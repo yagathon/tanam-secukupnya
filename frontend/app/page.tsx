@@ -83,7 +83,7 @@ export default function Home() {
 
       {data && (
         <section>
-          {tab === "inputs" && <InputsTab data={data} />}
+          {tab === "inputs" && <InputsTab data={data} onChange={load} />}
           {tab === "forecast" && <ForecastTab data={data} />}
           {tab === "commitments" && <CommitmentsTab data={data} />}
           {tab === "plan" && <PlanTab data={data} />}

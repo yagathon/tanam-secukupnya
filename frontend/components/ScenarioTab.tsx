@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import type { Data } from "@/lib/types";
 import { api } from "@/lib/api";
 import { kg, shortDate } from "@/lib/series";
-import type { Scenario } from "@/lib/types";
+import type { HarvestIssue, Scenario } from "@/lib/types";
 
 export default function ScenarioTab({ data }: { data: Data }) {
   const { state, plans } = data;
@@ -24,6 +24,17 @@ export default function ScenarioTab({ data }: { data: Data }) {
     }, 200);
     return () => clearTimeout(t);
   }, [crop, week, pct]);
+
+  // A farmer's loss hits only their share; the scenario slider is the whole crop's harvest that week.
+  const issues = state.notes.filter((n) => n.kind === "harvest_issue" && n.accepted && n.harvest_issue);
+  const applyIssue = (h: HarvestIssue) => {
+    const total = state.farmers.reduce((t, f) => t + (f.beds[h.crop] ?? 0), 0);
+    const mine = state.farmers.find((f) => f.id === h.farmer_id)?.beds[h.crop] ?? 0;
+    setCrop(h.crop);
+    const cw = [...new Set(plans.filter((p) => p.crop === h.crop).flatMap((p) => p.weeks.filter((w) => w.frozen).map((w) => w.week)))].sort();
+    setWeek(h.harvest_week && cw.includes(h.harvest_week) ? h.harvest_week : cw[0]);
+    setPct(Math.max(0, Math.round((100 - (h.loss_pct * mine) / Math.max(1, total)) / 5) * 5));
+  };
 
   const name = (id: string) =>
     state.partners.find((p) => p.id === id)?.alias ?? state.households.find((h) => h.id === id)?.alias ?? id;
@@ -46,7 +57,18 @@ export default function ScenarioTab({ data }: { data: Data }) {
           <input type="range" min={0} max={130} step={5} value={pct} onChange={(e) => setPct(Number(e.target.value))} />
         </label>
       </div>
-      <p className="muted small">Or pick a pest note from the inbox (arrives with the Gemini setup).</p>
+      {issues.length === 0 ? (
+        <p className="muted small">Or accept a farmer&apos;s harvest note in step 1 and play it out here.</p>
+      ) : (
+        <div className="row wrap small">
+          <span className="muted">From accepted farmer notes:</span>
+          {issues.map((n) => (
+            <button key={n.id} className="ghost" onClick={() => applyIssue(n.harvest_issue!)}>
+              {n.harvest_issue!.crop === "pakcoy" ? "Pakcoy" : "Sawi putih"} −{n.harvest_issue!.loss_pct}% ({n.harvest_issue!.cause})
+            </button>
+          ))}
+        </div>
+      )}
       {error && <div className="card error">{error}</div>}
 
       {result && (

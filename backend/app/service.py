@@ -33,9 +33,19 @@ def signals(store: Store) -> list[Signal]:
     for s in store.list("signals"):
         if not s.get("accepted"):
             continue
+        week_to = s.get("week_to") or (date.fromisoformat(s["week_from"]) + timedelta(weeks=26)).isoformat()
         out.append(Signal(s["id"], s["scope"], s["effect_pct"], date.fromisoformat(s["week_from"]),
-                          date.fromisoformat(s["week_to"]), s["source"], s["cause"], s.get("crop")))
+                          date.fromisoformat(week_to), s["source"], s["cause"], s.get("crop")))
     return out
+
+
+def recent_avg_kg(store: Store, weeks: int = 4) -> dict[str, float]:
+    """Last-N-week average kg per partner×crop and households×crop, so a note in kg becomes a %."""
+    out: dict[str, float] = defaultdict(float)
+    for s, hist in history(store).items():
+        who = s.partner_id or "households"
+        out[f"{who}/{s.crop}"] += sum(kg for _, kg in hist[-weeks:]) / weeks
+    return {k: round(v, 1) for k, v in sorted(out.items())}
 
 
 def history(store: Store) -> dict[Series, list[tuple[date, float]]]:

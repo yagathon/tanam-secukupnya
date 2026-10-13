@@ -67,6 +67,36 @@ export interface SignalDoc {
   cause: string;
   crop?: string | null;
   accepted?: boolean;
+  status?: "accepted" | "rejected";
+  cause_category?: string;
+  open_ended?: boolean;
+  note_id?: string;
+}
+
+export interface HarvestIssue {
+  farmer_id: string;
+  crop: string;
+  loss_pct: number;
+  delay_days: number;
+  harvest_week: string | null;
+  cause: string;
+  cause_category: string;
+}
+
+export interface NoteDoc {
+  id: string;
+  text: string;
+  sender: string;
+  received_on: string;
+  kind: "signals" | "harvest_issue" | "none";
+  summary_en: string;
+  harvest_issue: HarvestIssue | null;
+  status: "proposed" | "no_action" | "accepted" | "rejected";
+  accepted?: boolean;
+  dropped: string[];
+  model: string;
+  cached: boolean;
+  signals?: SignalDoc[];
 }
 
 export interface State {
@@ -78,6 +108,7 @@ export interface State {
   households: Household[];
   batches: Batch[];
   signals: SignalDoc[];
+  notes: NoteDoc[];
 }
 
 export interface ForecastPoint {

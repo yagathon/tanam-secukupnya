@@ -1,4 +1,4 @@
-import type { Plan, Scenario, SeriesView, State } from "./types";
+import type { NoteDoc, Plan, Scenario, SeriesView, SignalDoc, State } from "./types";
 
 async function call<T>(path: string, body?: unknown): Promise<T> {
   const res = await fetch(`/api${path}`, {
@@ -17,5 +17,8 @@ export const api = {
   plan: (horizon_weeks?: number) => call<{ today: string; plans: Plan[] }>("/plan/run", { horizon_weeks }),
   scenario: (crop: string, week: string, harvest_pct: number) =>
     call<Scenario>("/scenario", { crop, week, harvest_pct }),
+  readNote: (text: string, sender: string) => call<NoteDoc>("/notes", { text, sender }),
+  decideSignal: (id: string, accept: boolean) => call<SignalDoc>(`/signals/${id}/${accept ? "accept" : "reject"}`, {}),
+  decideNote: (id: string, accept: boolean) => call<NoteDoc>(`/notes/${id}/${accept ? "accept" : "reject"}`, {}),
   reset: () => call<{ ok: boolean }>("/demo/reset", {}),
 };
