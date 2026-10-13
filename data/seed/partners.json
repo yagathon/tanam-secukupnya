@@ -1,0 +1,58 @@
+[
+ {
+  "id": "resto_a",
+  "alias": "Restaurant A",
+  "segment": "restaurant",
+  "corridor": {
+   "pakcoy/regular": {
+    "min_kg": 12.6,
+    "max_kg": 23.4
+   },
+   "sawi_putih/restaurant": {
+    "min_kg": 21.0,
+    "max_kg": 39.0
+   }
+  }
+ },
+ {
+  "id": "resto_b",
+  "alias": "Restaurant B",
+  "segment": "restaurant",
+  "corridor": {
+   "pakcoy/regular": {
+    "min_kg": 8.4,
+    "max_kg": 15.6
+   },
+   "sawi_putih/restaurant": {
+    "min_kg": 14.0,
+    "max_kg": 26.0
+   }
+  }
+ },
+ {
+  "id": "caterer_c",
+  "alias": "Caterer C (school meals)",
+  "segment": "school_caterer",
+  "corridor": {
+   "pakcoy/regular": {
+    "min_kg": 17.5,
+    "max_kg": 32.5
+   },
+   "sawi_putih/restaurant": {
+    "min_kg": 24.5,
+    "max_kg": 45.5
+   }
+  }
+ },
+ {
+  "id": "cafe_d",
+  "alias": "Cafe D",
+  "segment": "cafe",
+  "corridor": {
+   "pakcoy/regular": {
+    "min_kg": 4.2,
+    "max_kg": 7.8
+   }
+  }
+ }
+]

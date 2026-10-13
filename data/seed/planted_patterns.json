@@ -1,0 +1,67 @@
+{
+ "meta": {
+  "synthetic": true,
+  "seed": 20261018,
+  "first_week": "2026-01-05",
+  "weeks": 40,
+  "noise_sigma": 0.12
+ },
+ "patterns": [
+  {
+   "id": "ramadan",
+   "scope": "B2B all",
+   "effect_pct": -25,
+   "from": "2026-02-18",
+   "to": "2026-03-19",
+   "cause": "Ramadan: lunch trade drops while fasting"
+  },
+  {
+   "id": "ramadan_b2c",
+   "scope": "B2C all",
+   "effect_pct": 15,
+   "from": "2026-02-18",
+   "to": "2026-03-19",
+   "cause": "Ramadan: more home cooking for iftar"
+  },
+  {
+   "id": "lebaran",
+   "scope": "B2B all",
+   "effect_pct": -50,
+   "from": "2026-03-20",
+   "to": "2026-03-27",
+   "cause": "Lebaran holiday week"
+  },
+  {
+   "id": "lebaran_b2c",
+   "scope": "B2C all",
+   "effect_pct": -30,
+   "from": "2026-03-20",
+   "to": "2026-03-27",
+   "cause": "Lebaran: families travel home (mudik)"
+  },
+  {
+   "id": "school_holiday",
+   "scope": "partner caterer_c",
+   "effect_pct": -60,
+   "from": "2026-06-22",
+   "to": "2026-07-12",
+   "cause": "School holiday: the school caterer cooks far less"
+  },
+  {
+   "id": "payday",
+   "scope": "B2C all",
+   "effect_pct": 12,
+   "from": null,
+   "to": null,
+   "cause": "Payday week (the 25th)"
+  },
+  {
+   "id": "growth_resto_b",
+   "scope": "partner resto_b",
+   "effect_pct": 1,
+   "from": null,
+   "to": null,
+   "cause": "Restaurant B grows ~1% per week"
+  }
+ ]
+}

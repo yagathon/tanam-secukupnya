@@ -17,3 +17,4 @@ out/
 *.pem
 *service-account*.json
 application_default_credentials.json
+backend/uv.lock.bak

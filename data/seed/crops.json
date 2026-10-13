@@ -1,0 +1,44 @@
+[
+  {
+    "id": "pakcoy",
+    "name": "Pakcoy",
+    "_note": "SYNTHETIC defaults from field experience. Fast crop with a narrow window: 15 days seedling + ~21-27 days in the bed.",
+    "nursery_days": 15,
+    "plants_per_bed": 160,
+    "grams_per_plant": 120,
+    "pest_loss": 0.10,
+    "zones": [
+      {"name": "early", "bed_day_from": 19, "bed_day_to": 21, "kg_factor": 0.75,
+       "grade_share": {"A": 0.85, "B": 0.10, "C": 0.05}, "fits": ["B2C"]},
+      {"name": "best", "bed_day_from": 22, "bed_day_to": 24, "kg_factor": 1.0,
+       "grade_share": {"A": 0.80, "B": 0.15, "C": 0.05}, "fits": ["B2B", "B2C"]},
+      {"name": "late", "bed_day_from": 25, "bed_day_to": 27, "kg_factor": 1.15,
+       "grade_share": {"A": 0.50, "B": 0.45, "C": 0.05}, "fits": ["B2B"]}
+    ],
+    "demand_lines": [
+      {"id": "regular", "channels": ["B2B", "B2C"], "target_zone": "best"},
+      {"id": "baby", "channels": ["B2C"], "target_zone": "early", "density_factor": 1.5}
+    ]
+  },
+  {
+    "id": "sawi_putih",
+    "name": "Sawi putih",
+    "_note": "SYNTHETIC defaults. Slow crop with a broad window: 15 days seedling + 50-60 days in the bed, still sellable to restaurants up to bed day 75 (pest risk rises).",
+    "nursery_days": 15,
+    "plants_per_bed": 110,
+    "grams_per_plant": 500,
+    "pest_loss": 0.10,
+    "zones": [
+      {"name": "best", "bed_day_from": 50, "bed_day_to": 60, "kg_factor": 1.0,
+       "grade_share": {"A": 0.80, "B": 0.15, "C": 0.05}, "fits": ["B2B", "B2C"]},
+      {"name": "late", "bed_day_from": 61, "bed_day_to": 67, "kg_factor": 1.10,
+       "grade_share": {"A": 0.70, "B": 0.22, "C": 0.08}, "fits": ["B2B"], "extra_pest_loss": 0.05},
+      {"name": "very_late", "bed_day_from": 68, "bed_day_to": 75, "kg_factor": 1.20,
+       "grade_share": {"A": 0.60, "B": 0.28, "C": 0.12}, "fits": ["B2B"], "extra_pest_loss": 0.10}
+    ],
+    "demand_lines": [
+      {"id": "retail", "channels": ["B2C"], "target_zone": "best"},
+      {"id": "restaurant", "channels": ["B2B"], "target_zone": "late"}
+    ]
+  }
+]

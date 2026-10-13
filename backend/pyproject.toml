@@ -1,0 +1,13 @@
+[project]
+name = "tanam-secukupnya"
+version = "0.1.0"
+description = "Plant just enough: demand-driven sowing planner for small farmers"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
