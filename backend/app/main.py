@@ -11,7 +11,7 @@ from datetime import date
 from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from app import service
+from app import gemini, service
 from app.store import JsonStore, Store
 
 store: Store = JsonStore()
@@ -63,6 +63,11 @@ def scenario(req: ScenarioRequest) -> dict:
 def demo_reset() -> dict:
     store.reset()
     return {"ok": True}
+
+
+@api.get("/gemini/ping")
+def gemini_ping() -> dict:
+    return gemini.ping()
 
 
 app = FastAPI(title="Tanam Secukupnya", version="0.1.0")

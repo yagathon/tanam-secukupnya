@@ -1,0 +1,8 @@
+# Only the API image is built in Cloud Build.
+.git
+.gitignore
+frontend/
+.shots/
+**/.venv
+**/__pycache__
+**/.pytest_cache

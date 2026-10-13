@@ -1,0 +1,11 @@
+# Build the API image (context = repo root, seed data lives outside backend/) and push it.
+#   gcloud builds submit --config cloudbuild.yaml --service-account projects/tanam-secukupnya/serviceAccounts/tanam-build@tanam-secukupnya.iam.gserviceaccount.com
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "backend/Dockerfile", "-t", "${_IMAGE}", "."]
+images: ["${_IMAGE}"]
+substitutions:
+  _IMAGE: asia-southeast2-docker.pkg.dev/${PROJECT_ID}/tanam/api:latest
+options:
+  logging: CLOUD_LOGGING_ONLY
+  dynamicSubstitutions: true
