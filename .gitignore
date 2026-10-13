@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+# Node / Next
+node_modules/
+.next/
+out/
+# Firebase
+.firebase/
+*-debug.log
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*service-account*.json
+application_default_credentials.json
