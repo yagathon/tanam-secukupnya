@@ -3,7 +3,8 @@
 Deliberately simple and explainable: we have weeks, not years, of history.
 - Baseline: exponentially weighted average of the history, after dividing out the effect of
   signals that are known to have applied in the past (so a Lebaran dip doesn't drag the level).
-- Band: σ of the one-step-ahead residuals; low/high = expected ∓ z·σ·√h, widening with horizon h.
+- Band: σ of the one-step-ahead residuals; low/high = expected ∓ z·σ·√(1+(h−1)α²), the
+  prediction interval of simple exponential smoothing, widening (gently) with horizon h.
 - Signals multiply expected (and the band) for the weeks and scopes they match. Calendar signals
   are capped at ±30%; an operator/farmer note overrides calendar signals of the same scope.
 Every forecast number carries the list of reasons that shaped it.
@@ -109,7 +110,7 @@ def forecast(history: list[tuple[date, float]], series: Series, start_week: date
         sigs = active_signals(series, week, signals)
         f = combined_factor(sigs)
         expected = level * f
-        half = z * sigma * math.sqrt(h) * f
+        half = z * sigma * math.sqrt(1 + (h - 1) * alpha**2) * f
         reasons = [f"baseline {level:.1f} kg/week (weighted recent average)"]
         reasons += [f"{s.effect_pct:+g}%{' (capped)' if s.factor() != 1 + s.effect_pct / 100 else ''}"
                     f" {s.cause} [{s.source}]" for s in sigs]

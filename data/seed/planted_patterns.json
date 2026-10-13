@@ -4,6 +4,7 @@
   "seed": 20261018,
   "first_week": "2026-01-05",
   "weeks": 40,
+  "today": "2026-10-12",
   "noise_sigma": 0.12
  },
  "patterns": [
@@ -62,6 +63,22 @@
    "from": null,
    "to": null,
    "cause": "Restaurant B grows ~1% per week"
+  }
+ ],
+ "in_ground_gaps": [
+  {
+   "crop": "pakcoy",
+   "line": "regular",
+   "week": "2026-10-26",
+   "beds_missing": 2,
+   "cause": "Farmer D's seedlings were transplanted late"
+  },
+  {
+   "crop": "sawi_putih",
+   "line": "retail",
+   "week": "2026-11-09",
+   "beds_missing": 1,
+   "cause": "a nursery tray failed"
   }
  ]
 }

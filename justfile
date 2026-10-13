@@ -6,3 +6,7 @@ test:
 # Regenerate the synthetic dataset (deterministic seed)
 data:
     uv run --project backend python scripts/generate.py
+
+# Run the API locally on :8000 (JSON seed store, no GCP needed)
+api:
+    cd backend && uv run uvicorn app.main:app --reload --port 8000

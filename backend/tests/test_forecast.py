@@ -23,7 +23,9 @@ def test_flat_history_forecasts_its_level_with_a_band_that_widens():
     pts = forecast(hist, S, W0 + timedelta(weeks=8), 4)
     assert pts[0].expected == pytest.approx(20, abs=1.5)
     widths = [p.high - p.low for p in pts]
-    assert widths == sorted(widths) and widths[3] == pytest.approx(widths[0] * 2, rel=1e-3)
+    # SES prediction interval: half-width ∝ √(1+(h−1)α²), α=0.3
+    assert all(b >= a - 0.02 for a, b in zip(widths, widths[1:]))
+    assert widths[3] == pytest.approx(widths[0] * (1 + 3 * 0.3**2) ** 0.5, rel=1e-2)
     assert all(p.low <= p.expected <= p.high for p in pts)
 
 

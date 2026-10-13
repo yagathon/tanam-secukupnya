@@ -10,14 +10,23 @@ to data/seed/planted_patterns.json, so the evaluation can check whether the syst
 from __future__ import annotations
 
 import json
+import math
 import random
+import sys
+from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parents[1] / "data" / "seed"
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "backend"))
+from app.crops import crop_from_dict  # noqa: E402
+from app.planner import HARVEST_WEEKDAY, harvest_needed, split_beds  # noqa: E402
+
+OUT = ROOT / "data" / "seed"
 SEED = 20261018
 FIRST_WEEK = date(2026, 1, 5)  # a Monday
 WEEKS = 40  # through the week of 2026-10-05
+TODAY = date(2026, 10, 12)  # the demo's "today": the Monday after the last week of history
 
 # Planted patterns: (id, description, scope, effect, date_from, date_to)
 RAMADAN = (date(2026, 2, 18), date(2026, 3, 19))
@@ -84,6 +93,51 @@ def b2c_factor(week: date) -> float:
     return f
 
 
+# Planted gaps in what's already in the ground, so the demo shows a bridge and a shortfall.
+# (crop, line, harvest week) → beds removed, and why.
+IN_GROUND_GAPS = {
+    ("pakcoy", "regular", date(2026, 10, 26)): (2, "Farmer D's seedlings were transplanted late"),
+    ("sawi_putih", "retail", date(2026, 11, 9)): (1, "a nursery tray failed"),
+}
+
+
+def in_ground_batches(orders: list[dict]) -> list[dict]:
+    """Batches already sown for every week a new sowing can no longer reach (the frozen weeks).
+
+    Sized to cover the recent average demand of their line, except the planted gaps above.
+    """
+    crops = [crop_from_dict(d) for d in json.loads((OUT / "crops.json").read_text())]
+    recent = {(FIRST_WEEK + timedelta(weeks=i)).isoformat() for i in range(WEEKS - 8, WEEKS)}
+    avg: dict[tuple[str, str, str], float] = defaultdict(float)
+    for o in orders:
+        if o["week"] in recent:
+            avg[o["crop"], o["line"], o["channel"]] += o["kg"] / len(recent)
+    batches = []
+    for crop in crops:
+        capacity = {f["id"]: f["beds"][crop.id] for f in FARMERS if crop.id in f["beds"]}
+        for ln in crop.demand_lines:
+            target = harvest_needed(crop, ln.id, avg[crop.id, ln.id, "B2B"], avg[crop.id, ln.id, "B2C"])
+            beds = math.ceil(target / crop.kg_per_bed_for_line(ln.id))
+            midpoint = crop.zone(ln.target_zone).midpoint
+            week = TODAY - timedelta(days=TODAY.weekday())
+            while True:
+                harvest_on = week + timedelta(days=HARVEST_WEEKDAY)
+                transplanted = harvest_on - timedelta(days=midpoint)
+                seeded = transplanted - timedelta(days=crop.nursery_days)
+                if seeded >= TODAY:
+                    break
+                gap, why = IN_GROUND_GAPS.get((crop.id, ln.id, week), (0, None))
+                for farmer, b in split_beds(beds - gap, capacity).items():
+                    batches.append({
+                        "id": f"{crop.id}-{ln.id}-{week.isoformat()}-{farmer}", "crop": crop.id, "line": ln.id,
+                        "farmer_id": farmer, "beds": b, "seeded_on": seeded.isoformat(),
+                        "transplanted_on": transplanted.isoformat(),
+                        "status": "nursery" if transplanted > TODAY else "bed",
+                        **({"note": why} if why else {})})
+                week += timedelta(weeks=1)
+    return batches
+
+
 def main() -> None:
     rng = random.Random(SEED)
     noise = lambda: rng.lognormvariate(0, NOISE_SIGMA)  # noqa: E731
@@ -135,9 +189,12 @@ def main() -> None:
     ]
 
     meta = {"synthetic": True, "seed": SEED, "first_week": FIRST_WEEK.isoformat(), "weeks": WEEKS,
-            "noise_sigma": NOISE_SIGMA}
+            "today": TODAY.isoformat(), "noise_sigma": NOISE_SIGMA}
+    gaps = [{"crop": c, "line": ln, "week": w.isoformat(), "beds_missing": n, "cause": why}
+            for (c, ln, w), (n, why) in IN_GROUND_GAPS.items()]
     files = {"farmers.json": FARMERS, "partners.json": partners, "households.json": households,
-             "orders.json": orders, "planted_patterns.json": {"meta": meta, "patterns": patterns}}
+             "orders.json": orders, "batches.json": in_ground_batches(orders),
+             "planted_patterns.json": {"meta": meta, "patterns": patterns, "in_ground_gaps": gaps}}
     OUT.mkdir(parents=True, exist_ok=True)
     for name, data in files.items():
         (OUT / name).write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
