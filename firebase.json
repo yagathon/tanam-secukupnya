@@ -1,0 +1,9 @@
+{
+  "hosting": {
+    "public": "frontend/out",
+    "cleanUrls": true,
+    "rewrites": [
+      { "source": "/api/**", "run": { "serviceId": "tanam-api", "region": "asia-southeast2" } }
+    ]
+  }
+}

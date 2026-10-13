@@ -19,3 +19,5 @@ out/
 application_default_credentials.json
 backend/uv.lock.bak
 .shots/
+firebase-debug.log
+.firebase/
