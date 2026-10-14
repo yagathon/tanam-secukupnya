@@ -156,7 +156,8 @@ def accept_note(id: str, ws: Store = Depends(workspace)) -> dict:
         farm.check_events(ws, events)
     except (KeyError, ValueError) as e:
         raise HTTPException(422, f"cannot apply this note ({e})") from e
-    ws.put("events", {"seq": farm.next_seq(ws), "kind": "note", "note_id": id, "events": events})
+    if not farm.append(ws, inp["seq"], {"kind": "note", "note_id": id, "events": events}):
+        raise HTTPException(409, "the farm changed while accepting this note; try again")
     return ws.put("notes", {**doc, "status": "accepted", "events": events})
 
 

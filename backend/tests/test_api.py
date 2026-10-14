@@ -146,3 +146,67 @@ def test_season_compares_three_strategies():
     assert set(s["summary"]) == {"cobweb", "fixed", "tanam"}
     assert s["summary"]["tanam"]["waste_pct"] < s["summary"]["fixed"]["waste_pct"]
     assert len(s["runs"]) == 3 * len(s["seeds"])
+
+
+def test_baby_postpone_is_dated_by_the_baby_line_not_regular(monkeypatch):
+    fake_gemini(monkeypatch, NoteReading(kind="sowing", summary_en="x", sowing=SowingReading(
+        line="regular", seedlings=1200, postponed=False, reason="")))
+    n = client.post("/api/notes", json={"text": "semai 1200", "sender": "farmer"}).json()
+    client.post(f"/api/notes/{n['id']}/accept")
+    fake_gemini(monkeypatch, NoteReading(kind="sowing", summary_en="x", sowing=SowingReading(
+        line="baby", seedlings=None, postponed=True, reason="rain")))
+    n = client.post("/api/notes", json={"text": "baby ditunda", "sender": "farmer"}).json()
+    a = client.post(f"/api/notes/{n['id']}/accept").json()
+    assert a["events"] == [{"t": "postpone", "line": "baby", "day": "2026-10-12", "reason": "rain"}]
+
+
+def _both_at_once(monkeypatch, *calls):
+    """Run the calls in two threads, each held after its first state load until both have loaded:
+    the window in which two requests both see the same log."""
+    import threading
+
+    from app import farm
+    barrier, orig, seen = threading.Barrier(len(calls), timeout=10), farm.load, set()
+
+    def gated(ws):
+        v = orig(ws)
+        me = threading.get_ident()
+        if me not in seen:
+            seen.add(me)
+            barrier.wait()
+        return v
+    monkeypatch.setattr(farm, "load", gated)
+    out = [None] * len(calls)
+
+    def run(i):
+        try:
+            out[i] = calls[i]()
+        except Exception as e:  # noqa: BLE001 - the HTTPException is the result under test
+            out[i] = e
+    ts = [threading.Thread(target=run, args=(i,)) for i in range(len(calls))]
+    for t in ts:
+        t.start()
+    for t in ts:
+        t.join()
+    return out
+
+
+def test_two_next_days_at_once_advance_the_farm_once(monkeypatch):
+    from datetime import date
+
+    from app import farm
+    ws = main.store.for_user("local")
+    out = _both_at_once(monkeypatch, *[lambda: farm.next_day(ws, date(2026, 10, 12), 1)] * 2)
+    assert sorted(r["appended"] for r in out) == [0, 1]
+    assert [d["seq"] for d in ws.list("events")] == [1]
+
+
+def test_double_accept_applies_the_note_once(monkeypatch):
+    fake_gemini(monkeypatch, NoteReading(kind="sowing", summary_en="x", sowing=SowingReading(
+        line="regular", seedlings=1200, postponed=False, reason="")))
+    n = client.post("/api/notes", json={"text": "semai 1200", "sender": "farmer"}).json()
+    ws = main.store.for_user("local")
+    out = _both_at_once(monkeypatch, *[lambda: main.accept_note(n["id"], ws)] * 2)
+    assert sum(isinstance(r, dict) for r in out) == 1
+    assert [e for e in out if not isinstance(e, dict)][0].status_code == 409
+    assert len(ws.list("events")) == 1

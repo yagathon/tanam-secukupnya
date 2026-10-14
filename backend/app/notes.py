@@ -176,7 +176,7 @@ def sanitize(r: NoteReading, today: date, buyers: list[dict], beds: dict[str, st
 
 # --- accepted proposal → log events (see state.py for the event kinds) ---
 
-def to_events(p: dict, today: date, next_sow_day: date) -> list[dict]:
+def to_events(p: dict, today: date, next_sow: dict[str, date]) -> list[dict]:
     t = today.isoformat()
     if p["kind"] == "orders":
         return [{"t": "order", **o} for o in p["orders"]]
@@ -187,7 +187,7 @@ def to_events(p: dict, today: date, next_sow_day: date) -> list[dict]:
     if p["kind"] == "sowing":
         s = p["sowing"]
         if s["postponed"]:
-            return [{"t": "postpone", "line": s["line"], "day": next_sow_day.isoformat(), "reason": s["reason"]}]
+            return [{"t": "postpone", "line": s["line"], "day": next_sow[s["line"]].isoformat(), "reason": s["reason"]}]
         return [{"t": "sow", "line": s["line"], "day": t, "seedlings": s["seedlings"]}]
     if p["kind"] == "loss":
         lo = p["loss"]

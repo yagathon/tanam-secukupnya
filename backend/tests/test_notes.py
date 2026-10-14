@@ -88,7 +88,7 @@ def test_signal_scope_and_open_end():
 
 
 def test_to_events_per_kind():
-    nxt = date(2026, 10, 15)
+    nxt = {"regular": date(2026, 10, 15), "baby": date(2026, 10, 15)}
     sow = {"kind": "sowing", "sowing": {"line": "regular", "postponed": True, "seedlings": None, "reason": "rain"}}
     assert to_events(sow, TODAY, nxt) == [{"t": "postpone", "line": "regular", "day": "2026-10-15", "reason": "rain"}]
     hv = {"kind": "harvest", "harvest": {"bed": "Bed 41", "batch": "b1", "kg": 3.0, "big5_g": None, "small5_g": None}}

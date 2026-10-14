@@ -27,12 +27,14 @@ SEED_DIR = Path(__file__).resolve().parents[2] / "data" / "seed"
 COLLECTIONS = ("crops", "buyers", "households", "batches", "history")
 WORKSPACE = ("notes", "events")
 LOCAL_UID = "local"
+_add_lock = threading.Lock()
 
 
 class Store(Protocol):
     def list(self, collection: str) -> list[dict]: ...
     def get(self, collection: str, id: str) -> dict | None: ...
     def put(self, collection: str, doc: dict) -> dict: ...
+    def add(self, collection: str, doc: dict) -> bool: ...
     def meta(self) -> dict: ...
     def reset(self) -> None: ...
     def for_user(self, uid: str) -> "Store": ...
@@ -80,6 +82,14 @@ class JsonStore:
         rows = self._rows(collection)
         rows[:] = [d for d in rows if d.get("id") != doc["id"]] + [doc]
         return copy.deepcopy(doc)
+
+    def add(self, collection: str, doc: dict) -> bool:
+        """Store `doc` under its own id only if no doc has that id yet; False if one already does."""
+        with _add_lock:
+            if self.get(collection, doc["id"]) is not None:
+                return False
+            self.put(collection, doc)
+            return True
 
     def meta(self) -> dict:
         return dict(self._meta)
@@ -142,6 +152,18 @@ class FirestoreStore:
         doc.setdefault("created_at", time.time())
         self._col(collection).document(doc["id"]).set(doc)
         return doc
+
+    def add(self, collection: str, doc: dict) -> bool:
+        """Create `doc` under its own id only if no doc has that id yet; False if one already does."""
+        from google.api_core.exceptions import AlreadyExists
+
+        if collection not in WORKSPACE:
+            raise ValueError(f"{collection} is reference data (read-only)")
+        try:
+            self._col(collection).document(doc["id"]).create({**doc, "created_at": time.time()})
+        except AlreadyExists:
+            return False
+        return True
 
     def meta(self) -> dict:
         return dict(self._meta)

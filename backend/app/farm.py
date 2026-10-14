@@ -80,8 +80,10 @@ def load(ws: Store) -> View:
     return view
 
 
-def next_seq(ws: Store) -> int:
-    return log_key(ws.list("events"))[1] + 1
+def append(ws: Store, seq: int, doc: dict) -> bool:
+    """Write log entry `seq`, only if no entry has that seq yet. `seq` comes from the state the caller
+    checked (its log_key + 1), so of two requests that read the same log only the first writes."""
+    return ws.add("events", {**doc, "id": f"e{seq:08d}", "seq": seq})
 
 
 # --- day loop ---
@@ -95,14 +97,15 @@ def next_day(ws: Store, from_day: date, days: int) -> dict:
     c, w = crop(ws), world(ws)
     st, plans = copy.deepcopy(v.state), v.plans
     fixed = ws.meta()["fixed_seedlings"]
-    seq = next_seq(ws)
+    seq = v.log_key[1] + 1
     for i in range(days):
         if i:
             plans = sim.plan(st, c, ws.list("buyers"))
         evs = sim.day_events(st, c, w, "tanam", fixed, plans)
+        if not append(ws, seq + i, {"kind": "day", "events": evs}):
+            return {"today": load(ws).state.today.isoformat(), "appended": i}
         for ev in evs:
             apply(st, c, ev)
-        ws.put("events", {"seq": seq + i, "kind": "day", "events": evs})
     return {"today": st.today.isoformat(), "appended": days}
 
 
@@ -229,8 +232,8 @@ def today(ws: Store) -> dict:
 
 
 def note_inputs(ws: Store) -> dict:
-    """What reading and sanitizing a note needs: the Gemini context, bed label → batch id, and the
-    sowing day a "postponed" note refers to."""
+    """What reading and sanitizing a note needs: the Gemini context, bed label → batch id, the sowing
+    day a "postponed" note refers to (per line), and the log seq an accepted note would take."""
     v = load(ws)
     st, c = v.state, crop(ws)
     in_ground = [b for b in sorted(st.alive(c), key=lambda b: b.sown_on)
@@ -243,7 +246,9 @@ def note_inputs(ws: Store) -> dict:
                         lines, usual)
     return {"today": st.today, "ctx": ctx, "beds": {b.label: b.id for b in in_ground}, "lines": lines,
             "max_seedlings": c.max_seedlings,
-            "next_sow": engine.next_sow_day(st.today, st.last_sown.get("regular") == st.today)}
+            "next_sow": {ln: engine.next_sow_day(st.today, st.last_sown.get(ln) == st.today
+                                                 or (ln, st.today.isoformat()) in st.postponed) for ln in lines},
+            "seq": v.log_key[1] + 1}
 
 
 def check_events(ws: Store, events: list[dict]) -> None:
