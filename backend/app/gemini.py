@@ -77,7 +77,9 @@ Decide the kind:
   buyer is named), "channel:B2C" for households/pelanggan rumahan, "channel:B2B" for all restaurants
   and caterers, "all" for everyone. effect_pct relative to the buyer's usual order: "separo" = -50,
   "dobel" = +100, "stop/libur/tutup" = -100; given kg vs usual_kg_per_order → kg/usual − 1.
-  date_from/date_to from the days table (inclusive); "minggu depan" = next Monday through Sunday;
+  line: null (all lines) unless the note names one ("pakcoy baby" → "baby").
+  date_from/date_to from the days table (inclusive); a weekday name = the next such day after today
+  ("mulai senin" sent on a Monday = next Monday); "mulai besok"/"mulai sekarang" as said; "minggu depan" = next Monday through Sunday;
   "bulan depan" = the 1st through the last day of next month; date_to null when no end is stated.
   cause_category: renovation, closure, event, holiday, school_calendar, menu_change, low_traffic,
   contract_change, stock, new_customers, other.

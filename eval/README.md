@@ -1,60 +1,52 @@
-# G1 benchmark: Bahasa notes → structured signals
+# G1 benchmark: Bahasa notes → one proposed farm event
 
-G1 reads a WhatsApp-style note (Indonesian, slang, typos, some Sundanese) and proposes either
-**demand signals**, a **harvest issue**, or **nothing**. This folder holds the labeled notes and the
-results of running Gemini on them.
+G1 reads a WhatsApp-style note (Indonesian, slang, typos, some Sundanese) and proposes one of six
+kinds: **orders**, **harvest** (with the optional 5-biggest/5-smallest size sample), **sowing**
+(or a postponed sowing), **loss**, a demand **signal**, or **none**. A person accepts or rejects
+every proposal; nothing reaches the farm until accepted.
 
 | File | What |
 |---|---|
-| `notes_labeled.jsonl` | **Dev set**, 45 notes. The prompt was tuned while looking at these results. |
-| `notes_holdout.jsonl` | **Held-out set**, 15 notes, written *after* prompt tuning and never used to change it. Report this number. |
+| `notes_labeled.jsonl` | **Dev set**, 60 notes. The prompt was tuned while looking at these results. |
+| `notes_holdout.jsonl` | **Held-out set**, 18 notes, written *after* prompt tuning and never used to change it. Report this number. |
 | `results/g1-<set>-<model>.md` | Score table + every miss |
 | `results/g1-<set>-<model>.jsonl` | Every reading, for inspection |
 
 Run: `just eval` (dev) · `just eval holdout` · `just eval holdout gemini-3-flash-preview`.
 Needs Application Default Credentials on the `tanam-secukupnya` project.
 
-## Label format (one JSON object per line)
+Every note is read against the DAY0 farm (2026-10-12): the same context a visitor's first note
+gets (buyer aliases, bed labels in the ground, usual kg per order, a 35-day date table).
+
+## Label format
 
 ```json
-{"id": "n01", "received_on": "2026-10-12", "sender": "operator",
- "text": "bu, resto A minggu depan pakcoy kurangin dulu ya separo, lg renovasi dapur",
- "expected": {"kind": "signals", "signals": [
-   {"scope": "partner:resto_a", "crop": "pakcoy", "effect_pct": -50,
-    "week_from": "2026-10-19", "week_to": "2026-10-19", "cause_category": "renovation"}]},
- "label_note": "optional: why the label is what it is"}
+{"id": "d02", "received_on": "2026-10-12", "sender": "farmer",
+ "text": "panen bed 41 td pagi 11,5 kg. timbang 5 gede 620gr 5 kecil 310",
+ "expected": {"kind": "harvest", "harvest": {"bed": "Bed 41", "kg": 11.5, "big5_g": 620, "small5_g": 310}}}
 ```
 
-- `sender`: a partner id, a farmer id, or `operator`. The model sees only `text`, `sender` and the
-  context (aliases, average kg per week, the table of coming Mondays), never `label_note`.
-- Weeks are keyed by their **Monday**. `week_to` is inclusive. `null` means open-ended ("mulai minggu depan").
-- `crop: null` = every crop the scope buys.
-- Harvest issue: `{farmer_id, crop, loss_pct, delay_days, harvest_week|null, cause_category}`.
-- Cause categories live in `backend/app/notes.py` (`DEMAND_CAUSES`, `HARVEST_CAUSES`).
-- `backend/tests/test_notes.py` checks that every label uses valid ids, Monday dates and known
-  categories, and that a perfect reading scores 100%.
+`expected` uses the sanitized proposal's shape:
+- `orders: [{buyer, line, kg, day}]`
+- `harvest: {bed, kg, big5_g, small5_g}`
+- `sowing: {line, postponed, seedlings}`
+- `loss: {bed, pct, cause_category}`
+- `signals: [{scope, line, effect_pct, date_from, date_to, cause_category}]`
+
+`backend/tests/test_labels.py` checks that a perfect reading of every label survives the
+sanitizer and scores 100%.
 
 ## Scoring
 
-Each note is scored on its **kind**, then field by field:
+Each note is scored on its **kind**, then field by field (`backend/app/notes.py: score`):
 
-| Kind | Fields | Correct when |
-|---|---|---|
-| signals | scope, crop, direction, magnitude, period, cause | magnitude = same bucket (stop / ±small <15% / ±medium 15–40% / ±large >40%); period = exact Monday range |
-| harvest issue | farmer, crop, magnitude, delay, period, cause | magnitude within ±10 points; delay exact |
-| none | — | anything proposed counts as a false alarm |
+| Kind | Fields (tolerance) |
+|---|---|
+| orders | buyer, line, kg (±5% or 0.1 kg), day |
+| harvest | bed, kg (±5% or 0.1 kg), sample (both figures ±2% or 5 g) |
+| sowing | line, postponed, seedlings (exact) |
+| loss | bed, pct (±10 points), cause category |
+| signal | scope, line, direction, magnitude bucket, period, cause category |
 
-Predicted signals are paired with labeled ones by best field agreement. A `crop: null` signal is
-expanded into one per crop the scope buys, so "pakcoy and sawi +30%" is accepted either as one signal
-or as two. Predicted signals with no labeled counterpart count as **extra**, meaning a proposal the
-operator would have to reject.
-
-## Honest caveats
-
-- All notes are **synthetic** and written by the same person (Claude) who wrote the prompt and the
-  labels. The founder reviews them for realism (checklist item). A real benchmark needs notes from
-  real partners and farmers.
-- Some notes are truly ambiguous (`label_note` says so, e.g. n19 "2 minggu ke depan" sent on a Monday).
-  In the product the operator settles these when accepting.
-- The model only *proposes*. Nothing reaches the forecast until a person accepts it, and the server
-  drops any id, crop or date outside what the context allows (`notes.sanitize`).
+List kinds are matched item to item; unmatched proposed items count as **extra** (false alarms a
+person would have to reject). A failed call scores every field wrong.
