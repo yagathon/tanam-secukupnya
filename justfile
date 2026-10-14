@@ -7,6 +7,10 @@ test:
 data:
     uv run --project backend python scripts/generate.py
 
+# Season comparison: 3 sowing strategies × 5 seeds × 26 weeks → data/seed/season.json (~2 min)
+season:
+    uv run --project backend python scripts/season.py
+
 # Run the API locally on :8100 (JSON seed store, auth off, no GCP needed)
 api:
     cd backend && AUTH=off uv run uvicorn app.main:app --reload --port 8100
