@@ -23,6 +23,7 @@
 - The ceiling always rounds **down** to 10 g (`engine._floor2`). Rounding up stepped past the safe point in prototyping.
 - Gemini is called only from `POST /api/notes`, behind the input cache and `GEMINI_DAILY_CAP` (default 300). Tests never call Gemini; they monkeypatch `gemini.read_note`.
 - **Secrets:** never write a secret's value into a file, a commit, a test or a report. Name the variable only.
+- `just` is not on the WSL PATH. Run steps use the underlying `uv run …` command; the justfile recipes are kept for the README.
 - Run tests in the foreground. Never background them or attach a monitor.
 - Until Task 8 removes the old weekly modules, the full suite is **expected to be red**. Each task runs only its own test files. Don't push until Task 8 is green; `main` is untouched until the founder merges.
 - Commits end with the two trailer lines:
@@ -1987,7 +1988,7 @@ if __name__ == "__main__":
     main()
 ```
 
-Run: `just data`
+Run: `uv run --project backend python scripts/generate.py` (the `just data` recipe; `just` is not on the WSL PATH)
 Expected output: `DAY0 2026-10-12: 26 batches, 58 history days, fixed {'regular': 1100, 'baby': 100}`. `git status` shows the five JSON files changed or added and the four old files deleted. Check `data/seed/meta.json`: `"day0": "2026-10-12"`, `"next_bed": 57`.
 
 - [ ] **Step 8: Commit**
@@ -2083,7 +2084,7 @@ season:
 
 - [ ] **Step 3: Run it**
 
-Run: `just season`. It runs in the foreground and takes about 2 minutes.
+Run: `uv run --project backend python scripts/season.py`. It runs in the foreground and takes about 2 minutes.
 Expected summary (5-seed means). Each figure must match within ±0.5 points; a larger drift means Tasks 1–5 differ from this plan:
 
 ```
@@ -3842,9 +3843,9 @@ person would have to reject). A failed call scores every field wrong.
 
 ```bash
 gcloud auth application-default print-access-token >/dev/null && echo ADC-OK
-just eval
+uv run --project backend python scripts/eval_g1.py dev
 ```
-Expected: `eval/results/g1-dev-<model>.md` is written; the kind accuracy line is printed. Tune `G1_SYSTEM` in `backend/app/gemini.py` against the dev misses (up to three rounds), re-running `just eval` and `uv run --project backend pytest -q backend/tests/test_notes.py` after each. Then write the holdout set, run `uv run --project backend pytest -q backend/tests/test_labels.py`, and run `just eval holdout` **once**. Report that number as is; don't tune on it.
+Expected: `eval/results/g1-dev-<model>.md` is written; the kind accuracy line is printed. Tune `G1_SYSTEM` in `backend/app/gemini.py` against the dev misses (up to three rounds), re-running `uv run --project backend python scripts/eval_g1.py dev` and `uv run --project backend pytest -q backend/tests/test_notes.py` after each. Then write the holdout set, run `uv run --project backend pytest -q backend/tests/test_labels.py`, and run `uv run --project backend python scripts/eval_g1.py holdout` **once**. Report that number as is; don't tune on it.
 
 - [ ] **Step 7: Run the whole suite**
 
@@ -3869,5 +3870,5 @@ Expected: CI green.
 
 - `uv run --project backend pytest -q backend/tests` passes (160), and CI is green on `feat/daily-engine`.
 - `data/seed/` holds `crops, buyers, households, batches, history, meta, season` (.json) and nothing else.
-- `just season` reproduces the summary in Task 6. The holdout benchmark is in `eval/results/`.
+- `uv run --project backend python scripts/season.py` reproduces the summary in Task 6. The holdout benchmark is in `eval/results/`.
 - `main` and prod are untouched. Plan 2 (UI, Firestore re-seed, deploy, README/REPORT) starts from this branch.
