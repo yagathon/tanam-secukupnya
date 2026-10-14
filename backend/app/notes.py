@@ -1,11 +1,11 @@
-"""G1: a free-text Bahasa note → proposed demand signals or a harvest issue (or nothing).
+"""G1: a free-text Bahasa note → one proposed farm event (orders, harvest, sowing, loss, signal) or nothing.
 
-This module holds everything about notes that is not the Gemini call itself: the output schema
-the model must fill, the context it gets (aliases, the coming Mondays), the sanitizer that turns
-a raw model reading into something safe to store, and the field-level scorer used by the eval.
+This module holds everything about notes except the Gemini call: the schema the model fills, the
+context it gets (aliases, bed labels, a day table), the sanitizer that turns a raw reading into a
+safe proposal, the conversion of an accepted proposal into log events, and the eval scorer.
 
-The model only *proposes*. Nothing it returns reaches the forecast until a person accepts it, and
-the sanitizer drops any id, crop or date it could not have legitimately produced.
+The model only *proposes*. Nothing reaches the farm state until a person accepts it, and the
+sanitizer drops any id, bed, line or date the model could not have legitimately produced.
 """
 
 from __future__ import annotations
@@ -15,151 +15,193 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-DEMAND_CAUSES = ("renovation", "closure", "event", "holiday", "school_calendar", "menu_change",
+KINDS = ("orders", "harvest", "sowing", "loss", "signal", "none")
+SIGNAL_CAUSES = ("renovation", "closure", "event", "holiday", "school_calendar", "menu_change",
                  "low_traffic", "contract_change", "stock", "new_customers", "other")
-HARVEST_CAUSES = ("pest", "disease", "weather", "flood", "drought", "seed_quality", "other")
-CAUSES = tuple(dict.fromkeys(DEMAND_CAUSES + HARVEST_CAUSES))
-KINDS = ("signals", "harvest_issue", "none")
-HORIZON_WEEKS = 26  # an open-ended signal ("mulai minggu depan") runs to the planning horizon
+LOSS_CAUSES = ("pest", "disease", "weather", "flood", "drought", "other")
+CAUSES = tuple(dict.fromkeys(SIGNAL_CAUSES + LOSS_CAUSES))
+ORDER_DAYS_AHEAD = 14
+SIGNAL_DAYS_AHEAD = 182        # an open-ended signal runs to the end of the season
+MAX_KG = 500.0
 
 Cause = Literal[CAUSES]  # type: ignore[valid-type]
 
 
-# --- what the model fills (kept flat: response schemas handle few nesting tricks) ---
+# --- what the model fills (flat: response schemas handle few nesting tricks) ---
 
-class SignalReading(BaseModel):
-    scope: str = Field(description='"all", "channel:B2B", "channel:B2C" or "partner:<partner id>"')
-    crop: str | None = Field(description="crop id, or null when the note covers every crop")
-    effect_pct: float = Field(description="+20 = 20% more demand, -100 = stop entirely")
-    week_from: str = Field(description="Monday (YYYY-MM-DD) of the first affected week")
-    week_to: str | None = Field(description="Monday of the last affected week; null if open-ended")
-    cause: str = Field(description="short English phrase for why, from the note")
-    cause_category: Cause
+class OrderReading(BaseModel):
+    buyer: str = Field(description="buyer id from the context")
+    line: str = Field(description='"regular" or "baby"')
+    kg: float
+    day: str = Field(description="delivery day YYYY-MM-DD from the days table; besok = tomorrow")
 
 
 class HarvestReading(BaseModel):
-    farmer_id: str
-    crop: str
-    loss_pct: float = Field(description="share of the expected harvest lost, 0–100")
-    delay_days: int = Field(0, description="days the harvest is pushed back; 0 if not delayed")
-    harvest_week: str | None = Field(description="Monday of the affected harvest week, if stated")
+    bed: str = Field(description='bed label from the context, e.g. "Bed 41"')
+    kg: float = Field(description="kg harvested")
+    big5_g: float | None = Field(description="the 5 biggest plants weighed together, grams; null if not given")
+    small5_g: float | None = Field(description="the 5 smallest plants weighed together, grams; null if not given")
+
+
+class SowingReading(BaseModel):
+    line: str
+    seedlings: int | None = Field(description="seedlings sown; null when postponed")
+    postponed: bool = Field(description="true when today's sowing did not happen")
+    reason: str = Field(description="short English reason when postponed, else empty")
+
+
+class LossReading(BaseModel):
+    bed: str = Field(description="bed label from the context")
+    pct: float = Field(description="share of the plants still in that bed that are lost, 0–100")
+    cause: str
+    cause_category: Cause
+
+
+class SignalReading(BaseModel):
+    scope: str = Field(description='"all", "channel:B2B", "channel:B2C" or "buyer:<buyer id>"')
+    line: str | None = Field(description="line id, or null when the note covers every line")
+    effect_pct: float = Field(description="+20 = 20% more demand, -100 = stop entirely")
+    date_from: str = Field(description="first affected day YYYY-MM-DD")
+    date_to: str | None = Field(description="last affected day YYYY-MM-DD; null if open-ended")
     cause: str
     cause_category: Cause
 
 
 class NoteReading(BaseModel):
     kind: Literal[KINDS]  # type: ignore[valid-type]
+    orders: list[OrderReading] = Field(default_factory=list)
+    harvest: HarvestReading | None = None
+    sowing: SowingReading | None = None
+    loss: LossReading | None = None
     signals: list[SignalReading] = Field(default_factory=list)
-    harvest_issue: HarvestReading | None = None
     summary_en: str = Field(description="one short English sentence: what the note says")
 
 
 # --- context ---
 
-def monday(d: date) -> date:
-    return d - timedelta(days=d.weekday())
+def day_table(today: date, days: int = 35) -> list[dict]:
+    """Coming days with plain labels, so the model looks dates up instead of computing them."""
+    labels = {0: "today (hari ini)", 1: "tomorrow (besok)", 2: "day after tomorrow (lusa)"}
+    return [{"date": (today + timedelta(days=i)).isoformat(), "weekday": (today + timedelta(days=i)).strftime("%A"),
+             "label": labels.get(i, "")} for i in range(days)]
 
 
-def week_table(today: date, weeks: int = 16) -> list[dict]:
-    """The coming Mondays with plain labels, so the model looks dates up instead of computing them."""
-    m0 = monday(today)
-    labels = {0: "this week (minggu ini)", 1: "next week (minggu depan)", 2: "in two weeks"}
-    rows = []
-    for i in range(weeks):
-        m = m0 + timedelta(weeks=i)
-        rows.append({"monday": m.isoformat(), "sunday": (m + timedelta(days=6)).isoformat(),
-                     "label": labels.get(i, f"in {i} weeks")})
-    return rows
-
-
-def context(state: dict, avg_kg: dict[str, float] | None = None) -> dict:
-    """What the model needs to resolve names: ids + aliases, crops and lines, the week table."""
-    today = date.fromisoformat(state["today"])
+def context(today: date, buyers: list[dict], beds: list[dict], lines: list[str], usual: dict[str, float]) -> dict:
+    """beds: [{"label", "line", "bed_day"}] for batches in the ground; usual: "buyer:line" → kg per order day."""
     return {
-        "today": today.isoformat(),
-        "weekday": today.strftime("%A"),
-        "partners": [{"id": p["id"], "alias": p["alias"], "crops": sorted({k.split("/")[0] for k in p["corridor"]})}
-                     for p in state["partners"]],
-        "farmers": [{"id": f["id"], "alias": f["alias"], "beds": f["beds"]} for f in state["farmers"]],
-        "crops": [{"id": c["id"], "name": c["name"], "lines": [l["id"] for l in c["demand_lines"]]}
-                  for c in state["crops"]],
-        "households": len(state.get("households", [])),
-        "avg_kg_per_week": avg_kg or {},
-        "weeks": week_table(today),
+        "today": today.isoformat(), "weekday": today.strftime("%A"), "lines": lines,
+        "buyers": [{"id": b["id"], "alias": b["alias"], "lines": sorted(b["lines"])} for b in buyers],
+        "beds": beds, "usual_kg_per_order": usual, "days": day_table(today),
     }
 
 
 # --- sanitize: model reading → storable proposal ---
 
-def _week(s: str | None, today: date, default: date | None = None) -> date | None:
-    if not s:
-        return default
+def _day(s: str | None, lo: date, hi: date) -> date | None:
     try:
-        d = monday(date.fromisoformat(s))
+        d = date.fromisoformat(s) if s else None
     except ValueError:
-        return default
-    lo, hi = monday(today) - timedelta(weeks=1), monday(today) + timedelta(weeks=HORIZON_WEEKS * 2)
-    return d if lo <= d <= hi else default
+        return None
+    return d if d is not None and lo <= d <= hi else None
 
 
-def sanitize(r: NoteReading, state: dict) -> tuple[dict, list[str]]:
-    """Clamp a reading to known ids, Monday dates and sane ranges. Returns (proposal, dropped reasons)."""
-    today = date.fromisoformat(state["today"])
-    partners = {p["id"] for p in state["partners"]}
-    farmers = {f["id"]: set(f["crops"]) for f in state["farmers"]}
-    crops = {c["id"] for c in state["crops"]}
-    scopes = {"all", "channel:B2B", "channel:B2C"} | {f"partner:{p}" for p in partners}
+def _kg(x: float) -> float | None:
+    return round(x, 2) if 0 < x <= MAX_KG else None
+
+
+def sanitize(r: NoteReading, today: date, buyers: list[dict], beds: dict[str, str], lines: list[str],
+             max_seedlings: int) -> tuple[dict, list[str]]:
+    """Clamp a reading to known ids, beds (label → batch id) and sane ranges. Returns (proposal, dropped)."""
     dropped: list[str] = []
-    out: dict = {"kind": r.kind, "summary_en": r.summary_en[:300], "signals": [], "harvest_issue": None}
-
-    if r.kind == "signals":
-        for s in r.signals:
-            if s.scope not in scopes:
-                dropped.append(f"unknown scope {s.scope!r}")
-                continue
-            if s.crop is not None and s.crop not in crops:
-                dropped.append(f"unknown crop {s.crop!r}")
-                continue
-            wf = _week(s.week_from, today)
-            if wf is None:
-                dropped.append(f"bad week_from {s.week_from!r}")
-                continue
-            wt = _week(s.week_to, today)
-            if wt is not None and wt < wf:
-                wt = wf
-            out["signals"].append({
-                "scope": s.scope, "crop": s.crop, "effect_pct": max(-100.0, min(300.0, round(s.effect_pct, 1))),
-                "week_from": wf.isoformat(), "week_to": wt.isoformat() if wt else None,
-                "cause": s.cause[:120], "cause_category": s.cause_category,
-            })
-        if not out["signals"]:
-            out["kind"] = "none"
-    elif r.kind == "harvest_issue" and r.harvest_issue:
-        h = r.harvest_issue
-        if h.farmer_id not in farmers or h.crop not in farmers[h.farmer_id]:
-            dropped.append(f"unknown farmer/crop {h.farmer_id!r}/{h.crop!r}")
-            out["kind"] = "none"
+    out: dict = {"kind": r.kind, "summary_en": r.summary_en[:300], "orders": [], "harvest": None,
+                 "sowing": None, "loss": None, "signals": []}
+    blines = {b["id"]: set(b["lines"]) for b in buyers}
+    if r.kind == "orders":
+        for o in r.orders:
+            d = _day(o.day, today + timedelta(days=1), today + timedelta(days=ORDER_DAYS_AHEAD))
+            if o.buyer not in blines or o.line not in blines[o.buyer]:
+                dropped.append(f"unknown buyer/line {o.buyer!r}/{o.line!r}")
+            elif d is None or _kg(o.kg) is None:
+                dropped.append(f"bad day or kg {o.day!r}/{o.kg!r}")
+            else:
+                out["orders"].append({"buyer": o.buyer, "line": o.line, "kg": _kg(o.kg), "day": d.isoformat()})
+    elif r.kind == "harvest" and r.harvest:
+        h = r.harvest
+        if h.bed not in beds or _kg(h.kg) is None:
+            dropped.append(f"unknown bed or bad kg {h.bed!r}/{h.kg!r}")
         else:
-            hw = _week(h.harvest_week, today)
-            out["harvest_issue"] = {
-                "farmer_id": h.farmer_id, "crop": h.crop, "loss_pct": max(0.0, min(100.0, round(h.loss_pct, 1))),
-                "delay_days": max(0, min(60, h.delay_days)), "harvest_week": hw.isoformat() if hw else None,
-                "cause": h.cause[:120], "cause_category": h.cause_category,
-            }
-    else:
+            big, small = h.big5_g, h.small5_g
+            if big is not None and small is not None and not (big >= small > 0):
+                dropped.append(f"sample needs big ≥ small > 0, got {big!r}/{small!r}")
+                big = small = None
+            if big is None or small is None:
+                big = small = None
+            out["harvest"] = {"bed": h.bed, "batch": beds[h.bed], "kg": _kg(h.kg), "big5_g": big, "small5_g": small}
+    elif r.kind == "sowing" and r.sowing:
+        s = r.sowing
+        if s.line not in lines:
+            dropped.append(f"unknown line {s.line!r}")
+        elif s.postponed:
+            out["sowing"] = {"line": s.line, "postponed": True, "seedlings": None, "reason": s.reason[:120]}
+        elif s.seedlings is None or not 0 < s.seedlings <= max_seedlings:
+            dropped.append(f"bad seedlings {s.seedlings!r}")
+        else:
+            out["sowing"] = {"line": s.line, "postponed": False, "seedlings": int(s.seedlings), "reason": ""}
+    elif r.kind == "loss" and r.loss:
+        lo = r.loss
+        if lo.bed not in beds:
+            dropped.append(f"unknown bed {lo.bed!r}")
+        else:
+            out["loss"] = {"bed": lo.bed, "batch": beds[lo.bed], "pct": max(0.0, min(100.0, round(lo.pct, 1))),
+                           "cause": lo.cause[:120], "cause_category": lo.cause_category}
+    elif r.kind == "signal":
+        scopes = {"all", "channel:B2B", "channel:B2C"} | {f"buyer:{b}" for b in blines}
+        for s in r.signals:
+            hi = today + timedelta(days=SIGNAL_DAYS_AHEAD)
+            d0 = _day(s.date_from, today, hi)
+            d1 = _day(s.date_to, today, hi) if s.date_to else hi
+            if s.scope not in scopes or (s.line is not None and s.line not in lines):
+                dropped.append(f"unknown scope/line {s.scope!r}/{s.line!r}")
+            elif d0 is None or d1 is None:
+                dropped.append(f"bad dates {s.date_from!r}–{s.date_to!r}")
+            else:
+                out["signals"].append({
+                    "scope": s.scope, "line": s.line, "effect_pct": max(-100.0, min(300.0, round(s.effect_pct, 1))),
+                    "date_from": d0.isoformat(), "date_to": max(d0, d1).isoformat(), "open_ended": s.date_to is None,
+                    "cause": s.cause[:120], "cause_category": s.cause_category})
+    if r.kind != "none" and not (out["orders"] or out["harvest"] or out["sowing"] or out["loss"] or out["signals"]):
         out["kind"] = "none"
     return out, dropped
 
 
-def open_end(week_from: str, week_to: str | None) -> str:
-    """Signals stored for the forecast need an end week; open-ended ones run to the horizon."""
-    return week_to or (date.fromisoformat(week_from) + timedelta(weeks=HORIZON_WEEKS)).isoformat()
+# --- accepted proposal → log events (see state.py for the event kinds) ---
+
+def to_events(p: dict, today: date, next_sow_day: date) -> list[dict]:
+    t = today.isoformat()
+    if p["kind"] == "orders":
+        return [{"t": "order", **o} for o in p["orders"]]
+    if p["kind"] == "harvest":
+        h = p["harvest"]
+        ev = {"t": "harvest", "batch": h["batch"], "day": t, "kg": h["kg"]}
+        return [{**ev, "big5_g": h["big5_g"], "small5_g": h["small5_g"]} if h["big5_g"] else ev]
+    if p["kind"] == "sowing":
+        s = p["sowing"]
+        if s["postponed"]:
+            return [{"t": "postpone", "line": s["line"], "day": next_sow_day.isoformat(), "reason": s["reason"]}]
+        return [{"t": "sow", "line": s["line"], "day": t, "seedlings": s["seedlings"]}]
+    if p["kind"] == "loss":
+        lo = p["loss"]
+        return [{"t": "loss", "batch": lo["batch"], "day": t, "pct": lo["pct"], "cause": lo["cause"]}]
+    if p["kind"] == "signal":
+        return [{"t": "signal", **{k: s[k] for k in ("scope", "line", "effect_pct", "date_from", "date_to", "cause")}}
+                for s in p["signals"]]
+    return []
 
 
 # --- scoring (eval) ---
 
 def bucket(pct: float) -> str:
-    """Magnitude buckets the benchmark scores on: the sign plus a coarse size."""
+    """Magnitude buckets for signals: the sign plus a coarse size."""
     if pct <= -100:
         return "stop"
     a = abs(pct)
@@ -167,71 +209,64 @@ def bucket(pct: float) -> str:
     return size if size == "zero" else f"{'+' if pct > 0 else '-'}{size}"
 
 
-def _sig_fields(e: dict, g: dict | None) -> dict[str, bool]:
-    g = g or {}
-    return {
-        "scope": e["scope"] == g.get("scope"),
-        "crop": e["crop"] == g.get("crop", "∅"),
-        "direction": (e["effect_pct"] > 0) == (g.get("effect_pct", 0) > 0) and "effect_pct" in g,
-        "magnitude": "effect_pct" in g and bucket(e["effect_pct"]) == bucket(g["effect_pct"]),
-        "period": e["week_from"] == g.get("week_from") and e["week_to"] == g.get("week_to", "∅"),
-        "cause": e["cause_category"] == g.get("cause_category"),
-    }
+def _close(a: float | None, b: float | None, rel: float, absolute: float) -> bool:
+    if a is None or b is None:
+        return a is None and b is None
+    return abs(a - b) <= max(absolute, rel * abs(b))
 
 
-def _harvest_fields(e: dict, g: dict | None) -> dict[str, bool]:
-    g = g or {}
-    return {
-        "farmer": e["farmer_id"] == g.get("farmer_id"),
-        "crop": e["crop"] == g.get("crop"),
-        "magnitude": "loss_pct" in g and abs(e["loss_pct"] - g["loss_pct"]) <= 10,
-        "delay": e.get("delay_days", 0) == g.get("delay_days", 0),
-        "period": e.get("harvest_week") == g.get("harvest_week"),
-        "cause": e["cause_category"] == g.get("cause_category"),
-    }
+def _fields(kind: str, e: dict, g: dict | None) -> dict[str, bool]:
+    """Field → correct. With no reading to compare (g is None) every field is wrong, including ones
+    whose expected value is null."""
+    f = _compare(kind, e, g or {})
+    return f if g is not None else dict.fromkeys(f, False)
 
 
-def expand_crops(sigs: list[dict], crops_for_scope: dict[str, list[str]]) -> list[dict]:
-    """crop=null → one signal per crop the scope buys, so "pakcoy and sawi" split per crop scores the same."""
-    out = []
-    for s in sigs:
-        if s.get("crop") is None and s.get("scope") in crops_for_scope:
-            out += [{**s, "crop": c} for c in crops_for_scope[s["scope"]]]
-        else:
-            out.append(s)
-    return out
+def _compare(kind: str, e: dict, g: dict) -> dict[str, bool]:
+    if kind == "orders":
+        return {"buyer": e["buyer"] == g.get("buyer"), "line": e["line"] == g.get("line"),
+                "kg": _close(g.get("kg"), e["kg"], 0.05, 0.1), "day": e["day"] == g.get("day")}
+    if kind == "harvest":
+        return {"bed": e["bed"] == g.get("bed"), "kg": _close(g.get("kg"), e["kg"], 0.05, 0.1),
+                "sample": _close(g.get("big5_g"), e.get("big5_g"), 0.02, 5) and _close(g.get("small5_g"), e.get("small5_g"), 0.02, 5)}
+    if kind == "sowing":
+        return {"line": e["line"] == g.get("line"), "postponed": e["postponed"] == g.get("postponed"),
+                "seedlings": e.get("seedlings") == g.get("seedlings")}
+    if kind == "loss":
+        return {"bed": e["bed"] == g.get("bed"), "pct": _close(g.get("pct"), e["pct"], 0, 10),
+                "cause": e["cause_category"] == g.get("cause_category")}
+    return {"scope": e["scope"] == g.get("scope"), "line": e.get("line") == g.get("line", "∅"),
+            "direction": "effect_pct" in g and (e["effect_pct"] > 0) == (g["effect_pct"] > 0),
+            "magnitude": "effect_pct" in g and bucket(e["effect_pct"]) == bucket(g["effect_pct"]),
+            "period": e["date_from"] == g.get("date_from") and e["date_to"] == g.get("date_to"),
+            "cause": e["cause_category"] == g.get("cause_category")}
 
 
-def scope_crops(state: dict) -> dict[str, list[str]]:
-    all_crops = [c["id"] for c in state["crops"]]
-    m = {s: all_crops for s in ("all", "channel:B2B", "channel:B2C")}
-    m.update({f"partner:{p['id']}": sorted({k.split("/")[0] for k in p["corridor"]}) for p in state["partners"]})
-    return m
+LIST_KINDS = {"orders": "orders", "signal": "signals"}
+ONE_KINDS = {"harvest": "harvest", "sowing": "sowing", "loss": "loss"}
 
 
-def score(expected: dict, got: dict, crops_for_scope: dict[str, list[str]] | None = None) -> dict:
-    """Field-level comparison of one labeled note against one (sanitized) reading.
+def score(expected: dict, got: dict) -> dict:
+    """Field-level comparison of one labeled note against one sanitized proposal.
 
-    Returns {"kind_ok", "fields": {name: bool}, "extra"} — `extra` counts predicted signals with
-    no labeled counterpart (a false alarm the operator would have to reject).
-    """
-    res = {"kind_ok": expected["kind"] == got["kind"], "fields": {}, "extra": 0}
-    if expected["kind"] == "signals":
-        exp = expected["signals"]
-        pool = list(got.get("signals") or [])
-        if crops_for_scope:
-            exp, pool = expand_crops(exp, crops_for_scope), expand_crops(pool, crops_for_scope)
-        for i, e in enumerate(exp):
-            # pair with the predicted signal that agrees on the most fields
-            best = max(pool, key=lambda g: sum(_sig_fields(e, g).values()), default=None)
+    Returns {"kind_ok", "fields": {name: bool}, "extra"}; `extra` counts proposed items with no
+    labeled counterpart (a false alarm the person would have to reject)."""
+    kind = expected["kind"]
+    res = {"kind_ok": kind == got["kind"], "fields": {}, "extra": 0}
+    if kind in LIST_KINDS:
+        k = LIST_KINDS[kind]
+        pool = list(got.get(k) or []) if got["kind"] == kind else []
+        for i, e in enumerate(expected[k]):
+            best = max(pool, key=lambda g: sum(_fields(kind, e, g).values()), default=None)
             if best is not None:
                 pool.remove(best)
-            for k, v in _sig_fields(e, best).items():
-                res["fields"][f"s{i}.{k}"] = v
+            for f, v in _fields(kind, e, best).items():
+                res["fields"][f"{i}.{f}"] = v
         res["extra"] = len(pool)
-    elif expected["kind"] == "harvest_issue":
-        for k, v in _harvest_fields(expected["harvest_issue"], got.get("harvest_issue")).items():
-            res["fields"][k] = v
+    elif kind in ONE_KINDS:
+        g = got.get(ONE_KINDS[kind]) if got["kind"] == kind else None
+        res["fields"] = _fields(kind, expected[ONE_KINDS[kind]], g)
     else:
-        res["extra"] = len(got.get("signals") or []) + (1 if got.get("harvest_issue") else 0)
+        res["extra"] = len(got.get("orders") or []) + len(got.get("signals") or []) + sum(
+            1 for k in ONE_KINDS.values() if got.get(k))
     return res
