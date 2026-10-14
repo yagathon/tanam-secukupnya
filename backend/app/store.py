@@ -1,10 +1,11 @@
 """Data access behind one small interface.
 
 Two kinds of data:
-- **reference** (crops, farmers, partners, households, orders, batches, meta): the synthetic dataset.
+- **reference** (crops, buyers, households, batches, history, meta): the synthetic farm on DAY0.
   Read-only to the app, shared by every visitor.
-- **workspace** (signals, notes, runs): what a visitor does in the demo. Scoped per user
-  (`for_user(uid)`, uid = Firebase anonymous auth), so visitors never see each other's notes.
+- **workspace** (notes, events): what a visitor does in the demo. Scoped per user
+  (`for_user(uid)`, uid = Firebase anonymous auth). `events` is the visitor's ordered log
+  (`{seq, kind: day|note, events}`); their farm state is the reference data with the log replayed.
 
 `JsonStore` reads the seed files and keeps workspaces in memory (local dev, tests).
 `FirestoreStore` loads the reference collections from Firestore once per process and reads and
@@ -23,8 +24,8 @@ from pathlib import Path
 from typing import Protocol
 
 SEED_DIR = Path(__file__).resolve().parents[2] / "data" / "seed"
-COLLECTIONS = ("crops", "farmers", "partners", "households", "orders", "batches")
-WORKSPACE = ("signals", "notes", "runs")
+COLLECTIONS = ("crops", "buyers", "households", "batches", "history")
+WORKSPACE = ("notes", "events")
 LOCAL_UID = "local"
 
 
@@ -39,7 +40,7 @@ class Store(Protocol):
 
 def load_seed(seed_dir: Path = SEED_DIR) -> tuple[dict[str, list[dict]], dict]:
     data = {c: json.loads((seed_dir / f"{c}.json").read_text()) for c in COLLECTIONS}
-    meta = json.loads((seed_dir / "planted_patterns.json").read_text())["meta"]
+    meta = json.loads((seed_dir / "meta.json").read_text())
     return data, meta
 
 
@@ -87,7 +88,7 @@ class JsonStore:
 class FirestoreStore:
     """Reference data: top-level collections (seeded by scripts/seed_firestore.py), each doc carrying
     `_i` (its position in the seed file, so list order matches JsonStore). Meta: doc `meta/dataset`.
-    Workspace: `users/{uid}/{signals|notes|runs}`, ordered by `created_at`."""
+    Workspace: `users/{uid}/{notes|events}`, ordered by `created_at`."""
 
     _cache: dict[str, tuple[dict[str, list[dict]], dict]] = {}
     _lock = threading.Lock()

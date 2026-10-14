@@ -34,7 +34,7 @@ def main(project: str = "tanam-secukupnya") -> None:
             b.commit()
         print(f"{c}: {len(ref[c])} docs (replaced {len(old)})")
     db.document("meta/dataset").set(meta)
-    print("meta/dataset:", meta.get("today"))
+    print("meta/dataset: day0", meta.get("day0"))
 
     # round-trip check: what the app will load equals the seed files
     FirestoreStore._cache.clear()
