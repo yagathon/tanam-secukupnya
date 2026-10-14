@@ -1,9 +1,12 @@
+import { idToken } from "./firebase";
 import type { NoteDoc, Plan, Scenario, SeriesView, SignalDoc, State } from "./types";
 
 async function call<T>(path: string, body?: unknown): Promise<T> {
+  const headers: Record<string, string> = { authorization: `Bearer ${await idToken()}` };
+  if (body !== undefined) headers["content-type"] = "application/json";
   const res = await fetch(`/api${path}`, {
     method: body === undefined ? "GET" : "POST",
-    headers: body === undefined ? undefined : { "content-type": "application/json" },
+    headers,
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`${path}: ${res.status} ${await res.text()}`);

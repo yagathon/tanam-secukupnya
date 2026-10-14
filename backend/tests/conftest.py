@@ -1,3 +1,7 @@
+import os
+
+os.environ.setdefault("AUTH", "off")  # tests run without Firebase; test_auth flips it per test
+
 import json
 from pathlib import Path
 
