@@ -1,0 +1,94 @@
+[
+ {
+  "id": "resto_a",
+  "alias": "Restaurant A",
+  "segment": "restaurant",
+  "weekdays": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "lines": {
+   "regular": {
+    "kg": 7.0,
+    "min_kg": 3.0
+   }
+  }
+ },
+ {
+  "id": "resto_b",
+  "alias": "Restaurant B",
+  "segment": "restaurant",
+  "weekdays": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "lines": {
+   "regular": {
+    "kg": 9.0,
+    "min_kg": 4.0
+   }
+  }
+ },
+ {
+  "id": "caterer_c",
+  "alias": "Caterer C (school meals)",
+  "segment": "school_caterer",
+  "weekdays": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "lines": {
+   "regular": {
+    "kg": 12.0,
+    "min_kg": 6.0
+   }
+  }
+ },
+ {
+  "id": "hotel_d",
+  "alias": "Hotel D",
+  "segment": "hotel",
+  "weekdays": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "lines": {
+   "regular": {
+    "kg": 5.0,
+    "min_kg": 2.0
+   }
+  }
+ },
+ {
+  "id": "warung_e",
+  "alias": "Warung E",
+  "segment": "warung",
+  "weekdays": [
+   0,
+   2,
+   4
+  ],
+  "lines": {
+   "regular": {
+    "kg": 4.0,
+    "min_kg": 0.0
+   }
+  }
+ }
+]

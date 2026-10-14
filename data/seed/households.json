@@ -2,253 +2,301 @@
  {
   "id": "hh_01",
   "alias": "Household 01",
-  "basket": {
-   "pakcoy/baby": 0.4
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_02",
   "alias": "Household 02",
-  "basket": {
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_03",
   "alias": "Household 03",
-  "basket": {
-   "pakcoy/regular": 0.5,
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_04",
   "alias": "Household 04",
-  "basket": {
-   "pakcoy/baby": 0.3,
-   "sawi_putih/retail": 0.8
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_05",
   "alias": "Household 05",
-  "basket": {
-   "pakcoy/regular": 0.5
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_06",
   "alias": "Household 06",
-  "basket": {
-   "pakcoy/baby": 0.4
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_07",
   "alias": "Household 07",
-  "basket": {
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_08",
   "alias": "Household 08",
-  "basket": {
-   "pakcoy/regular": 0.5,
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_09",
   "alias": "Household 09",
-  "basket": {
-   "pakcoy/baby": 0.3,
-   "sawi_putih/retail": 0.8
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_10",
   "alias": "Household 10",
-  "basket": {
-   "pakcoy/regular": 0.5
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_11",
   "alias": "Household 11",
-  "basket": {
-   "pakcoy/baby": 0.4
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_12",
   "alias": "Household 12",
-  "basket": {
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_13",
   "alias": "Household 13",
-  "basket": {
-   "pakcoy/regular": 0.5,
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_14",
   "alias": "Household 14",
-  "basket": {
-   "pakcoy/baby": 0.3,
-   "sawi_putih/retail": 0.8
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_15",
   "alias": "Household 15",
-  "basket": {
-   "pakcoy/regular": 0.5
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_16",
   "alias": "Household 16",
-  "basket": {
-   "pakcoy/baby": 0.4
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_17",
   "alias": "Household 17",
-  "basket": {
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_18",
   "alias": "Household 18",
-  "basket": {
-   "pakcoy/regular": 0.5,
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "regular",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_19",
   "alias": "Household 19",
-  "basket": {
-   "pakcoy/baby": 0.3,
-   "sawi_putih/retail": 0.8
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_20",
   "alias": "Household 20",
-  "basket": {
-   "pakcoy/regular": 0.5
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_21",
   "alias": "Household 21",
-  "basket": {
-   "pakcoy/baby": 0.4
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_22",
   "alias": "Household 22",
-  "basket": {
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_23",
   "alias": "Household 23",
-  "basket": {
-   "pakcoy/regular": 0.5,
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_24",
   "alias": "Household 24",
-  "basket": {
-   "pakcoy/baby": 0.3,
-   "sawi_putih/retail": 0.8
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_25",
   "alias": "Household 25",
-  "basket": {
-   "pakcoy/regular": 0.5
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_26",
   "alias": "Household 26",
-  "basket": {
-   "pakcoy/baby": 0.4
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_27",
   "alias": "Household 27",
-  "basket": {
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  },
  {
   "id": "hh_28",
   "alias": "Household 28",
-  "basket": {
-   "pakcoy/regular": 0.5,
-   "sawi_putih/retail": 1.0
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   0,
+   3
+  ]
  },
  {
   "id": "hh_29",
   "alias": "Household 29",
-  "basket": {
-   "pakcoy/baby": 0.3,
-   "sawi_putih/retail": 0.8
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   1,
+   4
+  ]
  },
  {
   "id": "hh_30",
   "alias": "Household 30",
-  "basket": {
-   "pakcoy/regular": 0.5
-  },
-  "shortfall_weeks": []
+  "line": "baby",
+  "kg": 0.5,
+  "weekdays": [
+   2,
+   5
+  ]
  }
 ]

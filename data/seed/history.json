@@ -1,0 +1,689 @@
+[
+ {
+  "id": "2026-08-17",
+  "series": {
+   "b2b:hotel_d:regular": 5.0,
+   "hh:regular": 2.95,
+   "hh:baby": 1.02,
+   "b2b:resto_a:regular": 8.8,
+   "b2b:resto_b:regular": 7.9,
+   "b2b:caterer_c:regular": 12.7,
+   "b2b:warung_e:regular": 3.9
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-18",
+  "series": {
+   "b2b:hotel_d:regular": 5.2,
+   "hh:regular": 2.56,
+   "hh:baby": 2.04,
+   "b2b:resto_a:regular": 8.9,
+   "b2b:resto_b:regular": 8.1,
+   "b2b:caterer_c:regular": 12.1
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-19",
+  "series": {
+   "b2b:hotel_d:regular": 5.8,
+   "hh:regular": 2.93,
+   "hh:baby": 1.84,
+   "b2b:resto_a:regular": 10.6,
+   "b2b:resto_b:regular": 9.6,
+   "b2b:caterer_c:regular": 13.4,
+   "b2b:warung_e:regular": 3.7
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-20",
+  "series": {
+   "b2b:hotel_d:regular": 5.5,
+   "hh:regular": 3.26,
+   "hh:baby": 2.02,
+   "b2b:resto_a:regular": 10.6,
+   "b2b:resto_b:regular": 6.8,
+   "b2b:caterer_c:regular": 11.4
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-21",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 3.02,
+   "hh:baby": 2.08,
+   "b2b:resto_a:regular": 10.5,
+   "b2b:resto_b:regular": 10.3,
+   "b2b:caterer_c:regular": 11.5,
+   "b2b:warung_e:regular": 4.0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-22",
+  "series": {
+   "b2b:hotel_d:regular": 7.5,
+   "hh:regular": 2.53,
+   "hh:baby": 1.57,
+   "b2b:resto_a:regular": 12.8,
+   "b2b:resto_b:regular": 10.6
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-23",
+  "series": {
+   "b2b:hotel_d:regular": 6.2,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-24",
+  "series": {
+   "b2b:hotel_d:regular": 4.5,
+   "hh:regular": 3.09,
+   "hh:baby": 1.43,
+   "b2b:resto_a:regular": 8.0,
+   "b2b:resto_b:regular": 8.8,
+   "b2b:caterer_c:regular": 12.3,
+   "b2b:warung_e:regular": 4.4
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-25",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 2.88,
+   "hh:baby": 1.43,
+   "b2b:resto_a:regular": 8.9,
+   "b2b:resto_b:regular": 9.4,
+   "b2b:caterer_c:regular": 11.5
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-26",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 2.54,
+   "hh:baby": 2.0,
+   "b2b:resto_a:regular": 8.5,
+   "b2b:resto_b:regular": 9.1,
+   "b2b:caterer_c:regular": 11.3,
+   "b2b:warung_e:regular": 4.3
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-27",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 2.42,
+   "hh:baby": 2.03,
+   "b2b:resto_a:regular": 8.3,
+   "b2b:resto_b:regular": 8.1,
+   "b2b:caterer_c:regular": 11.8
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-28",
+  "series": {
+   "b2b:hotel_d:regular": 4.5,
+   "hh:regular": 2.89,
+   "hh:baby": 1.43,
+   "b2b:resto_a:regular": 12.7,
+   "b2b:resto_b:regular": 10.0,
+   "b2b:caterer_c:regular": 12.7,
+   "b2b:warung_e:regular": 3.7
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-29",
+  "series": {
+   "b2b:hotel_d:regular": 5.7,
+   "hh:regular": 1.47,
+   "hh:baby": 1.37,
+   "b2b:resto_a:regular": 11.3,
+   "b2b:resto_b:regular": 12.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-30",
+  "series": {
+   "b2b:hotel_d:regular": 7.0,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-08-31",
+  "series": {
+   "b2b:hotel_d:regular": 4.8,
+   "hh:regular": 2.71,
+   "hh:baby": 1.56,
+   "b2b:resto_a:regular": 7.8,
+   "b2b:resto_b:regular": 8.8,
+   "b2b:caterer_c:regular": 11.0,
+   "b2b:warung_e:regular": 3.8
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-01",
+  "series": {
+   "b2b:hotel_d:regular": 4.4,
+   "hh:regular": 2.93,
+   "hh:baby": 1.96,
+   "b2b:resto_a:regular": 9.4,
+   "b2b:resto_b:regular": 10.0,
+   "b2b:caterer_c:regular": 13.9
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-02",
+  "series": {
+   "b2b:hotel_d:regular": 4.1,
+   "hh:regular": 2.31,
+   "hh:baby": 1.47,
+   "b2b:resto_a:regular": 7.2,
+   "b2b:resto_b:regular": 9.3,
+   "b2b:caterer_c:regular": 12.2,
+   "b2b:warung_e:regular": 3.9
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-03",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 2.18,
+   "hh:baby": 2.12,
+   "b2b:resto_a:regular": 7.8,
+   "b2b:resto_b:regular": 8.2,
+   "b2b:caterer_c:regular": 12.1
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-04",
+  "series": {
+   "b2b:hotel_d:regular": 5.4,
+   "hh:regular": 2.93,
+   "hh:baby": 2.15,
+   "b2b:resto_a:regular": 9.4,
+   "b2b:resto_b:regular": 7.6,
+   "b2b:caterer_c:regular": 11.9,
+   "b2b:warung_e:regular": 4.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-05",
+  "series": {
+   "b2b:hotel_d:regular": 7.4,
+   "hh:regular": 2.35,
+   "hh:baby": 1.77,
+   "b2b:resto_a:regular": 10.8,
+   "b2b:resto_b:regular": 11.5
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-06",
+  "series": {
+   "b2b:hotel_d:regular": 6.1,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-07",
+  "series": {
+   "b2b:hotel_d:regular": 5.4,
+   "hh:regular": 3.09,
+   "hh:baby": 2.05,
+   "b2b:resto_a:regular": 7.6,
+   "b2b:resto_b:regular": 8.7,
+   "b2b:caterer_c:regular": 12.6,
+   "b2b:warung_e:regular": 4.4
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-08",
+  "series": {
+   "b2b:hotel_d:regular": 5.5,
+   "hh:regular": 2.82,
+   "hh:baby": 1.89,
+   "b2b:resto_a:regular": 7.7,
+   "b2b:resto_b:regular": 8.7,
+   "b2b:caterer_c:regular": 12.4
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-09",
+  "series": {
+   "b2b:hotel_d:regular": 5.3,
+   "hh:regular": 2.13,
+   "hh:baby": 1.3,
+   "b2b:resto_a:regular": 8.4,
+   "b2b:resto_b:regular": 7.8,
+   "b2b:caterer_c:regular": 12.9,
+   "b2b:warung_e:regular": 3.6
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-10",
+  "series": {
+   "b2b:hotel_d:regular": 4.8,
+   "hh:regular": 2.43,
+   "hh:baby": 1.72,
+   "b2b:resto_a:regular": 8.0,
+   "b2b:resto_b:regular": 8.8,
+   "b2b:caterer_c:regular": 10.8
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-11",
+  "series": {
+   "b2b:hotel_d:regular": 4.8,
+   "hh:regular": 2.37,
+   "hh:baby": 2.04,
+   "b2b:resto_a:regular": 9.1,
+   "b2b:resto_b:regular": 9.4,
+   "b2b:caterer_c:regular": 12.2,
+   "b2b:warung_e:regular": 4.6
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-12",
+  "series": {
+   "b2b:hotel_d:regular": 6.5,
+   "hh:regular": 2.69,
+   "hh:baby": 1.96,
+   "b2b:resto_a:regular": 7.9,
+   "b2b:resto_b:regular": 12.1
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-13",
+  "series": {
+   "b2b:hotel_d:regular": 6.7,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-14",
+  "series": {
+   "b2b:hotel_d:regular": 4.7,
+   "hh:regular": 2.98,
+   "hh:baby": 2.05,
+   "b2b:resto_a:regular": 6.6,
+   "b2b:resto_b:regular": 10.7,
+   "b2b:caterer_c:regular": 11.2,
+   "b2b:warung_e:regular": 3.4
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-15",
+  "series": {
+   "b2b:hotel_d:regular": 4.9,
+   "hh:regular": 3.01,
+   "hh:baby": 1.49,
+   "b2b:resto_a:regular": 9.5,
+   "b2b:resto_b:regular": 9.4,
+   "b2b:caterer_c:regular": 12.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-16",
+  "series": {
+   "b2b:hotel_d:regular": 5.2,
+   "hh:regular": 2.05,
+   "hh:baby": 1.99,
+   "b2b:resto_a:regular": 7.9,
+   "b2b:resto_b:regular": 8.7,
+   "b2b:caterer_c:regular": 9.6,
+   "b2b:warung_e:regular": 4.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-17",
+  "series": {
+   "b2b:hotel_d:regular": 4.7,
+   "hh:regular": 3.22,
+   "hh:baby": 1.5,
+   "b2b:resto_a:regular": 7.4,
+   "b2b:resto_b:regular": 8.4,
+   "b2b:caterer_c:regular": 12.5
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-18",
+  "series": {
+   "b2b:hotel_d:regular": 5.4,
+   "hh:regular": 2.83,
+   "hh:baby": 1.93,
+   "b2b:resto_a:regular": 9.8,
+   "b2b:resto_b:regular": 7.9,
+   "b2b:caterer_c:regular": 10.4,
+   "b2b:warung_e:regular": 3.7
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-19",
+  "series": {
+   "b2b:hotel_d:regular": 6.2,
+   "hh:regular": 3.04,
+   "hh:baby": 1.51,
+   "b2b:resto_a:regular": 8.8,
+   "b2b:resto_b:regular": 10.9
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-20",
+  "series": {
+   "b2b:hotel_d:regular": 6.8,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-21",
+  "series": {
+   "b2b:hotel_d:regular": 4.2,
+   "hh:regular": 3.08,
+   "hh:baby": 2.04,
+   "b2b:resto_a:regular": 7.5,
+   "b2b:resto_b:regular": 9.1,
+   "b2b:caterer_c:regular": 13.0,
+   "b2b:warung_e:regular": 4.9
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-22",
+  "series": {
+   "b2b:hotel_d:regular": 4.5,
+   "hh:regular": 2.56,
+   "hh:baby": 2.06,
+   "b2b:resto_a:regular": 6.4,
+   "b2b:resto_b:regular": 8.9,
+   "b2b:caterer_c:regular": 12.3
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-23",
+  "series": {
+   "b2b:hotel_d:regular": 4.9,
+   "hh:regular": 2.53,
+   "hh:baby": 0.42,
+   "b2b:resto_a:regular": 8.1,
+   "b2b:resto_b:regular": 7.6,
+   "b2b:caterer_c:regular": 10.7,
+   "b2b:warung_e:regular": 4.5
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-24",
+  "series": {
+   "b2b:hotel_d:regular": 5.6,
+   "hh:regular": 2.58,
+   "hh:baby": 2.04,
+   "b2b:resto_a:regular": 8.2,
+   "b2b:resto_b:regular": 9.8,
+   "b2b:caterer_c:regular": 12.0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-25",
+  "series": {
+   "b2b:hotel_d:regular": 4.7,
+   "hh:regular": 3.14,
+   "hh:baby": 2.06,
+   "b2b:resto_a:regular": 9.5,
+   "b2b:resto_b:regular": 10.0,
+   "b2b:caterer_c:regular": 11.0,
+   "b2b:warung_e:regular": 4.6
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-26",
+  "series": {
+   "b2b:hotel_d:regular": 4.4,
+   "hh:regular": 3.26,
+   "hh:baby": 1.51,
+   "b2b:resto_a:regular": 11.1,
+   "b2b:resto_b:regular": 10.5
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-27",
+  "series": {
+   "b2b:hotel_d:regular": 7.8,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-28",
+  "series": {
+   "b2b:hotel_d:regular": 5.4,
+   "hh:regular": 3.07,
+   "hh:baby": 1.47,
+   "b2b:resto_a:regular": 7.9,
+   "b2b:resto_b:regular": 8.7,
+   "b2b:caterer_c:regular": 12.3,
+   "b2b:warung_e:regular": 3.8
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-29",
+  "series": {
+   "b2b:hotel_d:regular": 4.8,
+   "hh:regular": 2.56,
+   "hh:baby": 1.83,
+   "b2b:resto_a:regular": 6.4,
+   "b2b:resto_b:regular": 8.2,
+   "b2b:caterer_c:regular": 11.8
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-09-30",
+  "series": {
+   "b2b:hotel_d:regular": 5.6,
+   "hh:regular": 2.92,
+   "hh:baby": 1.92,
+   "b2b:resto_a:regular": 7.0,
+   "b2b:resto_b:regular": 7.7,
+   "b2b:caterer_c:regular": 11.9,
+   "b2b:warung_e:regular": 3.8
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-01",
+  "series": {
+   "b2b:hotel_d:regular": 4.7,
+   "hh:regular": 3.06,
+   "hh:baby": 1.97,
+   "b2b:resto_a:regular": 6.1,
+   "b2b:resto_b:regular": 9.3,
+   "b2b:caterer_c:regular": 13.5
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-02",
+  "series": {
+   "b2b:hotel_d:regular": 4.7,
+   "hh:regular": 2.67,
+   "hh:baby": 2.05,
+   "b2b:resto_a:regular": 8.3,
+   "b2b:resto_b:regular": 8.5,
+   "b2b:caterer_c:regular": 14.1,
+   "b2b:warung_e:regular": 4.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-03",
+  "series": {
+   "b2b:hotel_d:regular": 6.2,
+   "hh:regular": 2.35,
+   "hh:baby": 1.96,
+   "b2b:resto_a:regular": 8.9,
+   "b2b:resto_b:regular": 11.4
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-04",
+  "series": {
+   "b2b:hotel_d:regular": 6.4,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-05",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 2.32,
+   "hh:baby": 1.93,
+   "b2b:resto_a:regular": 6.0,
+   "b2b:resto_b:regular": 10.9,
+   "b2b:caterer_c:regular": 14.4,
+   "b2b:warung_e:regular": 4.0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-06",
+  "series": {
+   "b2b:hotel_d:regular": 5.5,
+   "hh:regular": 2.95,
+   "hh:baby": 1.42,
+   "b2b:resto_a:regular": 8.8,
+   "b2b:resto_b:regular": 8.5,
+   "b2b:caterer_c:regular": 11.7
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-07",
+  "series": {
+   "b2b:hotel_d:regular": 5.2,
+   "hh:regular": 2.87,
+   "hh:baby": 2.11,
+   "b2b:resto_a:regular": 5.7,
+   "b2b:resto_b:regular": 8.3,
+   "b2b:caterer_c:regular": 12.2,
+   "b2b:warung_e:regular": 3.9
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-08",
+  "series": {
+   "b2b:hotel_d:regular": 5.0,
+   "hh:regular": 2.85,
+   "hh:baby": 1.34,
+   "b2b:resto_a:regular": 7.1,
+   "b2b:resto_b:regular": 8.6,
+   "b2b:caterer_c:regular": 11.7
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-09",
+  "series": {
+   "b2b:hotel_d:regular": 5.6,
+   "hh:regular": 1.88,
+   "hh:baby": 1.83,
+   "b2b:resto_a:regular": 7.2,
+   "b2b:resto_b:regular": 9.5,
+   "b2b:caterer_c:regular": 8.6,
+   "b2b:warung_e:regular": 4.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-10",
+  "series": {
+   "b2b:hotel_d:regular": 6.1,
+   "hh:regular": 2.32,
+   "hh:baby": 2.02,
+   "b2b:resto_a:regular": 9.9,
+   "b2b:resto_b:regular": 11.1
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-11",
+  "series": {
+   "b2b:hotel_d:regular": 6.8,
+   "hh:regular": 0,
+   "hh:baby": 0
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-12",
+  "series": {
+   "b2b:hotel_d:regular": 4.6,
+   "hh:regular": 1.97,
+   "hh:baby": 1.5,
+   "b2b:resto_a:regular": 7.8,
+   "b2b:resto_b:regular": 9.9,
+   "b2b:caterer_c:regular": 12.8,
+   "b2b:warung_e:regular": 4.2
+  },
+  "orders": {}
+ },
+ {
+  "id": "2026-10-13",
+  "series": {},
+  "orders": {
+   "caterer_c:regular": 13.1,
+   "hotel_d:regular": 4.9,
+   "resto_a:regular": 7.7,
+   "resto_b:regular": 9.0
+  }
+ }
+]
