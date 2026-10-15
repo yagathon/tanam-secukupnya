@@ -1,33 +1,47 @@
 # G1 benchmark — dev set — gemini-3.5-flash
 
-45 labeled notes (synthetic, Bahasa/Sundanese WhatsApp style), received 2026-10-12.
+60 labeled notes (synthetic, Bahasa/Sundanese WhatsApp style), received 2026-10-12.
 
 | Measure | Result |
 |---|---|
-| Kind correct (signals / harvest issue / none) | 45/45 (100%) |
-| Field-level accuracy (all scored fields) | 244/246 (99%) |
-| False alarms on noise notes | 0/11 |
-| Extra signals not in the label | 0 |
+| Kind correct | 60/60 (100%) |
+| Field-level accuracy (all scored fields) | 220/220 (100%) |
+| False alarms on no-action notes | 0/8 |
+| Extra items not in the label | 0 |
 | Errors | 0 |
-| Median latency | 7.8 s |
-| Avg tokens in / out | 2852 / 106 |
+| Median latency | 5.9 s |
+| Avg tokens in / out | 3669 / 89 |
+
+| Kind | Notes | Kind correct | All fields correct |
+|---|---|---|---|
+| orders | 14 | 100% | 100% |
+| harvest | 10 | 100% | 100% |
+| sowing | 10 | 100% | 100% |
+| loss | 8 | 100% | 100% |
+| signal | 10 | 100% | 100% |
+| none | 8 | 100% | 100% |
 
 | Field | Correct |
 |---|---|
-| harvest_issue/cause | 12/12 (100%) |
-| harvest_issue/crop | 12/12 (100%) |
-| harvest_issue/delay | 12/12 (100%) |
-| harvest_issue/farmer | 12/12 (100%) |
-| harvest_issue/magnitude | 12/12 (100%) |
-| harvest_issue/period | 11/12 (92%) |
-| signals/cause | 29/29 (100%) |
-| signals/crop | 29/29 (100%) |
-| signals/direction | 29/29 (100%) |
-| signals/magnitude | 29/29 (100%) |
-| signals/period | 28/29 (97%) |
-| signals/scope | 29/29 (100%) |
+| harvest/bed | 10/10 (100%) |
+| harvest/kg | 10/10 (100%) |
+| harvest/sample | 10/10 (100%) |
+| loss/bed | 8/8 (100%) |
+| loss/cause | 8/8 (100%) |
+| loss/pct | 8/8 (100%) |
+| orders/buyer | 19/19 (100%) |
+| orders/day | 19/19 (100%) |
+| orders/kg | 19/19 (100%) |
+| orders/line | 19/19 (100%) |
+| signal/cause | 10/10 (100%) |
+| signal/direction | 10/10 (100%) |
+| signal/line | 10/10 (100%) |
+| signal/magnitude | 10/10 (100%) |
+| signal/period | 10/10 (100%) |
+| signal/scope | 10/10 (100%) |
+| sowing/line | 10/10 (100%) |
+| sowing/postponed | 10/10 (100%) |
+| sowing/seedlings | 10/10 (100%) |
 
-## Misses (2)
+## Misses (0)
 
-- **n19** `Kak, 2 minggu ke depan pakcoy +15% ya, ada event makan siang kantor deket resto` — expected signals, got signals; wrong: s0.period
-- **h11** `Ulat grayak nyerang pakcoy, sudah 2 bedeng habis dari 6 yang mau panen` — expected harvest_issue, got harvest_issue; wrong: period

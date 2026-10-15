@@ -7,6 +7,10 @@ test:
 data:
     uv run --project backend python scripts/generate.py
 
+# Season comparison: 3 sowing strategies × 5 seeds × 26 weeks → data/seed/season.json (~2 min)
+season:
+    uv run --project backend python scripts/season.py
+
 # Run the API locally on :8100 (JSON seed store, auth off, no GCP needed)
 api:
     cd backend && AUTH=off uv run uvicorn app.main:app --reload --port 8100
@@ -18,6 +22,10 @@ eval set="dev" model="":
 # Load data/seed into Firestore (replaces reference collections; leaves visitors' workspaces alone)
 seed-firestore:
     uv run --project backend python scripts/seed_firestore.py
+
+# One-off for the daily-engine launch: also delete the weekly app's collections and ALL visitor workspaces
+seed-firestore-fresh:
+    uv run --project backend python scripts/seed_firestore.py --wipe-workspaces
 
 project := "tanam-secukupnya"
 region := "asia-southeast2"

@@ -70,7 +70,7 @@ textarea {
 }
 input[type="range"] { width: 100%; accent-color: var(--leaf); }
 
-.steps { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 2px; }
 .step { display: flex; align-items: center; gap: 8px; white-space: nowrap; border-radius: 999px; padding: 6px 14px 6px 6px; }
 .step .num {
   display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
@@ -86,6 +86,8 @@ input[type="range"] { width: 100%; accent-color: var(--leaf); }
 .card.warn { background: var(--warn-bg); border-color: var(--warn); padding: 8px 12px; }
 .card.message { border-style: dashed; }
 
+.grid { display: grid; gap: 16px; }
+.grid > * { min-width: 0; }
 .grid.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
 .row { display: flex; gap: 8px; align-items: center; }
 .row.wrap { flex-wrap: wrap; gap: 16px; }
@@ -108,6 +110,8 @@ th { font-weight: 600; color: var(--muted); }
 td.neg { color: var(--bad); }
 tr.frozen td:first-child { color: var(--muted); }
 .scroll { overflow-x: auto; }
+.scroll th, .scroll td { white-space: nowrap; }
+.scroll td.wrap { white-space: normal; min-width: 160px; }
 ul { padding-left: 18px; }
 ul.signals { list-style: none; padding: 0; display: grid; gap: 6px; }
 
@@ -128,3 +132,17 @@ ul.signals { list-style: none; padding: 0; display: grid; gap: 6px; }
 .proposal { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
 .proposal ul.signals li { line-height: 2; }
 .neg { color: var(--bad); }
+
+.clock { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button.primary { background: var(--leaf); border-color: var(--leaf); color: #fff; font-weight: 600; }
+button.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.sentence { font-size: 16px; line-height: 1.6; }
+.empty { color: var(--muted); font-style: italic; padding: 8px 0; }
+.bad { color: var(--bad); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+@media (max-width: 600px) {
+  .clock { width: 100%; }
+  .clock button.primary { flex: 1; }
+}
+.clock button { white-space: nowrap; }

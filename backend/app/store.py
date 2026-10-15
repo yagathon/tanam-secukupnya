@@ -1,10 +1,11 @@
 """Data access behind one small interface.
 
 Two kinds of data:
-- **reference** (crops, farmers, partners, households, orders, batches, meta): the synthetic dataset.
+- **reference** (crops, buyers, households, batches, history, meta): the synthetic farm on DAY0.
   Read-only to the app, shared by every visitor.
-- **workspace** (signals, notes, runs): what a visitor does in the demo. Scoped per user
-  (`for_user(uid)`, uid = Firebase anonymous auth), so visitors never see each other's notes.
+- **workspace** (notes, events): what a visitor does in the demo. Scoped per user
+  (`for_user(uid)`, uid = Firebase anonymous auth). `events` is the visitor's ordered log
+  (`{seq, kind: day|note, events}`); their farm state is the reference data with the log replayed.
 
 `JsonStore` reads the seed files and keeps workspaces in memory (local dev, tests).
 `FirestoreStore` loads the reference collections from Firestore once per process and reads and
@@ -23,15 +24,17 @@ from pathlib import Path
 from typing import Protocol
 
 SEED_DIR = Path(__file__).resolve().parents[2] / "data" / "seed"
-COLLECTIONS = ("crops", "farmers", "partners", "households", "orders", "batches")
-WORKSPACE = ("signals", "notes", "runs")
+COLLECTIONS = ("crops", "buyers", "households", "batches", "history")
+WORKSPACE = ("notes", "events")
 LOCAL_UID = "local"
+_add_lock = threading.Lock()
 
 
 class Store(Protocol):
     def list(self, collection: str) -> list[dict]: ...
     def get(self, collection: str, id: str) -> dict | None: ...
     def put(self, collection: str, doc: dict) -> dict: ...
+    def add(self, collection: str, doc: dict) -> bool: ...
     def meta(self) -> dict: ...
     def reset(self) -> None: ...
     def for_user(self, uid: str) -> "Store": ...
@@ -39,7 +42,7 @@ class Store(Protocol):
 
 def load_seed(seed_dir: Path = SEED_DIR) -> tuple[dict[str, list[dict]], dict]:
     data = {c: json.loads((seed_dir / f"{c}.json").read_text()) for c in COLLECTIONS}
-    meta = json.loads((seed_dir / "planted_patterns.json").read_text())["meta"]
+    meta = json.loads((seed_dir / "meta.json").read_text())
     return data, meta
 
 
@@ -80,6 +83,14 @@ class JsonStore:
         rows[:] = [d for d in rows if d.get("id") != doc["id"]] + [doc]
         return copy.deepcopy(doc)
 
+    def add(self, collection: str, doc: dict) -> bool:
+        """Store `doc` under its own id only if no doc has that id yet; False if one already does."""
+        with _add_lock:
+            if self.get(collection, doc["id"]) is not None:
+                return False
+            self.put(collection, doc)
+            return True
+
     def meta(self) -> dict:
         return dict(self._meta)
 
@@ -87,7 +98,7 @@ class JsonStore:
 class FirestoreStore:
     """Reference data: top-level collections (seeded by scripts/seed_firestore.py), each doc carrying
     `_i` (its position in the seed file, so list order matches JsonStore). Meta: doc `meta/dataset`.
-    Workspace: `users/{uid}/{signals|notes|runs}`, ordered by `created_at`."""
+    Workspace: `users/{uid}/{notes|events}`, ordered by `created_at`."""
 
     _cache: dict[str, tuple[dict[str, list[dict]], dict]] = {}
     _lock = threading.Lock()
@@ -141,6 +152,18 @@ class FirestoreStore:
         doc.setdefault("created_at", time.time())
         self._col(collection).document(doc["id"]).set(doc)
         return doc
+
+    def add(self, collection: str, doc: dict) -> bool:
+        """Create `doc` under its own id only if no doc has that id yet; False if one already does."""
+        from google.api_core.exceptions import AlreadyExists
+
+        if collection not in WORKSPACE:
+            raise ValueError(f"{collection} is reference data (read-only)")
+        try:
+            self._col(collection).document(doc["id"]).create({**doc, "created_at": time.time()})
+        except AlreadyExists:
+            return False
+        return True
 
     def meta(self) -> dict:
         return dict(self._meta)
