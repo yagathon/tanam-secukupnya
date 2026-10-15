@@ -48,7 +48,7 @@ export interface Today { today: string; weekday: string; lines: TodayLine[]; pen
 
 export interface BatchRow {
   id: string; label: string; sown_on: string; bed_day: number; stage: "nursery" | "bed"; seedlings: number;
-  plants_left: number; avg_g: number | null; offset_days: number; spread: number; sampled: boolean;
+  plants_left: number; avg_g: number | null; size_pct: number; spread: number; sampled: boolean;
   ready_from: string; until: string; available_tomorrow_kg: number; waste_plants: number;
 }
 export interface ChartDay { day: string; available_kg: number; need_kg: number; short_kg: number }

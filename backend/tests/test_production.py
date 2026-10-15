@@ -5,6 +5,7 @@ import pytest
 from app.production import (
     Batch,
     apply_loss,
+    avg_g,
     apply_sample,
     available_kg,
     available_plants,
@@ -48,19 +49,24 @@ def test_harvested_plants_are_not_wasted(pakcoy):
     assert waste_plants(pakcoy, b, bd(pakcoy, 31)) == pytest.approx(900 - 600)
 
 
-def test_sample_sets_offset_spread_and_plants(pakcoy):
+def test_sample_sets_size_spread_and_plants(pakcoy):
     b = batch()
-    d = bd(pakcoy, 21)                       # curve says 100 g
+    d = bd(pakcoy, 21)                       # reference says 100 g
     s = apply_sample(pakcoy, b, d, kg=11.0, big5_g=650, small5_g=450)   # avg 110 g, r = 40/110
-    assert s.growth_offset_days == pytest.approx(1.2)     # 110 g is curve day 22.2
+    assert s.size_factor == pytest.approx(1.1)
     assert s.spread_ratio == pytest.approx(0.364, abs=1e-3)
     assert s.harvested_plants == pytest.approx(100)        # 11 kg / 110 g
     assert s.sampled and b.harvested_plants == 0           # the input is not mutated
 
 
-def test_sample_offset_is_clamped(pakcoy):
+def test_sample_size_is_clamped(pakcoy):
     s = apply_sample(pakcoy, batch(), bd(pakcoy, 0), kg=1, big5_g=800, small5_g=700)
-    assert s.growth_offset_days == 7
+    assert s.size_factor == 1.5
+
+
+def test_avg_scales_reference(pakcoy):
+    b = batch(size_factor=0.8)
+    assert avg_g(pakcoy, b, bd(pakcoy, 21)) == pytest.approx(80.0)
 
 
 @pytest.mark.parametrize("big,small", [(300, 400), (500, 0), (0, 0)])

@@ -43,7 +43,7 @@ function LineBeds({ l }: { l: BedsLine }) {
             <thead>
               <tr>
                 <th>Bed</th><th>Sown</th><th className="num">Bed day</th><th className="num">Plants left</th>
-                <th className="num">Avg g</th><th className="num">Growth</th><th>Ready</th>
+                <th className="num">Avg g</th><th className="num">Size</th><th>Ready</th>
                 <th className="num">Tomorrow</th><th className="num">Wasted</th>
               </tr>
             </thead>
@@ -56,7 +56,7 @@ function LineBeds({ l }: { l: BedsLine }) {
                   <td className="num">{int(b.plants_left)}</td>
                   <td className="num">{b.avg_g ?? "—"}</td>
                   <td className="num" title={b.sampled ? "from the farmer's 5+5 sample" : "crop default"}>
-                    {b.offset_days > 0 ? "+" : ""}{b.offset_days} d{b.sampled ? " ✓" : ""}
+                    {b.size_pct}%{b.sampled ? " ✓" : ""}
                   </td>
                   <td>{shortDate(b.ready_from)} – {shortDate(b.until)}</td>
                   <td className="num">{kg(b.available_tomorrow_kg)}</td>
@@ -68,7 +68,7 @@ function LineBeds({ l }: { l: BedsLine }) {
         </div>
       )}
       <p className="small muted">
-        Growth: days ahead (+) or behind (−) the crop curve; ✓ = corrected by a harvest sample. Quick field estimate: assumes
+        Size: this bed’s plants vs the reference curve (100% = on curve, lower = stunted or crowded); ✓ = corrected by a harvest sample. Quick field estimate: assumes
         sizes spread evenly between the small and big groups.
       </p>
     </div>

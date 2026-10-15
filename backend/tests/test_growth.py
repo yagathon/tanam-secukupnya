@@ -56,7 +56,7 @@ def test_first_ready_day_baby_before_regular(pakcoy):
     baby = first_ready_day(pakcoy, pakcoy.line("baby"), MON)
     reg = first_ready_day(pakcoy, pakcoy.line("regular"), MON)
     assert baby < reg == date(2026, 11, 16)                      # 15 nursery + 20 bed days
-    assert first_ready_day(pakcoy, pakcoy.line("regular"), MON, offset=2) < reg
+    assert first_ready_day(pakcoy, pakcoy.line("regular"), MON, size=1.2) < reg
 
 
 def test_seed_conversion(pakcoy):

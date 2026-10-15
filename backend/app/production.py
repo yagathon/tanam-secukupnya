@@ -12,9 +12,9 @@ from dataclasses import asdict, dataclass, fields, replace
 from datetime import date, timedelta
 from functools import lru_cache
 
-from app.growth import Crop, curve, curve_inv, in_range_mean, share_from
+from app.growth import Crop, curve, in_range_mean, share_from
 
-MAX_OFFSET = 7.0
+SIZE_MIN, SIZE_MAX = 0.5, 1.5
 
 
 @dataclass
@@ -24,7 +24,7 @@ class Batch:
     line: str
     sown_on: date
     seedlings: int
-    growth_offset_days: float = 0.0
+    size_factor: float = 1.0           # this bed's plants vs the reference curve (model B: stunting, crowding)
     spread_ratio: float | None = None  # None → the crop's prior
     harvested_plants: float = 0.0
     lost_plants: float = 0.0
@@ -55,23 +55,23 @@ def bed_day(crop: Crop, b: Batch, d: date) -> int:
 
 
 def avg_g(crop: Crop, b: Batch, d: date) -> float:
-    return curve(crop, bed_day(crop, b, d) + b.growth_offset_days)
+    return b.size_factor * curve(crop, bed_day(crop, b, d))
 
 
 @lru_cache(maxsize=262144)
-def _at(crop: Crop, line_id: str, bd: int, offset: float, r: float) -> tuple[float, float, float]:
+def _at(crop: Crop, line_id: str, bd: int, size: float, r: float) -> tuple[float, float, float]:
     """(F_ready, F_over, kg per harvested plant) for one bed day. Cached: projections ask this a lot."""
     if bd < 0:
         return 0.0, 0.0, 0.0
     line = crop.line(line_id)
-    avg = curve(crop, bd + offset)
+    avg = size * curve(crop, bd)
     over = 1.0 if bd > crop.max_bed_day else share_from(avg, r, line.max_g)
     return share_from(avg, r, line.min_g), over, in_range_mean(avg, r, line) / 1000
 
 
 def shares(crop: Crop, b: Batch, d: date) -> tuple[float, float]:
     """(F_ready, F_over): share at/above the line's minimum, and past its maximum (all of it after max_bed_day)."""
-    ready, over, _ = _at(crop, b.line, bed_day(crop, b, d), b.growth_offset_days, spread(crop, b))
+    ready, over, _ = _at(crop, b.line, bed_day(crop, b, d), b.size_factor, spread(crop, b))
     return ready, over
 
 
@@ -91,7 +91,7 @@ def in_bed_plants(crop: Crop, b: Batch, d: date) -> float:
 
 
 def kg_per_plant(crop: Crop, b: Batch, d: date) -> float:
-    kpp = _at(crop, b.line, bed_day(crop, b, d), b.growth_offset_days, spread(crop, b))[2]
+    kpp = _at(crop, b.line, bed_day(crop, b, d), b.size_factor, spread(crop, b))[2]
     return kpp or crop.line(b.line).min_g / 1000
 
 
@@ -105,13 +105,13 @@ def harvest(crop: Crop, b: Batch, d: date, kg: float, grams_each: float | None =
 
 
 def apply_sample(crop: Crop, b: Batch, d: date, kg: float, big5_g: float, small5_g: float) -> Batch:
-    """The 5 biggest and 5 smallest weighed together → average, growth offset, spread, plants picked."""
+    """The 5 biggest and 5 smallest weighed together → average, size factor, spread, plants picked."""
     if not big5_g >= small5_g > 0:
         raise ValueError("a harvest sample needs big5 ≥ small5 > 0")
     big, small = big5_g / 5, small5_g / 5
     avg = (big + small) / 2
-    offset = max(-MAX_OFFSET, min(MAX_OFFSET, curve_inv(crop, avg) - bed_day(crop, b, d)))
-    b = replace(b, growth_offset_days=round(offset, 2), spread_ratio=round((big - small) / avg, 3), sampled=True)
+    size = min(SIZE_MAX, max(SIZE_MIN, avg / curve(crop, bed_day(crop, b, d))))
+    b = replace(b, size_factor=round(size, 3), spread_ratio=round((big - small) / avg, 3), sampled=True)
     return harvest(crop, b, d, kg, grams_each=avg)
 
 

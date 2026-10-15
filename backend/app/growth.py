@@ -100,11 +100,11 @@ def in_range_mean(avg: float, spread: float, line: Line) -> float:
     return (a + b) / 2
 
 
-def first_ready_day(crop: Crop, line: Line, sown_on: date, offset: float = 0.0, spread: float | None = None) -> date:
+def first_ready_day(crop: Crop, line: Line, sown_on: date, size: float = 1.0, spread: float | None = None) -> date:
     """First day a quarter of the batch's plants are in the line's range."""
     r = crop.spread_ratio if spread is None else spread
     for bd in range(crop.max_bed_day + 1):
-        if share_from(curve(crop, bd + offset), r, line.min_g) >= READY_SHARE:
+        if share_from(size * curve(crop, bd), r, line.min_g) >= READY_SHARE:
             return sown_on + timedelta(days=crop.nursery_days + bd)
     return sown_on + timedelta(days=crop.nursery_days + crop.max_bed_day)
 

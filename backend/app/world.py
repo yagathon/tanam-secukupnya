@@ -63,9 +63,9 @@ class World:
         return round(sum(kg for _, ln, kg in self.hh.get(d.isoformat(), []) if ln == rest[0]), 2)
 
     def growth_truth(self, crop: Crop, line: str, sown_on: date) -> tuple[float, float]:
-        """(growth offset days, spread ratio) the batch really has. Independent of the sowing order."""
+        """(size factor vs the reference curve, spread ratio) the batch really has. Independent of the sowing order."""
         r = random.Random(f"{self.seed}:{line}:{sown_on.isoformat()}")
-        return round(r.uniform(-2, 2), 2), round(crop.spread_ratio * r.uniform(0.85, 1.15), 3)
+        return round(r.uniform(0.85, 1.15), 3), round(crop.spread_ratio * r.uniform(0.85, 1.15), 3)
 
 
 def market(d: date) -> float:

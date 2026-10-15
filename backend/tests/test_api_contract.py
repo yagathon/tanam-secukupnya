@@ -39,7 +39,7 @@ def test_beds_shape():
     b = client.get("/api/beds").json()["lines"][0]
     assert keys(b) == {"line", "min_g", "max_g", "batches", "chart"}
     assert keys(b["batches"][0]) == {"id", "label", "sown_on", "bed_day", "stage", "seedlings", "plants_left", "avg_g",
-                                     "offset_days", "spread", "sampled", "ready_from", "until",
+                                     "size_pct", "spread", "sampled", "ready_from", "until",
                                      "available_tomorrow_kg", "waste_plants"}
     assert keys(b["chart"][0]) == {"day", "available_kg", "need_kg", "short_kg"}
     assert len(b["chart"]) == 40

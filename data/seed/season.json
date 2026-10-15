@@ -10,21 +10,21 @@
  "main_seed": 20261014,
  "summary": {
   "cobweb": {
-   "waste_pct": 52.6,
-   "b2b_fill_pct": 75.7,
-   "hh_fill_pct": 71.1,
+   "waste_pct": 52.8,
+   "b2b_fill_pct": 75.2,
+   "hh_fill_pct": 75.1,
    "sowing_cv": 0.9
   },
   "fixed": {
-   "waste_pct": 34.5,
+   "waste_pct": 32.0,
    "b2b_fill_pct": 99.9,
-   "hh_fill_pct": 97.7,
+   "hh_fill_pct": 98.7,
    "sowing_cv": 0.0
   },
   "tanam": {
-   "waste_pct": 13.0,
-   "b2b_fill_pct": 98.9,
-   "hh_fill_pct": 95.1,
+   "waste_pct": 14.0,
+   "b2b_fill_pct": 96.3,
+   "hh_fill_pct": 92.9,
    "sowing_cv": 0.4
   }
  },
@@ -32,122 +32,122 @@
   {
    "strategy": "cobweb",
    "seed": 20261014,
-   "waste_pct": 51.6,
-   "b2b_fill_pct": 77.0,
-   "hh_fill_pct": 76.0,
-   "sowing_cv": 0.93
+   "waste_pct": 46.9,
+   "b2b_fill_pct": 74.7,
+   "hh_fill_pct": 78.0,
+   "sowing_cv": 0.95
   },
   {
    "strategy": "fixed",
    "seed": 20261014,
-   "waste_pct": 35.0,
+   "waste_pct": 33.5,
    "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 98.2,
+   "hh_fill_pct": 99.4,
    "sowing_cv": 0.0
   },
   {
    "strategy": "tanam",
    "seed": 20261014,
-   "waste_pct": 14.3,
-   "b2b_fill_pct": 98.9,
-   "hh_fill_pct": 95.6,
-   "sowing_cv": 0.36
+   "waste_pct": 14.2,
+   "b2b_fill_pct": 97.0,
+   "hh_fill_pct": 95.3,
+   "sowing_cv": 0.34
   },
   {
    "strategy": "cobweb",
    "seed": 1,
-   "waste_pct": 58.5,
-   "b2b_fill_pct": 73.1,
-   "hh_fill_pct": 64.3,
-   "sowing_cv": 0.96
+   "waste_pct": 57.7,
+   "b2b_fill_pct": 73.2,
+   "hh_fill_pct": 70.5,
+   "sowing_cv": 0.94
   },
   {
    "strategy": "fixed",
    "seed": 1,
-   "waste_pct": 35.4,
+   "waste_pct": 33.2,
    "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 98.1,
+   "hh_fill_pct": 98.9,
    "sowing_cv": 0.0
   },
   {
    "strategy": "tanam",
    "seed": 1,
-   "waste_pct": 12.2,
-   "b2b_fill_pct": 99.4,
-   "hh_fill_pct": 95.1,
+   "waste_pct": 13.3,
+   "b2b_fill_pct": 96.8,
+   "hh_fill_pct": 91.5,
    "sowing_cv": 0.4
   },
   {
    "strategy": "cobweb",
    "seed": 2,
-   "waste_pct": 55.4,
-   "b2b_fill_pct": 76.6,
-   "hh_fill_pct": 69.6,
+   "waste_pct": 53.4,
+   "b2b_fill_pct": 74.4,
+   "hh_fill_pct": 70.0,
+   "sowing_cv": 0.94
+  },
+  {
+   "strategy": "fixed",
+   "seed": 2,
+   "waste_pct": 31.0,
+   "b2b_fill_pct": 100.0,
+   "hh_fill_pct": 98.6,
+   "sowing_cv": 0.0
+  },
+  {
+   "strategy": "tanam",
+   "seed": 2,
+   "waste_pct": 13.1,
+   "b2b_fill_pct": 95.5,
+   "hh_fill_pct": 88.9,
+   "sowing_cv": 0.31
+  },
+  {
+   "strategy": "cobweb",
+   "seed": 3,
+   "waste_pct": 52.7,
+   "b2b_fill_pct": 76.2,
+   "hh_fill_pct": 77.0,
    "sowing_cv": 0.91
   },
   {
    "strategy": "fixed",
-   "seed": 2,
-   "waste_pct": 34.6,
-   "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 97.6,
-   "sowing_cv": 0.0
-  },
-  {
-   "strategy": "tanam",
-   "seed": 2,
-   "waste_pct": 10.9,
-   "b2b_fill_pct": 99.2,
-   "hh_fill_pct": 94.4,
-   "sowing_cv": 0.36
-  },
-  {
-   "strategy": "cobweb",
    "seed": 3,
-   "waste_pct": 46.5,
-   "b2b_fill_pct": 74.5,
-   "hh_fill_pct": 70.7,
-   "sowing_cv": 0.96
-  },
-  {
-   "strategy": "fixed",
-   "seed": 3,
-   "waste_pct": 34.6,
-   "b2b_fill_pct": 99.3,
-   "hh_fill_pct": 96.5,
+   "waste_pct": 31.5,
+   "b2b_fill_pct": 99.7,
+   "hh_fill_pct": 97.8,
    "sowing_cv": 0.0
   },
   {
    "strategy": "tanam",
    "seed": 3,
-   "waste_pct": 13.0,
-   "b2b_fill_pct": 98.3,
-   "hh_fill_pct": 94.1,
-   "sowing_cv": 0.36
+   "waste_pct": 12.3,
+   "b2b_fill_pct": 96.8,
+   "hh_fill_pct": 94.6,
+   "sowing_cv": 0.39
   },
   {
    "strategy": "cobweb",
    "seed": 7,
-   "waste_pct": 50.9,
-   "b2b_fill_pct": 77.4,
-   "hh_fill_pct": 74.9,
+   "waste_pct": 53.2,
+   "b2b_fill_pct": 77.5,
+   "hh_fill_pct": 80.1,
    "sowing_cv": 0.93
   },
   {
    "strategy": "fixed",
    "seed": 7,
-   "waste_pct": 32.7,
+   "waste_pct": 30.7,
    "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 98.0,
+   "hh_fill_pct": 98.9,
    "sowing_cv": 0.0
   },
   {
    "strategy": "tanam",
    "seed": 7,
-   "waste_pct": 14.4,
-   "b2b_fill_pct": 98.6,
-   "hh_fill_pct": 96.1,
-   "sowing_cv": 0.4
+   "waste_pct": 16.9,
+   "b2b_fill_pct": 95.5,
+   "hh_fill_pct": 94.0,
+   "sowing_cv": 0.39
   }
  ],
  "sowings": {
@@ -170,47 +170,47 @@
    {
     "line": "regular",
     "day": "2026-10-26",
-    "seedlings": 1000
+    "seedlings": 1100
    },
    {
     "line": "regular",
     "day": "2026-10-29",
-    "seedlings": 850
+    "seedlings": 1050
    },
    {
     "line": "regular",
     "day": "2026-11-02",
-    "seedlings": 700
+    "seedlings": 1000
    },
    {
     "line": "regular",
     "day": "2026-11-05",
-    "seedlings": 600
+    "seedlings": 850
    },
    {
     "line": "regular",
     "day": "2026-11-09",
-    "seedlings": 500
+    "seedlings": 700
    },
    {
     "line": "regular",
     "day": "2026-11-12",
-    "seedlings": 450
+    "seedlings": 650
    },
    {
     "line": "regular",
     "day": "2026-11-16",
-    "seedlings": 350
+    "seedlings": 550
    },
    {
     "line": "regular",
     "day": "2026-11-19",
-    "seedlings": 300
+    "seedlings": 400
    },
    {
     "line": "regular",
     "day": "2026-11-23",
-    "seedlings": 250
+    "seedlings": 300
    },
    {
     "line": "regular",
@@ -235,77 +235,77 @@
    {
     "line": "regular",
     "day": "2026-12-10",
-    "seedlings": 150
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2026-12-14",
-    "seedlings": 150
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2026-12-17",
-    "seedlings": 150
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2026-12-21",
-    "seedlings": 150
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2026-12-28",
-    "seedlings": 150
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2026-12-31",
-    "seedlings": 200
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2027-01-04",
-    "seedlings": 300
+    "seedlings": 100
    },
    {
     "line": "regular",
     "day": "2027-01-07",
-    "seedlings": 400
+    "seedlings": 150
    },
    {
     "line": "regular",
     "day": "2027-01-11",
-    "seedlings": 600
+    "seedlings": 200
    },
    {
     "line": "regular",
     "day": "2027-01-14",
-    "seedlings": 850
+    "seedlings": 300
    },
    {
     "line": "regular",
     "day": "2027-01-18",
-    "seedlings": 1200
+    "seedlings": 450
    },
    {
     "line": "regular",
     "day": "2027-01-21",
-    "seedlings": 1700
+    "seedlings": 650
    },
    {
     "line": "regular",
     "day": "2027-01-25",
-    "seedlings": 2450
+    "seedlings": 950
    },
    {
     "line": "regular",
     "day": "2027-01-28",
-    "seedlings": 3000
+    "seedlings": 1400
    },
    {
     "line": "regular",
     "day": "2027-02-01",
-    "seedlings": 3000
+    "seedlings": 2050
    },
    {
     "line": "regular",
@@ -350,17 +350,27 @@
    {
     "line": "regular",
     "day": "2027-03-04",
-    "seedlings": 2400
+    "seedlings": 3000
    },
    {
     "line": "regular",
     "day": "2027-03-08",
-    "seedlings": 1050
+    "seedlings": 3000
    },
    {
     "line": "regular",
     "day": "2027-03-11",
-    "seedlings": 150
+    "seedlings": 2650
+   },
+   {
+    "line": "regular",
+    "day": "2027-03-15",
+    "seedlings": 1200
+   },
+   {
+    "line": "regular",
+    "day": "2027-03-18",
+    "seedlings": 500
    }
   ],
   "fixed": [
@@ -619,42 +629,42 @@
    {
     "line": "regular",
     "day": "2026-10-12",
-    "seedlings": 100
+    "seedlings": 450
    },
    {
     "line": "regular",
     "day": "2026-10-15",
-    "seedlings": 950
+    "seedlings": 1200
    },
    {
     "line": "regular",
     "day": "2026-10-19",
-    "seedlings": 850
+    "seedlings": 450
    },
    {
     "line": "regular",
     "day": "2026-10-26",
-    "seedlings": 1650
+    "seedlings": 1200
    },
    {
     "line": "regular",
     "day": "2026-10-29",
-    "seedlings": 950
+    "seedlings": 1050
    },
    {
     "line": "regular",
     "day": "2026-11-02",
-    "seedlings": 650
+    "seedlings": 700
    },
    {
     "line": "regular",
     "day": "2026-11-05",
-    "seedlings": 800
+    "seedlings": 850
    },
    {
     "line": "regular",
     "day": "2026-11-09",
-    "seedlings": 1000
+    "seedlings": 950
    },
    {
     "line": "regular",
@@ -674,17 +684,17 @@
    {
     "line": "regular",
     "day": "2026-11-23",
-    "seedlings": 500
+    "seedlings": 750
    },
    {
     "line": "regular",
     "day": "2026-11-26",
-    "seedlings": 350
+    "seedlings": 250
    },
    {
     "line": "regular",
     "day": "2026-11-30",
-    "seedlings": 800
+    "seedlings": 950
    },
    {
     "line": "regular",
@@ -694,22 +704,22 @@
    {
     "line": "regular",
     "day": "2026-12-07",
-    "seedlings": 700
+    "seedlings": 500
    },
    {
     "line": "regular",
     "day": "2026-12-10",
-    "seedlings": 850
+    "seedlings": 750
    },
    {
     "line": "regular",
     "day": "2026-12-14",
-    "seedlings": 700
+    "seedlings": 650
    },
    {
     "line": "regular",
     "day": "2026-12-17",
-    "seedlings": 1000
+    "seedlings": 950
    },
    {
     "line": "regular",
@@ -724,12 +734,12 @@
    {
     "line": "regular",
     "day": "2026-12-31",
-    "seedlings": 600
+    "seedlings": 650
    },
    {
     "line": "regular",
     "day": "2027-01-04",
-    "seedlings": 900
+    "seedlings": 850
    },
    {
     "line": "regular",
@@ -739,12 +749,12 @@
    {
     "line": "regular",
     "day": "2027-01-11",
-    "seedlings": 500
+    "seedlings": 800
    },
    {
     "line": "regular",
     "day": "2027-01-14",
-    "seedlings": 650
+    "seedlings": 700
    },
    {
     "line": "regular",
@@ -754,17 +764,17 @@
    {
     "line": "regular",
     "day": "2027-01-21",
-    "seedlings": 500
+    "seedlings": 450
    },
    {
     "line": "regular",
     "day": "2027-01-25",
-    "seedlings": 650
+    "seedlings": 600
    },
    {
     "line": "regular",
     "day": "2027-01-28",
-    "seedlings": 750
+    "seedlings": 550
    },
    {
     "line": "regular",
@@ -774,17 +784,17 @@
    {
     "line": "regular",
     "day": "2027-02-04",
-    "seedlings": 850
+    "seedlings": 800
    },
    {
     "line": "regular",
     "day": "2027-02-08",
-    "seedlings": 600
+    "seedlings": 650
    },
    {
     "line": "regular",
     "day": "2027-02-11",
-    "seedlings": 1050
+    "seedlings": 950
    },
    {
     "line": "regular",
@@ -794,32 +804,32 @@
    {
     "line": "regular",
     "day": "2027-02-18",
-    "seedlings": 950
+    "seedlings": 900
    },
    {
     "line": "regular",
     "day": "2027-02-22",
-    "seedlings": 550
+    "seedlings": 700
    },
    {
     "line": "regular",
     "day": "2027-02-25",
-    "seedlings": 650
+    "seedlings": 1050
    },
    {
     "line": "regular",
     "day": "2027-03-01",
-    "seedlings": 450
+    "seedlings": 550
    },
    {
     "line": "regular",
     "day": "2027-03-04",
-    "seedlings": 600
+    "seedlings": 300
    },
    {
     "line": "regular",
     "day": "2027-03-08",
-    "seedlings": 750
+    "seedlings": 900
    },
    {
     "line": "regular",
@@ -829,17 +839,17 @@
    {
     "line": "regular",
     "day": "2027-03-15",
-    "seedlings": 850
+    "seedlings": 800
    },
    {
     "line": "regular",
     "day": "2027-03-18",
-    "seedlings": 900
+    "seedlings": 800
    },
    {
     "line": "regular",
     "day": "2027-03-22",
-    "seedlings": 450
+    "seedlings": 350
    },
    {
     "line": "regular",
@@ -849,17 +859,17 @@
    {
     "line": "regular",
     "day": "2027-03-29",
-    "seedlings": 850
+    "seedlings": 800
    },
    {
     "line": "regular",
     "day": "2027-04-01",
-    "seedlings": 950
+    "seedlings": 900
    },
    {
     "line": "regular",
     "day": "2027-04-05",
-    "seedlings": 400
+    "seedlings": 550
    },
    {
     "line": "regular",

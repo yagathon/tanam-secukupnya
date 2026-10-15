@@ -67,13 +67,13 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
 
 
 def _truth(crop: Crop, w: W.World, b: Batch) -> Batch:
-    off, r = w.growth_truth(crop, b.line, b.sown_on)
-    return replace(b, growth_offset_days=off, spread_ratio=r)
+    size, r = w.growth_truth(crop, b.line, b.sown_on)
+    return replace(b, size_factor=size, spread_ratio=r)
 
 
 def _sample(crop: Crop, b: Batch, d: date) -> tuple[float, float]:
     """5 biggest and 5 smallest weighed together (true growth; the 5 extremes sit ~90% out on the spread)."""
-    avg = curve(crop, bed_day(crop, b, d) + b.growth_offset_days)
+    avg = b.size_factor * curve(crop, bed_day(crop, b, d))
     k = 0.9 * b.spread_ratio / 2
     return round(5 * avg * (1 + k)), round(5 * avg * (1 - k))
 
