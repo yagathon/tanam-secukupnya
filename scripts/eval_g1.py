@@ -3,9 +3,10 @@
     just eval                         # dev set, default model
     just eval holdout                 # held-out set (never used to tune the prompt)
     just eval dev gemini-3-flash-preview
+    just eval sandbox                 # sandbox set, read against eval/sandbox_setup.json
 
 Every note is read against the DAY0 farm (a fresh workspace), the same context a visitor's first
-note gets. Writes eval/results/g1-<set>-<model>.jsonl (every reading) and .md (the table).
+note gets; the sandbox set is read against a sandbox built from eval/sandbox_setup.json. Writes eval/results/g1-<set>-<model>.jsonl (every reading) and .md (the table).
 """
 
 from __future__ import annotations
@@ -24,15 +25,19 @@ SET = sys.argv[1] if len(sys.argv) > 1 else "dev"
 if len(sys.argv) > 2:
     os.environ["GEMINI_MODEL"] = sys.argv[2]
 
-from app import farm, gemini, notes  # noqa: E402
+from app import farm, gemini, notes, sandbox  # noqa: E402
 from app.store import JsonStore  # noqa: E402
 
-LABELS = ROOT / "eval" / {"dev": "notes_labeled.jsonl", "holdout": "notes_holdout.jsonl"}[SET]
+LABELS = ROOT / "eval" / {"dev": "notes_labeled.jsonl", "holdout": "notes_holdout.jsonl",
+                          "sandbox": "notes_sandbox.jsonl"}[SET]
 OUT = ROOT / "eval" / "results"
 
 
 def main() -> None:
     ws = JsonStore()
+    if SET == "sandbox":
+        setup = json.loads((ROOT / "eval" / "sandbox_setup.json").read_text())
+        ws = sandbox.SandboxStore(ws.for_user("eval"), sandbox.SetupIn.model_validate(setup).model_dump(mode="json"))
     inp = farm.note_inputs(ws)
     buyers = ws.list("buyers")
     rows = [json.loads(line) for line in LABELS.read_text().splitlines() if line.strip()]
