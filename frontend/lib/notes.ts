@@ -18,3 +18,8 @@ export async function readAgain(note: NoteDoc, a: Pick<Api, "readNote" | "decide
   if (n.status === "proposed") await a.decideNote(note.id, false);
   return n;
 }
+
+/** Edit hands the reading to one form, so it is offered only for a note that reads as exactly one event. */
+export function editable(note: NoteDoc): boolean {
+  return note.preview_events?.length === 1;
+}

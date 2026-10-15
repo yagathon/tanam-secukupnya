@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import replace
 from datetime import date, datetime, timedelta, timezone
 from functools import lru_cache
@@ -83,7 +84,11 @@ class BuyerIn(BaseModel):
     min_kg: float = Field(0, ge=0, le=500)
 
 
+BED_ID = r"^[a-z0-9_]{1,20}-\d{4}-\d{2}-\d{2}-\d{1,3}$"     # <line>-<sown on>-<number>; the number names "Bed N"
+
+
 class BedIn(BaseModel):
+    id: str | None = Field(None, pattern=BED_ID)
     line: str
     sown_on: date
     seedlings: int = Field(gt=0, le=100000)
@@ -114,6 +119,9 @@ class SetupIn(BaseModel):
             ids.add(b.id)
             if any(not 0 <= d <= 6 for d in b.weekdays):
                 raise ValueError(f"buyer {b.name}: weekdays are 0 (Mon) … 6 (Sun)")
+        nos = [bed_no(b.id) for b in self.beds if b.id]
+        if len(nos) != len(set(nos)):
+            raise ValueError("two beds share one number")
         for b in self.beds:
             if b.line not in lines:
                 raise ValueError(f"bed: unknown line {b.line!r}")
@@ -131,6 +139,65 @@ def default_setup() -> dict:
                      "grams_per_teaspoon": 3, "max_bed_day": 30, "max_seedlings_per_sowing": 3000, "sow_weekdays": [0, 3],
                      "lines": [{"id": "regular", "min_g": 100, "max_g": 140}, {"id": "baby", "min_g": 50, "max_g": 70}]},
             "buyers": [], "beds": []}
+
+
+def bed_no(bed_id: str) -> int:
+    return int(bed_id.rsplit("-", 1)[1])
+
+
+def _event_buyers(events: list[dict]) -> set[str]:
+    out: set[str] = set()
+    for doc in events:
+        for ev in doc.get("events", []):
+            out |= {ev[k] for k in ("buyer", "household") if isinstance(ev.get(k), str)}
+            if str(ev.get("scope", "")).startswith("buyer:"):
+                out.add(ev["scope"][6:])
+            if str(ev.get("series", "")).startswith("b2b:"):
+                out.add(ev["series"].split(":")[1])
+    return out
+
+
+def keep_ids(body: dict, old: dict | None, events: list[dict]) -> dict:
+    """Give the id-less buyers and beds of a setup body stable ids before validation, so a re-pasted sheet
+    or an added row never shifts history onto someone else: a buyer keeps the id of the old buyer with
+    its name, a bed the id of an old bed with its line, date and seedlings; anything new gets a number
+    never used before (by the old setup, the body, or the log)."""
+    if not isinstance(body, dict):
+        return body
+    body = json.loads(json.dumps(body))
+    buyers = [b for b in body.get("buyers") or [] if isinstance(b, dict)] if isinstance(body.get("buyers"), list) else []
+    beds = [b for b in body.get("beds") or [] if isinstance(b, dict)] if isinstance(body.get("beds"), list) else []
+    old_buyers = (old or {}).get("buyers", [])
+    by_name = {b["name"]: b["id"] for b in old_buyers}
+    used = {b["id"] for b in old_buyers} | {b["id"] for b in buyers if b.get("id")} | _event_buyers(events)
+    n = max((int(i[1:]) for i in used if re.fullmatch(r"b\d+", str(i))), default=0)
+    taken = {b["id"] for b in buyers if b.get("id")}
+    for b in buyers:
+        if not b.get("id"):
+            b["id"] = by_name.get(b.get("name"))
+            if b["id"] is None or b["id"] in taken:
+                n += 1
+                b["id"] = f"b{n}"
+            taken.add(b["id"])
+    old_beds = reference(old)["batches"] if old else []
+    kept = {b["id"] for b in beds if b.get("id")}
+    free = [b for b in old_beds if b["id"] not in kept]
+    n = max([bed_no(b["id"]) for b in old_beds] + [bed_no(i) for i in kept if re.fullmatch(BED_ID, str(i))], default=0)
+    fresh = []
+    for b in beds:
+        if b.get("id"):
+            continue
+        twin = next((o for o in free if (o["line"], o["sown_on"], o["seedlings"]) == (b.get("line"), b.get("sown_on"),
+                                                                                     b.get("seedlings"))), None)
+        if twin:
+            free.remove(twin)
+            b["id"] = twin["id"]
+        else:
+            fresh.append(b)
+    for b in sorted(fresh, key=lambda b: str(b.get("sown_on"))):      # new beds: numbered by sowing date
+        n += 1
+        b["id"] = f"{b.get('line')}-{b.get('sown_on')}-{n}"
+    return body
 
 
 def _week(b: dict) -> list[float]:
@@ -163,8 +230,10 @@ def _reference(raw: str) -> dict:
     biz = [b for b in s["buyers"] if b["type"] == "business"]
     hh = [b for b in s["buyers"] if b["type"] == "household"]
     beds = sorted(s["beds"], key=lambda b: b["sown_on"])
-    batches = [{"id": f"{b['line']}-{b['sown_on']}-{i}", "label": f"Bed {i}", "line": b["line"],
-                "sown_on": b["sown_on"], "seedlings": b["seedlings"]} for i, b in enumerate(beds, 1)]
+    # a saved bed keeps its id (and so its number); a setup without ids numbers its beds by sowing date
+    ids = [b.get("id") or f"{b['line']}-{b['sown_on']}-{i}" for i, b in enumerate(beds, 1)]
+    batches = [{"id": i, "label": f"Bed {bed_no(i)}", "line": b["line"], "sown_on": b["sown_on"],
+                "seedlings": b["seedlings"]} for i, b in zip(ids, beds)]
     last = {ln["id"]: max((b["sown_on"] for b in beds if b["line"] == ln["id"]), default=None) for ln in s["crop"]["lines"]}
     return {
         "crops": [crop],
@@ -178,7 +247,7 @@ def _reference(raw: str) -> dict:
         "meta": {"day0": start.isoformat(), "shape_until": start.isoformat(), "sandbox": True, "synthetic": False,
                  "learn_reference": s["learn_reference"], "priors": priors_from_setup(s),
                  "household_ids": [b["id"] for b in hh], "rev": _key(s),
-                 "last_sown": {k: v for k, v in last.items() if v}, "next_bed": len(beds) + 1},
+                 "last_sown": {k: v for k, v in last.items() if v}, "next_bed": max(map(bed_no, ids), default=0) + 1},
     }
 
 
@@ -223,7 +292,14 @@ class SandboxStore:
 
 def open_sandbox(base: Store) -> SandboxStore:
     doc = base.get("sandbox_setup", SETUP_ID)
-    return SandboxStore(base, doc["setup"] if doc else None)
+    if doc is None:
+        return SandboxStore(base, None)
+    return SandboxStore(base, json.loads(doc["json"]) if "json" in doc else doc["setup"])
+
+
+def setup_doc(setup: dict) -> dict:
+    """The stored form: one JSON string, since Firestore cannot hold the curve's arrays inside an array."""
+    return {"id": SETUP_ID, "json": json.dumps(setup, sort_keys=True)}
 
 
 def close_day(st, crop, buyers: list[dict], households: list[dict], plans) -> list[dict]:
@@ -239,7 +315,8 @@ def close_day(st, crop, buyers: list[dict], households: list[dict], plans) -> li
     for ln in crop.lines:
         line = ln.id
         orders = {(who, kg) for (day, who, l2), kg in st.known_orders.items() if day == iso and l2 == line}
-        b2b = [BuyerOrder(w, kg, by_id[w]["lines"][line]["min_kg"]) for w, kg in sorted(orders) if w in by_id]
+        b2b = [BuyerOrder(w, kg, by_id[w]["lines"][line]["min_kg"]) for w, kg in sorted(orders)
+               if w in by_id and line in by_id[w]["lines"]]
         hh = [HouseholdOrder(w, kg, st.last_shorted.get(w)) for w, kg in sorted(orders) if w in hh_ids]
         logged = st.harvested.get((t.isoformat(), line), 0.0) + st.harvested.get((iso, line), 0.0)
         got = logged
@@ -274,6 +351,13 @@ def _day(iso: str) -> str:
     return f"{d:%a} {d.day} {d:%b}"
 
 
+def orphan_orders(st, buyers: dict[str, set[str]]) -> list[str]:
+    """Orders still to come whose buyer is gone or no longer buys that line (a setup edit would strand them)."""
+    t = st.today.isoformat()
+    return [f"{who} · {line} · {day}" for (day, who, line), kg in sorted(st.known_orders.items())
+            if day > t and kg > 0 and line not in buyers.get(who, set())]
+
+
 def describe(ev: dict, names: dict[str, str], labels: dict[str, str]) -> str:
     """One fixed-format line per event, for the confirm card and the trail."""
     who = lambda i: names.get(i, f"⚠ unknown buyer {i}")
@@ -299,16 +383,22 @@ def describe(ev: dict, names: dict[str, str], labels: dict[str, str]) -> str:
     return t.upper()
 
 
-def form_events(raw: dict, st, crop, labels: dict[str, str], buyer_ids: set[str]) -> list[dict]:
+def buyer_lines(ws: Store) -> dict[str, set[str]]:
+    """Every buyer (households included) → the lines they buy."""
+    return ({b["id"]: set(b["lines"]) for b in ws.list("buyers")}
+            | {h["id"]: {h["line"]} for h in ws.list("households")})
+
+
+def form_events(raw: dict, st, crop, labels: dict[str, str], buyers: dict[str, set[str]]) -> list[dict]:
     """One form submission → primitive events dated the sandbox's today. Raises ValueError with a
-    sentence for people."""
+    sentence for people. buyers: buyer id → the lines they buy."""
     try:
-        return _form_events(raw, st, crop, buyer_ids)
+        return _form_events(raw, st, crop, buyers)
     except (KeyError, TypeError) as e:
         raise ValueError(f"missing or malformed field {e}") from e
 
 
-def _form_events(raw: dict, st, crop, buyer_ids: set[str]) -> list[dict]:
+def _form_events(raw: dict, st, crop, buyers: dict[str, set[str]]) -> list[dict]:
     k, t = raw.get("kind"), st.today
     lines = {ln.id for ln in crop.lines}
     def line_of(x):
@@ -328,9 +418,11 @@ def _form_events(raw: dict, st, crop, buyer_ids: set[str]) -> list[dict]:
         d = date.fromisoformat(raw["day"])
         if not t < d <= t + timedelta(days=14):
             raise ValueError("an order is for tomorrow or up to 14 days ahead")
-        if raw.get("buyer") not in buyer_ids:
+        if raw.get("buyer") not in buyers:
             raise ValueError(f"unknown buyer {raw.get('buyer')!r}")
-        return [{"t": "order", "day": d.isoformat(), "buyer": raw["buyer"], "line": line_of(raw["line"]), "kg": kg_of(raw["kg"])}]
+        if line_of(raw["line"]) not in buyers[raw["buyer"]]:
+            raise ValueError(f"this buyer is not set up for the {raw['line']} line; change the buyer in Setup first")
+        return [{"t": "order", "day": d.isoformat(), "buyer": raw["buyer"], "line": raw["line"], "kg": kg_of(raw["kg"])}]
     if k == "harvest":
         ev = {"t": "harvest", "batch": bed_of(raw.get("batch")), "day": t.isoformat(), "kg": kg_of(raw["kg"], 5000)}
         if raw.get("big5_g") or raw.get("small5_g"):
@@ -360,7 +452,7 @@ def _form_events(raw: dict, st, crop, buyer_ids: set[str]) -> list[dict]:
             raise ValueError("no bed in the ground on that line")
         return [{"t": "loss", "batch": i, "day": t.isoformat(), "pct": pct, "cause": cause} for i in ids]
     if k == "signal":
-        scopes = {"all", "channel:B2B", "channel:B2C"} | {f"buyer:{b}" for b in buyer_ids}
+        scopes = {"all", "channel:B2B", "channel:B2C"} | {f"buyer:{b}" for b in buyers}
         if raw.get("scope") not in scopes:
             raise ValueError(f"unknown scope {raw.get('scope')!r}")
         line = line_of(raw["line"]) if raw.get("line") else None

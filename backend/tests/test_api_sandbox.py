@@ -126,3 +126,88 @@ def test_400_day_cap():
         farm.append(ws, i, {"kind": "day", "events": []})
     r = client.post(f"{S}/day/next", json={"from_day": "2026-10-12"})
     assert r.status_code == 422
+
+
+def test_order_on_line_buyer_lacks_is_422():
+    client.put(f"{S}/setup", json=_setup())
+    r = client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "baby", "kg": 3,
+                                                  "day": "2026-10-13"}, "seq": 1})
+    assert r.status_code == 422
+
+
+def test_setup_edit_orphaning_pending_order_is_422():
+    client.put(f"{S}/setup", json=_setup())
+    client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": 3,
+                                             "day": "2026-10-13"}, "seq": 1})
+    moved = _setup(buyers=[{**_setup()["buyers"][0], "line": "baby"}])
+    assert client.put(f"{S}/setup", json=moved).status_code == 422
+    assert client.put(f"{S}/setup", json=_setup(buyers=[])).status_code == 422
+    assert client.post(f"{S}/day/next", json={"from_day": "2026-10-12"}).status_code == 200
+
+
+def _biz(name):
+    return {"name": name, "type": "business", "line": "regular", "usual_kg_per_week": 7}
+
+
+def _ids(setup):
+    return {b["name"]: b["id"] for b in setup["buyers"]}
+
+
+def test_repasted_buyers_keep_their_ids():                  # a sheet paste sends no ids
+    first = client.put(f"{S}/setup", json=_setup(buyers=[_biz("A"), _biz("B"), _biz("C")])).json()["setup"]
+    again = client.put(f"{S}/setup", json=_setup(buyers=[_biz("B"), _biz("C")])).json()["setup"]
+    assert _ids(again) == {"B": _ids(first)["B"], "C": _ids(first)["C"]}
+
+
+def test_new_buyer_never_reuses_an_id():
+    first = client.put(f"{S}/setup", json=_setup(buyers=[_biz("A"), _biz("B"), _biz("C")])).json()["setup"]
+    again = client.put(f"{S}/setup", json=_setup(buyers=[_biz("A"), _biz("B"), _biz("D")])).json()["setup"]
+    assert _ids(again)["D"] not in set(_ids(first).values())
+
+
+def _bed(day, n=500):
+    return {"line": "regular", "sown_on": day, "seedlings": n}
+
+
+def test_adding_an_earlier_bed_keeps_logged_bed_ids():
+    first = client.put(f"{S}/setup", json=_setup(beds=[_bed("2026-09-10")])).json()["setup"]
+    bid = sb.reference(first)["batches"][0]["id"]
+    assert client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": bid, "kg": 1}, "seq": 1}).status_code == 200
+    r = client.put(f"{S}/setup", json=_setup(beds=[_bed("2026-09-01"), *first["beds"]]))
+    assert r.status_code == 200
+    ref = sb.reference(r.json()["setup"])
+    labels = {b["id"]: b["label"] for b in ref["batches"]}
+    assert labels[bid] == "Bed 1" and len(set(labels.values())) == 2
+
+
+def test_same_day_beds_keep_identity_when_reordered():
+    a, b = _bed("2026-09-10", 300), _bed("2026-09-10", 700)
+    first = client.put(f"{S}/setup", json=_setup(beds=[a, b])).json()["setup"]
+    by_n = {x["seedlings"]: x["id"] for x in sb.reference(first)["batches"]}
+    again = client.put(f"{S}/setup", json=_setup(beds=[b, a])).json()["setup"]
+    assert {x["seedlings"]: x["id"] for x in sb.reference(again)["batches"]} == by_n
+
+
+def test_edited_bed_keeps_its_id():
+    first = client.put(f"{S}/setup", json=_setup()).json()["setup"]
+    bid = first["beds"][0]["id"]
+    assert client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": bid, "kg": 1}, "seq": 1}).status_code == 200
+    r = client.put(f"{S}/setup", json=_setup(beds=[{**first["beds"][0], "seedlings": 950}]))
+    assert r.status_code == 200 and r.json()["setup"]["beds"][0]["id"] == bid
+
+
+def test_setup_doc_has_no_nested_lists():              # Firestore rejects arrays inside arrays (growth_curve)
+    client.put(f"{S}/setup", json=_setup())
+    doc = main.store.for_user("local").get("sandbox_setup", sb.SETUP_ID)
+    def nested(v, in_list=False):
+        if isinstance(v, list):
+            return in_list or any(nested(x, True) for x in v)
+        return isinstance(v, dict) and any(nested(x) for x in v.values())
+    assert not nested(doc)
+    assert client.get(f"{S}/setup").json()["setup"]["crop"]["growth_curve"][0] == [0, 5]
+
+
+def test_legacy_setup_doc_still_opens():
+    s = sb.SetupIn.model_validate(_setup()).model_dump(mode="json")
+    main.store.for_user("local").put("sandbox_setup", {"id": sb.SETUP_ID, "setup": s})
+    assert client.get(f"{S}/setup").json()["saved"] is True

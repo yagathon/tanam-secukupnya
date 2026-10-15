@@ -245,18 +245,24 @@ def get_setup(ws: Store = Depends(workspace)) -> dict:
 @sbx.put("/setup")
 def put_setup(body: dict, ws: Store = Depends(workspace)) -> dict:
     ws = _sandbox_ws(ws)
+    docs = ws.list("events")
     try:
+        body = sandbox.keep_ids(body, ws.setup if ws.saved else None, docs)
         new = sandbox.SetupIn.model_validate(body).model_dump(mode="json")
     except ValidationError as e:
         raise HTTPException(422, "; ".join(err["msg"] for err in e.errors())) from e
-    docs = ws.list("events")
     if docs and new["start"] != ws.setup["start"]:
         raise HTTPException(422, "the start date is locked once days are logged; clear the sandbox first")
+    nws = sandbox.SandboxStore(ws.base, new)
     try:
-        farm.replay_check(sandbox.SandboxStore(ws.base, new))       # the whole log, replayed on the new setup
+        farm.replay_check(nws)                                      # the whole log, replayed on the new setup
     except (KeyError, ValueError) as e:
         raise HTTPException(422, f"the logged days do not fit this setup ({e}); clear the sandbox or undo the change") from e
-    ws.base.put("sandbox_setup", {"id": sandbox.SETUP_ID, "setup": new})
+    stranded = sandbox.orphan_orders(farm.load(nws).state, sandbox.buyer_lines(nws))
+    if stranded:
+        raise HTTPException(422, f"orders still to come would lose their buyer or line ({', '.join(stranded)}); "
+                                 "keep that buyer's line until those days pass, or clear the sandbox")
+    ws.base.put("sandbox_setup", sandbox.setup_doc(new))
     return {"saved": True, "setup": new, "locked_start": bool(docs)}
 
 
@@ -268,7 +274,7 @@ def post_events(req: EventRequest, ws: Store = Depends(workspace)) -> dict:
     v = farm.load(ws)
     labels = {b.id: b.label for b in v.state.batches.values()}
     try:
-        events = sandbox.form_events(req.form, v.state, v.crop, labels, set(_names(ws)))
+        events = sandbox.form_events(req.form, v.state, v.crop, labels, sandbox.buyer_lines(ws))
         farm.check_events(ws, events)
     except (KeyError, ValueError, TypeError) as e:
         raise HTTPException(422, str(e)) from e

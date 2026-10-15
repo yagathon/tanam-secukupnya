@@ -21,7 +21,7 @@ const sbx = makeApi("/sandbox");
 interface Tab { id: string; label: string; hint: string; view: (p: TabProps) => ReactNode }
 
 const VIEWS: Tab[] = [
-  { id: "today", label: "Today", hint: "Log what happened today: by form, or as a note Gemini reads", view: (p) => <TodayTab {...p} input={<InputPanel {...p} />} /> },
+  { id: "today", label: "Today", hint: "Log what happened today: by form, or as a note Gemini reads", view: (p) => <TodayTab {...p} input={<InputPanel key={p.data.today.today} {...p} />} /> },
   { id: "beds", label: "Beds", hint: "What is growing, and how much is ready each day", view: (p) => <BedsTab {...p} /> },
   { id: "tomorrow", label: "Tomorrow", hint: "The most we can safely send, and who gets it", view: (p) => <TomorrowTab {...p} /> },
   { id: "sow", label: "Sow", hint: "How many seedlings on the next sowing day, and why", view: (p) => <SowTab {...p} /> },

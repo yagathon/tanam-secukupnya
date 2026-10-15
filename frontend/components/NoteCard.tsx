@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type { Api } from "@/lib/api";
 import { friendly, proposalLines, shortDate } from "@/lib/format";
-import { conflict, readAgain } from "@/lib/notes";
+import { conflict, editable, readAgain } from "@/lib/notes";
 import type { NoteDoc, State } from "@/lib/types";
 
 /** A proposed note: what Gemini read, what was dropped, and Accept / Reject. If the farm moved on
@@ -71,7 +71,7 @@ export default function NoteCard({ note, state, onDone, api, onEdit }: {
             {onEdit ? "OK" : "Accept"}
           </button>
         )}
-        {onEdit && <button disabled={busy} onClick={() => onEdit(note)}>Edit</button>}
+        {onEdit && editable(note) && <button disabled={busy} onClick={() => onEdit(note)}>Edit</button>}
         <button disabled={busy} onClick={() => run(() => api.decideNote(note.id, false))}>
           {onEdit ? "Discard" : "Reject"}
         </button>

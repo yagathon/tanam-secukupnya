@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ApiError } from "./api";
-import { conflict, readAgain } from "./notes";
+import { conflict, editable, readAgain } from "./notes";
 import type { NoteDoc } from "./types";
 
 const old = { id: "n1", text: "besok 15 kg", sender: "resto_a" } as NoteDoc;
@@ -43,5 +43,15 @@ describe("conflict", () => {
     expect(conflict(new ApiError(409, "the farm changed while accepting this note; try again"))).toBe("retry");
     expect(conflict(new ApiError(429, "x"))).toBeNull();
     expect(conflict(new TypeError("x"))).toBeNull();
+  });
+});
+
+describe("editable", () => {
+  it("offers Edit only when the note reads as exactly one event", () => {
+    const ev = { t: "order" };
+    expect(editable({ ...old, preview_events: [ev] } as NoteDoc)).toBe(true);
+    expect(editable({ ...old, preview_events: [ev, ev] } as NoteDoc)).toBe(false);
+    expect(editable({ ...old, preview_events: [] } as NoteDoc)).toBe(false);
+    expect(editable(old)).toBe(false);
   });
 });

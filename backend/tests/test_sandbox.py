@@ -141,7 +141,7 @@ def test_form_loss_without_bed_expands_to_line():
                     {"line": "regular", "sown_on": "2026-09-08", "seedlings": 500}], start="2026-10-12")
     st, c, ref = _state(s)
     labels = {b.id: b.label for b in st.batches.values()}
-    evs = sb.form_events({"kind": "loss", "line": "regular", "pct": 20, "cause": "pest"}, st, c, labels, set())
+    evs = sb.form_events({"kind": "loss", "line": "regular", "pct": 20, "cause": "pest"}, st, c, labels, {})
     assert len(evs) == 2 and all(e["t"] == "loss" for e in evs)
 
 
@@ -149,6 +149,7 @@ def test_form_loss_without_bed_expands_to_line():
     {"kind": "order", "buyer": "b1", "line": "regular", "kg": 5, "day": "2026-10-12"},   # today, not tomorrow+
     {"kind": "order", "buyer": "b1", "line": "regular", "kg": 501, "day": "2026-10-13"},
     {"kind": "order", "buyer": "zz", "line": "regular", "kg": 5, "day": "2026-10-13"},
+    {"kind": "order", "buyer": "b1", "line": "baby", "kg": 5, "day": "2026-10-13"},      # b1 buys regular only
     {"kind": "sow", "line": "regular", "seedlings": 0},
     {"kind": "harvest", "batch": "nope", "kg": 1},
     {"kind": "signal", "scope": "all", "effect_pct": 400, "date_from": "2026-10-12"},
@@ -157,7 +158,7 @@ def test_form_rejects(raw):
     s = setup(start="2026-10-12", buyers=[{"name": "Restaurant A", "type": "business", "line": "regular"}])
     st, c, ref = _state(s)
     with pytest.raises(ValueError):
-        sb.form_events(raw, st, c, {}, {"b1"})
+        sb.form_events(raw, st, c, {}, {"b1": {"regular"}})
 
 
 def test_assumed_harvest_does_not_count_as_logged_next_day():
@@ -172,3 +173,12 @@ def test_assumed_harvest_does_not_count_as_logged_next_day():
     assert st.harvested == {}
     day2 = sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
     assert [e for e in day2 if e["t"] == "harvest"]
+
+
+def test_close_day_skips_order_on_line_buyer_lacks():
+    s = setup(start="2026-10-12", buyers=[{"name": "Restaurant A", "type": "business", "line": "regular"}])
+    st, c, ref = _state(s, [{"seq": 1, "kind": "form", "events": [
+        {"t": "order", "day": "2026-10-13", "buyer": "b1", "line": "baby", "kg": 2}]}])
+    from app import sim
+    evs = sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
+    assert evs[-1]["t"] == "clock"
