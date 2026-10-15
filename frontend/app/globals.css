@@ -70,7 +70,7 @@ textarea {
 }
 input[type="range"] { width: 100%; accent-color: var(--leaf); }
 
-.steps { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 2px; }
 .step { display: flex; align-items: center; gap: 8px; white-space: nowrap; border-radius: 999px; padding: 6px 14px 6px 6px; }
 .step .num {
   display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
