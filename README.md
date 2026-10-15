@@ -40,6 +40,32 @@ browser ──► Firebase Hosting (static Next.js UI)
 |---|---|
 | `just test` | backend tests |
 | `just api` | API on :8100 (JSON store, auth off); `cd frontend && npx next dev -p 3100` for the UI |
-| `just eval [dev\|holdout]` | G1 benchmark (see `eval/README.md`) |
+| `just eval [dev\|holdout\|sandbox]` | G1 benchmark (see `eval/README.md`) |
 | `just seed-firestore` | load `data/seed` into Firestore |
 | `just deploy` | tests → Cloud Build → Cloud Run → UI build → Hosting → smoke test |
+
+## Sandbox (`/sandbox`)
+
+A blank farm on the same engine: you set the crop and the buyers, then enter each day yourself
+and watch the decisions move. Nothing is hidden: you are the world. **Clear** wipes the logged days
+and keeps the setup. The **Trail** tab shows each day's numbers, with what changed highlighted.
+
+Setup tables accept a paste from Google Sheets (tab-separated) or CSV (`,` or `;`). A header
+row is optional, and `12,5` and `12.5` both read as 12.5:
+
+| Table | Columns |
+|---|---|
+| Growth curve | `day` · `grams` (both increasing) |
+| Buyers | `name` · `type` (business/household) · `line` · `usual kg/week` · `weekdays` (e.g. `Tue Fri`; empty = every day) · `min kg` |
+| Beds | `line` · `sown on` (YYYY-MM-DD) · `seedlings` |
+
+Daily input is either a form or a free-text note: Gemini reads the note into a fixed-format card
+(`ORDER · Restaurant A · regular · 16.0 kg · Tue 20 Oct`, `HARVEST · Bed 1 · 10.5 kg · sample 640 g / 330 g`,
+`LOSS · Bed 2 · 25% · caterpillars`), and nothing is logged until you press **OK**. **Edit** opens
+the matching form, prefilled.
+
+**Model B growth.** A bed's curve is the reference curve scaled by a percentage: a stunted bed
+(often from planting too densely) stays small instead of running late. Each 5-biggest/5-smallest
+sample updates that bed's percentage. Healthy sampled beds also move the reference curve slowly,
+one age node at a time. This is a calibration loop, not reinforcement learning (RL in simulation
+is on the roadmap).
