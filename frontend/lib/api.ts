@@ -39,6 +39,7 @@ export const api = {
   demand: () => call<Demand>("/demand"),
   season: () => call<Season>("/season"),
   readNote: (text: string, sender: string) => call<NoteDoc>("/notes", { text, sender }),
+  why: () => call<{ text: string; model: string; cached: boolean }>("/today/why", {}),
   decideNote: (id: string, accept: boolean) => call<NoteDoc>(`/notes/${id}/${accept ? "accept" : "reject"}`, {}),
   nextDay: (from_day: string, days = 1) => call<{ today: string; appended: number }>("/day/next", { from_day, days }),
   reset: () => call<{ ok: boolean }>("/demo/reset", {}),

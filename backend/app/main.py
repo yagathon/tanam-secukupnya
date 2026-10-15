@@ -1,6 +1,6 @@
 """FastAPI app: every route under /api (Firebase Hosting rewrites /api/** to Cloud Run).
 
-Gemini (/notes) is cached by input and capped per day, so a public demo URL cannot run up the bill.
+Gemini (/notes, /today/why) is cached by input and capped per day, so a public demo URL cannot run up the bill.
 Every route but /health needs a Firebase anonymous ID token; its uid scopes the visitor's workspace
 (notes and the event log), so visitors never see or overwrite each other's farm.
 """
@@ -8,6 +8,7 @@ Every route but /health needs a Firebase anonymous ID token; its uid scopes the 
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import threading
 from datetime import date
@@ -134,6 +135,28 @@ def read_note(req: NoteRequest, ws: Store = Depends(workspace)) -> dict:
                             "status": "proposed" if proposal["kind"] != "none" else "no_action",
                             "dropped": dropped, "model": hit["model"], "cached": cached})
 
+
+_g5_cache: dict[str, dict] = {}
+
+
+@api.post("/today/why")
+def why(ws: Store = Depends(workspace)) -> dict:
+    """G5: Gemini narrates today's numbers from the engine's own JSON (computes nothing)."""
+    t, tm, sw = farm.today(ws), farm.tomorrow(ws), farm.sow(ws)
+    t = {k: v for k, v in t.items() if k != "pending"}
+    # keyed by the numbers themselves, so two visitors on the same farm state share one answer
+    key = hashlib.sha256(json.dumps([t, tm, sw], sort_keys=True, default=str).encode()).hexdigest()
+    if key in _g5_cache:
+        return {**_g5_cache[key], "cached": True}
+    _spend_one_call()
+    try:
+        out = gemini.explain(t, tm, sw)
+    except Exception as e:
+        raise HTTPException(502, f"Gemini could not explain the day ({type(e).__name__}).") from e
+    if not out["text"]:
+        raise HTTPException(502, "Gemini returned an empty explanation; try again.")
+    _g5_cache[key] = out
+    return {**out, "cached": False}
 
 def _note(ws: Store, id: str) -> dict:
     doc = ws.get("notes", id)

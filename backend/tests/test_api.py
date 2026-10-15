@@ -11,6 +11,7 @@ client = TestClient(main.app)
 def fresh():
     client.post("/api/demo/reset")
     main._g1_cache.clear()
+    main._g5_cache.clear()
     main._calls.clear()
     yield
     client.post("/api/demo/reset")
@@ -210,3 +211,23 @@ def test_double_accept_applies_the_note_once(monkeypatch):
     assert sum(isinstance(r, dict) for r in out) == 1
     assert [e for e in out if not isinstance(e, dict)][0].status_code == 409
     assert len(ws.list("events")) == 1
+
+
+def test_why_narrates_the_engine_numbers_and_is_cached(monkeypatch):
+    seen = []
+
+    def explain(today, tomorrow, sow):
+        seen.append(today["today"])
+        return {"text": "Because the beds hold enough.", "model": "fake"}
+    monkeypatch.setattr(gemini, "explain", explain)
+    a = client.post("/api/today/why").json()
+    b = client.post("/api/today/why").json()
+    assert a["text"] == "Because the beds hold enough." and not a["cached"] and b["cached"]
+    assert seen == ["2026-10-12"]
+
+
+def test_why_with_an_empty_answer_is_an_error_not_a_blank_card(monkeypatch):
+    monkeypatch.setattr(gemini, "explain", lambda *a: {"text": "", "model": "fake"})
+    r = client.post("/api/today/why")
+    assert r.status_code == 502 and "Gemini" in r.json()["detail"]
+    assert main._g5_cache == {}
