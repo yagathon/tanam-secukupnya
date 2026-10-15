@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
@@ -15,6 +15,29 @@ export default function TodayTab({ data, reload }: TabProps) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [last, setLast] = useState<NoteDoc | null>(null);
+  const [why, setWhy] = useState<{ text: string; failed: boolean } | null>(null);
+  const [asking, setAsking] = useState(false);
+  const day = useRef(today.today);
+
+  // An explanation belongs to one day: drop it (and any answer still in flight) when the day moves.
+  useEffect(() => {
+    day.current = today.today;
+    setWhy(null);
+  }, [today.today]);
+
+  const explain = async () => {
+    const asked = today.today;
+    setAsking(true);
+    setWhy(null);
+    try {
+      const r = await api.why();
+      if (day.current === asked) setWhy({ text: r.text, failed: false });
+    } catch (e) {
+      if (day.current === asked) setWhy({ text: friendly(e), failed: true });
+    } finally {
+      setAsking(false);
+    }
+  };
 
   const examples = useMemo(() => {
     const inBed = beds.lines[0]?.batches.filter((b) => b.stage === "bed" && b.plants_left > 0) ?? [];
@@ -56,6 +79,11 @@ export default function TodayTab({ data, reload }: TabProps) {
             <p className={`sentence ${l.short_kg > 0.005 ? "bad" : ""}`}>{daySentence(l)}</p>
           </div>
         ))}
+        <div className="row wrap">
+          <button disabled={asking} onClick={explain}>{asking ? "Asking Gemini…" : "Why?"}</button>
+          <span className="small muted">Gemini explains today&apos;s numbers in plain words. The engine decides; Gemini only explains.</span>
+        </div>
+        {why && <p className={`small ${why.failed ? "bad" : "why"}`}>{why.text}</p>}
         <p className="small muted">
           Press <strong>Next day →</strong> to let the farm live one day: orders arrive, the farmer harvests and samples, and
           sowing happens on Mondays and Thursdays.
