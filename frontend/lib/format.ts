@@ -102,8 +102,12 @@ export function friendly(e: unknown): string {
     if (e.status === 401) return "Your demo session expired. Reload the page.";
     if (e.status === 429) return "Today's Gemini budget for this demo is used up. Try again tomorrow.";
     if (e.status === 502) return "Gemini could not read the note just now. Try again in a moment.";
+    if (e.status >= 500 || e.detail.trimStart().startsWith("<")) return "The server had a problem. Try again in a moment.";
     return sentence(e.detail);
   }
-  if (e instanceof TypeError) return "Could not reach the server. Check the connection and retry.";
-  return `Something went wrong: ${e instanceof Error ? e.message : String(e)}`;
+  const offline = "Could not reach the server. Check the connection and retry.";
+  if (e instanceof TypeError) return offline;
+  if ((e as { code?: unknown } | null)?.code === "auth/network-request-failed") return offline;
+  console.error(e);
+  return "Something went wrong. Reload the page and try again.";
 }

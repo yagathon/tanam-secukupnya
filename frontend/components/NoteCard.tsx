@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
-import { api, ApiError } from "@/lib/api";
+import { api } from "@/lib/api";
 import { friendly, proposalLines, shortDate } from "@/lib/format";
+import { conflict, readAgain } from "@/lib/notes";
 import type { NoteDoc, State } from "@/lib/types";
 
 /** A proposed note: what Gemini read, what was dropped, and Accept / Reject. If the farm moved on
@@ -11,17 +12,22 @@ import type { NoteDoc, State } from "@/lib/types";
 export default function NoteCard({ note, state, onDone }: { note: NoteDoc; state: State; onDone: () => Promise<void> }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ text: string; stale: boolean } | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const lines = proposalLines(note.proposal, state);
   const sender = state.senders.find((s) => s.id === note.sender)?.alias ?? note.sender;
 
   const run = async (fn: () => Promise<unknown>) => {
     setBusy(true);
     setError(null);
+    setInfo(null);
     try {
-      await fn();
+      if ((await fn()) === "keep") return;
       await onDone();
     } catch (e) {
-      setError({ text: friendly(e), stale: e instanceof ApiError && e.status === 409 });
+      const c = conflict(e);
+      // decided in another tab: nothing left to do here, the reload drops the card
+      if (c === "decided") return void (await onDone());
+      setError({ text: friendly(e), stale: c === "stale" });
     } finally {
       setBusy(false);
     }
@@ -40,13 +46,17 @@ export default function NoteCard({ note, state, onDone }: { note: NoteDoc; state
         <p>{note.summary_en}</p>
       )}
       {note.dropped?.length > 0 && <p className="small muted">Ignored: {note.dropped.join("; ")}</p>}
-      {error && <p className="small bad">{error.text}</p>}
+      {error?.text && <p className="small bad">{error.text}</p>}
+      {info && <p className="small muted">{info}</p>}
       <div className="row">
         {error?.stale ? (
           <button className="primary" disabled={busy}
             onClick={() => run(async () => {
-              await api.decideNote(note.id, false);
-              await api.readNote(note.text, note.sender);
+              const n = await readAgain(note);
+              if (n.status === "proposed") return;
+              setInfo(`Read again: ${n.summary_en} Nothing to apply; reject this note if it is no longer needed.`);
+              setError({ text: "", stale: true });
+              return "keep";
             })}>
             Read again
           </button>

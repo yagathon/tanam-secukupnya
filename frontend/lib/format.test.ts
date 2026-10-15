@@ -124,6 +124,14 @@ describe("friendly", () => {
   it("explains auth and network trouble", () => {
     expect(friendly(new ApiError(401, "x"))).toBe("Your demo session expired. Reload the page.");
     expect(friendly(new TypeError("Failed to fetch"))).toBe("Could not reach the server. Check the connection and retry.");
-    expect(friendly("weird")).toBe("Something went wrong: weird");
+    expect(friendly("weird")).toBe("Something went wrong. Reload the page and try again.");
+  });
+  it("never shows raw codes or server pages", () => {
+    const fb = Object.assign(new Error("Firebase: Error (auth/network-request-failed)."), { code: "auth/network-request-failed" });
+    expect(friendly(fb)).toBe("Could not reach the server. Check the connection and retry.");
+    expect(friendly(new Error("Firebase: Error (auth/internal-error)."))).toBe("Something went wrong. Reload the page and try again.");
+    expect(friendly(new ApiError(503, "<html><body>Service Unavailable</body></html>")))
+      .toBe("The server had a problem. Try again in a moment.");
+    expect(friendly(new ApiError(500, "Internal Server Error"))).toBe("The server had a problem. Try again in a moment.");
   });
 });
