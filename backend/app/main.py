@@ -49,7 +49,7 @@ def state(ws: Store = Depends(workspace)) -> dict:
     v = farm.load(ws)
     return {"today": v.state.today.isoformat(), "synthetic": ws.meta().get("synthetic", True),
             "crop": ws.list("crops")[0], "buyers": ws.list("buyers"), "households": ws.list("households"),
-            "senders": senders(ws)}
+            "senders": senders(ws), "reference": farm.reference(ws)}
 
 
 @api.get("/today")

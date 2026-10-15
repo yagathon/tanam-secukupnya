@@ -24,7 +24,7 @@ from app.production import (
     take_oldest,
     waste_plants,
 )
-from app.state import FarmState, apply
+from app.state import FarmState, apply, current_crop
 
 PLAN_DAYS = 45
 STRATEGIES = ("cobweb", "fixed", "tanam")
@@ -42,10 +42,11 @@ class LinePlan:
 
 
 def demand_model(st: FarmState) -> demand.DemandModel:
-    return demand.fit(st.history, W.DAY0, st.today + timedelta(days=1))
+    return demand.fit(st.history, st.shape_until or W.DAY0, st.today + timedelta(days=1))
 
 
 def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandModel | None = None) -> dict[str, LinePlan]:
+    crop = current_crop(st, crop)
     model = model or demand_model(st)
     out = {}
     tom = st.today + timedelta(days=1)
@@ -92,6 +93,7 @@ def _cobweb(st: FarmState, crop: Crop, w: W.World, line: str, fixed: int) -> int
 def day_events(st: FarmState, crop: Crop, w: W.World, strategy: str, fixed: dict[str, int],
                plans: dict[str, LinePlan] | None = None) -> list[dict]:
     """Everything that happens from today (t) to tomorrow (t+1), as primitive events."""
+    crop = current_crop(st, crop)
     t = st.today
     d = t + timedelta(days=1)
     evs: list[dict] = []

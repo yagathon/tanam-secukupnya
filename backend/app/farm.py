@@ -27,7 +27,7 @@ from app.production import (
     spread,
     waste_plants,
 )
-from app.state import FarmState, apply, replay
+from app.state import FarmState, apply, current_crop, replay
 from app.store import SEED_DIR, Store
 
 CHART_DAYS = 40
@@ -35,7 +35,7 @@ SEASON_FILE = SEED_DIR / "season.json"
 _CACHE_SIZE = 256
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=64)
 def _crop(raw: str) -> Crop:
     return crop_from_dict(json.loads(raw))
 
@@ -54,6 +54,7 @@ class View:
     state: FarmState
     plans: dict[str, sim.LinePlan]
     log_key: tuple[int, int]
+    crop: Crop                       # with the learned reference curve
 
 
 _views: OrderedDict[str, View] = OrderedDict()
@@ -73,7 +74,7 @@ def load(ws: Store) -> View:
         return hit
     c = crop(ws)
     st = replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), c, docs)
-    view = View(st, sim.plan(st, c, ws.list("buyers")), key)
+    view = View(st, sim.plan(st, c, ws.list("buyers")), key, current_crop(st, c))
     _views[ws.uid] = view
     while len(_views) > _CACHE_SIZE:
         _views.popitem(last=False)
@@ -107,6 +108,14 @@ def next_day(ws: Store, from_day: date, days: int) -> dict:
         for ev in evs:
             apply(st, c, ev)
     return {"today": st.today.isoformat(), "appended": days}
+
+
+
+def reference(ws: Store) -> dict:
+    v, base = load(ws), crop(ws)
+    kept = v.state.ref_kept or tuple(() for _ in base.curve)
+    return {"start": [list(p) for p in base.curve], "now": [[x, round(y, 1)] for x, y in v.crop.curve],
+            "samples": [len(k) for k in kept]}
 
 
 # --- views ---
@@ -154,7 +163,7 @@ def tomorrow(ws: Store) -> dict:
 
 def beds(ws: Store) -> dict:
     v = load(ws)
-    st, c = v.state, crop(ws)
+    st, c = v.state, v.crop
     tom = st.today + timedelta(days=1)
     lines = []
     for lp in v.plans.values():
@@ -182,7 +191,7 @@ def beds(ws: Store) -> dict:
 
 def sow(ws: Store) -> dict:
     v = load(ws)
-    st, c = v.state, crop(ws)
+    st, c = v.state, v.crop
     lines = []
     for lp in v.plans.values():
         p = asdict(lp.sow)
@@ -235,7 +244,7 @@ def note_inputs(ws: Store) -> dict:
     """What reading and sanitizing a note needs: the Gemini context, bed label → batch id, the sowing
     day a "postponed" note refers to (per line), and the log seq an accepted note would take."""
     v = load(ws)
-    st, c = v.state, crop(ws)
+    st, c = v.state, v.crop
     in_ground = [b for b in sorted(st.alive(c), key=lambda b: b.sown_on)
                  if bed_day(c, b, st.today) >= 0 and in_bed_plants(c, b, st.today) > 0]
     model = sim.demand_model(st)
