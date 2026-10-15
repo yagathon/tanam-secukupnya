@@ -63,6 +63,11 @@ class View:
 _views: OrderedDict[str, View] = OrderedDict()
 
 
+def replay_check(ws: Store) -> None:
+    """Raise KeyError/ValueError if ws's log does not replay on ws's reference."""
+    replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), crop(ws), ws.list("events"))
+
+
 def log_key(docs: list[dict]) -> tuple[int, int]:
     return len(docs), max((d["seq"] for d in docs), default=0)
 

@@ -13,20 +13,23 @@ import os
 import threading
 from datetime import date
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
+from pydantic import BaseModel, Field, ValidationError
 
-from app import farm, gemini, notes
+from app import farm, gemini, notes, sandbox, trail
 from app.auth import current_uid
 from app.store import Store, make_store
 
 store: Store = make_store()
 public = APIRouter(prefix="/api")
 api = APIRouter(prefix="/api")
+sbx = APIRouter(prefix="/api/sandbox")
 
 
-def workspace(uid: str = Depends(current_uid)) -> Store:
-    return store.for_user(uid)
+def workspace(request: Request, uid: str = Depends(current_uid)) -> Store:
+    """The demo farm, or under /api/sandbox/ the visitor's own sandbox (same handlers, other reference)."""
+    ws = store.for_user(uid)
+    return sandbox.open_sandbox(ws) if request.url.path.startswith("/api/sandbox/") else ws
 
 
 class NoteRequest(BaseModel):
@@ -48,6 +51,7 @@ def health() -> dict:
 def state(ws: Store = Depends(workspace)) -> dict:
     v = farm.load(ws)
     return {"today": v.state.today.isoformat(), "synthetic": ws.meta().get("synthetic", True),
+            "sandbox": ws.meta().get("sandbox", False),
             "crop": ws.list("crops")[0], "buyers": ws.list("buyers"), "households": ws.list("households"),
             "senders": senders(ws), "reference": farm.reference(ws)}
 
@@ -84,7 +88,10 @@ def season(uid: str = Depends(current_uid)) -> dict:
 
 @api.post("/day/next")
 def day_next(req: NextDayRequest, ws: Store = Depends(workspace)) -> dict:
-    return farm.next_day(ws, req.from_day, req.days)
+    try:
+        return farm.next_day(ws, req.from_day, req.days)
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from e
 
 
 DAILY_CAP = int(os.environ.get("GEMINI_DAILY_CAP", "300"))
@@ -130,7 +137,11 @@ def read_note(req: NoteRequest, ws: Store = Depends(workspace)) -> dict:
         hit = _g1_cache[key] = {"reading": out["reading"], "model": out["model"]}
     proposal, dropped = notes.sanitize(hit["reading"], inp["today"], ws.list("buyers"), inp["beds"], inp["lines"],
                                        inp["max_seedlings"])
-    return ws.put("notes", {"text": text, "sender": req.sender, "received_on": today_iso, "proposal": proposal,
+    events = notes.to_events(proposal, inp["today"], inp["next_sow"]) if proposal["kind"] != "none" else []
+    names = {b["id"]: b["alias"] for b in ws.list("buyers")}
+    labels = {bid: lbl for lbl, bid in inp["beds"].items()}
+    return ws.put("notes", {"preview": [sandbox.describe(e, names, labels) for e in events], "preview_events": events,
+                            "text": text, "sender": req.sender, "received_on": today_iso, "proposal": proposal,
                             "kind": proposal["kind"], "summary_en": proposal["summary_en"],
                             "status": "proposed" if proposal["kind"] != "none" else "no_action",
                             "dropped": dropped, "model": hit["model"], "cached": cached})
@@ -200,6 +211,85 @@ def gemini_ping(uid: str = Depends(current_uid)) -> dict:
     return gemini.ping()
 
 
+# --- sandbox: the visitor's own farm, entered by hand ---
+
+for _path, _fn, _methods in [("/state", state, ["GET"]), ("/today", today, ["GET"]), ("/beds", beds, ["GET"]),
+                             ("/tomorrow", tomorrow, ["GET"]), ("/sow", sow, ["GET"]), ("/demand", demand, ["GET"]),
+                             ("/day/next", day_next, ["POST"]), ("/notes", read_note, ["POST"]),
+                             ("/notes/{id}/accept", accept_note, ["POST"]),
+                             ("/notes/{id}/reject", reject_note, ["POST"]), ("/today/why", why, ["POST"])]:
+    sbx.add_api_route(_path, _fn, methods=_methods)
+
+
+class EventRequest(BaseModel):
+    form: dict
+    seq: int = Field(ge=1)
+
+
+def _sandbox_ws(ws: Store) -> sandbox.SandboxStore:
+    if not isinstance(ws, sandbox.SandboxStore):
+        raise HTTPException(404)
+    return ws
+
+
+def _names(ws: Store) -> dict[str, str]:
+    return {b["id"]: b["alias"] for b in ws.list("buyers")} | {h["id"]: h["alias"] for h in ws.list("households")}
+
+
+@sbx.get("/setup")
+def get_setup(ws: Store = Depends(workspace)) -> dict:
+    ws = _sandbox_ws(ws)
+    return {"saved": ws.saved, "setup": ws.setup, "locked_start": bool(ws.list("events"))}
+
+
+@sbx.put("/setup")
+def put_setup(body: dict, ws: Store = Depends(workspace)) -> dict:
+    ws = _sandbox_ws(ws)
+    try:
+        new = sandbox.SetupIn.model_validate(body).model_dump(mode="json")
+    except ValidationError as e:
+        raise HTTPException(422, "; ".join(err["msg"] for err in e.errors())) from e
+    docs = ws.list("events")
+    if docs and new["start"] != ws.setup["start"]:
+        raise HTTPException(422, "the start date is locked once days are logged; clear the sandbox first")
+    try:
+        farm.replay_check(sandbox.SandboxStore(ws.base, new))       # the whole log, replayed on the new setup
+    except (KeyError, ValueError) as e:
+        raise HTTPException(422, f"the logged days do not fit this setup ({e}); clear the sandbox or undo the change") from e
+    ws.base.put("sandbox_setup", {"id": sandbox.SETUP_ID, "setup": new})
+    return {"saved": True, "setup": new, "locked_start": bool(docs)}
+
+
+@sbx.post("/events")
+def post_events(req: EventRequest, ws: Store = Depends(workspace)) -> dict:
+    ws = _sandbox_ws(ws)
+    if not ws.saved:
+        raise HTTPException(409, "save the setup first")
+    v = farm.load(ws)
+    labels = {b.id: b.label for b in v.state.batches.values()}
+    try:
+        events = sandbox.form_events(req.form, v.state, v.crop, labels, set(_names(ws)))
+        farm.check_events(ws, events)
+    except (KeyError, ValueError, TypeError) as e:
+        raise HTTPException(422, str(e)) from e
+    if req.seq != v.log_key[1] + 1 or not farm.append(ws, req.seq, {"kind": "form", "events": events}):
+        raise HTTPException(409, "the sandbox changed meanwhile; reload and try again")
+    names = _names(ws)
+    return {"events": events, "lines": [sandbox.describe(e, names, labels) for e in events]}
+
+
+@sbx.get("/trail")
+def get_trail(ws: Store = Depends(workspace)) -> dict:
+    return trail.build(_sandbox_ws(ws))
+
+
+@sbx.post("/clear")
+def clear(ws: Store = Depends(workspace)) -> dict:
+    _sandbox_ws(ws).reset(("sandbox_events", "sandbox_notes"))
+    return {"ok": True}
+
+
 app = FastAPI(title="Tanam Secukupnya", version="0.2.0")
 app.include_router(public)
 app.include_router(api)
+app.include_router(sbx)
