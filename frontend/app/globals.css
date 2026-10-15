@@ -141,3 +141,4 @@ button.primary:hover:not(:disabled) { filter: brightness(1.08); }
   .clock { width: 100%; }
   .clock button.primary { flex: 1; }
 }
+.clock button { white-space: nowrap; }

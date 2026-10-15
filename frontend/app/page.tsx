@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
+import TodayTab from "@/components/TodayTab";
 import { api } from "@/lib/api";
 import { friendly, shortDate } from "@/lib/format";
 import type { Data } from "@/lib/types";
@@ -19,7 +20,9 @@ interface Tab {
 }
 
 // Each later task adds its tab here, in spec order: Today, Beds, Tomorrow, Sow, Demand, Season.
-const TABS: Tab[] = [];
+const TABS: Tab[] = [
+  { id: "today", label: "Today", hint: "The day in one line, and notes from the field", view: (p) => <TodayTab {...p} /> },
+];
 
 export default function Home() {
   const [tab, setTab] = useState<string>("today");
@@ -90,7 +93,7 @@ export default function Home() {
         {data && (
           <div className="clock">
             <span>
-              {data.today.weekday} <strong>{shortDate(data.today.today)}</strong>
+              <strong>{shortDate(data.today.today)}</strong>
             </span>
             {data.state.synthetic && <span className="pill muted">synthetic data</span>}
             <button className="primary" disabled={busy} onClick={() => advance(1)}>Next day →</button>
