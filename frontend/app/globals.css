@@ -111,6 +111,7 @@ td.neg { color: var(--bad); }
 tr.frozen td:first-child { color: var(--muted); }
 .scroll { overflow-x: auto; }
 .scroll th, .scroll td { white-space: nowrap; }
+.scroll td.wrap { white-space: normal; min-width: 160px; }
 ul { padding-left: 18px; }
 ul.signals { list-style: none; padding: 0; display: grid; gap: 6px; }
 
