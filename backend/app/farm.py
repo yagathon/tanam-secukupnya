@@ -54,7 +54,8 @@ class View:
     state: FarmState
     plans: dict[str, sim.LinePlan]
     log_key: tuple[int, int]
-    crop: Crop                       # with the learned reference curve
+    crop: Crop
+    rev: str | None = None           # sandbox setup revision: a setup edit invalidates the view                       # with the learned reference curve
 
 
 _views: OrderedDict[str, View] = OrderedDict()
@@ -69,12 +70,13 @@ def load(ws: Store) -> View:
     docs = ws.list("events")
     key = log_key(docs)
     hit = _views.get(ws.uid)
-    if hit is not None and hit.log_key == key:
+    rev = ws.meta().get("rev")
+    if hit is not None and hit.log_key == key and hit.rev == rev:
         _views.move_to_end(ws.uid)
         return hit
     c = crop(ws)
     st = replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), c, docs)
-    view = View(st, sim.plan(st, c, ws.list("buyers")), key, current_crop(st, c))
+    view = View(st, sim.plan(st, c, ws.list("buyers")), key, current_crop(st, c), rev)
     _views[ws.uid] = view
     while len(_views) > _CACHE_SIZE:
         _views.popitem(last=False)

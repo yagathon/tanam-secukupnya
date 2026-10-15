@@ -2,7 +2,7 @@
 
 Each workspace `events` doc is {"seq", "kind": "day"|"note", "events": [primitive events]}.
 Primitive events (field "t"):
-  clock{day} · actual{series,day,kg} · order{day,buyer,line,kg} · harvest{batch,day,kg,big5_g?,small5_g?}
+  clock{day} · actual{series,day,kg} · order{day,buyer,line,kg} · harvest{batch,day,kg,big5_g?,small5_g?,assumed?}
   sow{line,day,seedlings} · postpone{line,day,reason} · loss{batch,day,pct,cause} · short{household,day}
   served{day,line,b2b_ordered,b2b_served,hh_ordered,hh_served} · signal{scope,line,effect_pct,date_from,date_to,cause} · reference_reset{day}
 """
@@ -103,7 +103,8 @@ def apply(st: FarmState, crop: Crop, ev: dict) -> None:
         st.known_orders[ev["day"], ev["buyer"], ev["line"]] = ev["kg"]
     elif t == "harvest":
         b = st.batches[ev["batch"]]
-        st.harvested[ev["day"], b.line] = st.harvested.get((ev["day"], b.line), 0.0) + ev["kg"]
+        if not ev.get("assumed"):                 # sandbox: a planned send harvested for the farmer is not a logged harvest
+            st.harvested[ev["day"], b.line] = st.harvested.get((ev["day"], b.line), 0.0) + ev["kg"]
         if ev.get("big5_g") and ev.get("small5_g"):
             t_bed = bed_day(crop, b, d)
             if st.learn and b.id not in st.unhealthy and t_bed >= 0:

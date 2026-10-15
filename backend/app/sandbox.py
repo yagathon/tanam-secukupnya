@@ -1,0 +1,378 @@
+"""The sandbox: a blank farm the founder sets up and then feeds by hand, one day at a time.
+
+Same engine, different reference: the setup doc (crop, lines, buyers with usual demand, beds
+already in the ground) stands in for the demo's seed data, and the log lives in sandbox_* collections.
+Closing a day uses what was entered (orders, harvests) instead of a simulated world.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import replace
+from datetime import date, datetime, timedelta, timezone
+from functools import lru_cache
+from typing import Literal
+
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from app import engine
+from app.allocator import BuyerOrder, HouseholdOrder, allocate_day
+from app.production import bed_day, in_bed_plants, take_oldest
+from app.store import SANDBOX, Store
+
+MAX_DAYS, MAX_BUYERS, MAX_BEDS = 400, 50, 50
+WIB = timezone(timedelta(hours=7))
+SETUP_ID = "current"
+
+
+def today_wib() -> date:
+    return datetime.now(WIB).date()
+
+
+class LineIn(BaseModel):
+    id: str = Field(pattern=r"^[a-z0-9_]{1,20}$")
+    min_g: float = Field(gt=0)
+    max_g: float = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _order(self):
+        if self.min_g >= self.max_g:
+            raise ValueError(f"line {self.id}: min_g must be below max_g")
+        return self
+
+
+class CropIn(BaseModel):
+    name: str = Field(min_length=1, max_length=40)
+    nursery_days: int = Field(ge=0, le=60)
+    growth_curve: list[tuple[float, float]] = Field(min_length=2, max_length=30)
+    spread_ratio: float = Field(gt=0, le=2)
+    germination: float = Field(gt=0, le=1)
+    survival: float = Field(gt=0, le=1)
+    seeds_per_gram: float = Field(gt=0)
+    grams_per_teaspoon: float = Field(gt=0)
+    max_bed_day: int = Field(ge=1, le=200)
+    max_seedlings_per_sowing: int = Field(ge=1, le=100000)
+    sow_weekdays: list[int] = Field(min_length=1, max_length=7)
+    lines: list[LineIn] = Field(min_length=1, max_length=5)
+
+    @field_validator("growth_curve")
+    @classmethod
+    def _increasing(cls, v):
+        if any(b[0] <= a[0] or b[1] <= a[1] for a, b in zip(v, v[1:])):
+            raise ValueError("growth curve: days and grams must both increase")
+        if v[0][1] <= 0:
+            raise ValueError("growth curve: grams must be above 0")
+        return v
+
+    @field_validator("sow_weekdays")
+    @classmethod
+    def _weekdays(cls, v):
+        if any(not 0 <= d <= 6 for d in v):
+            raise ValueError("sow weekdays are 0 (Mon) … 6 (Sun)")
+        return sorted(set(v))
+
+
+class BuyerIn(BaseModel):
+    id: str | None = Field(None, pattern=r"^[a-z0-9_]{1,20}$")
+    name: str = Field(min_length=1, max_length=40)
+    type: Literal["business", "household"]
+    line: str
+    usual_kg_per_week: float = Field(0, ge=0, le=5000)
+    weekdays: list[int] = Field(default_factory=list, max_length=7)
+    min_kg: float = Field(0, ge=0, le=500)
+
+
+class BedIn(BaseModel):
+    line: str
+    sown_on: date
+    seedlings: int = Field(gt=0, le=100000)
+
+
+class SetupIn(BaseModel):
+    start: date = Field(default_factory=today_wib)
+    learn_reference: bool = True
+    crop: CropIn
+    buyers: list[BuyerIn] = Field(default_factory=list, max_length=MAX_BUYERS)
+    beds: list[BedIn] = Field(default_factory=list, max_length=MAX_BEDS)
+
+    @model_validator(mode="after")
+    def _consistent(self):
+        lines = {ln.id for ln in self.crop.lines}
+        names, ids = set(), set()
+        for i, b in enumerate(self.buyers, 1):
+            if b.line not in lines:
+                raise ValueError(f"buyer {b.name}: unknown line {b.line!r}")
+            if b.name in names:
+                raise ValueError(f"buyer name {b.name!r} is used twice")
+            names.add(b.name)
+            if b.id is None:
+                b.id = next(f"b{n}" for n in range(i, i + MAX_BUYERS + 1) if f"b{n}" not in ids
+                            and all(o.id != f"b{n}" for o in self.buyers))
+            if b.id in ids:
+                raise ValueError(f"buyer id {b.id!r} is used twice")
+            ids.add(b.id)
+            if any(not 0 <= d <= 6 for d in b.weekdays):
+                raise ValueError(f"buyer {b.name}: weekdays are 0 (Mon) … 6 (Sun)")
+        for b in self.beds:
+            if b.line not in lines:
+                raise ValueError(f"bed: unknown line {b.line!r}")
+            if b.sown_on > self.start:
+                raise ValueError(f"bed sown {b.sown_on} is after the start {self.start}")
+        return self
+
+
+def default_setup() -> dict:
+    """A blank farm with the pakcoy curve and both lines filled in (the founder edits from there)."""
+    return {"start": today_wib().isoformat(), "learn_reference": True,
+            "crop": {"name": "Pakcoy", "nursery_days": 15,
+                     "growth_curve": [[0, 5], [7, 15], [14, 45], [18, 70], [21, 100], [24, 125], [27, 145], [30, 160]],
+                     "spread_ratio": 0.45, "germination": 0.85, "survival": 0.9, "seeds_per_gram": 400,
+                     "grams_per_teaspoon": 3, "max_bed_day": 30, "max_seedlings_per_sowing": 3000, "sow_weekdays": [0, 3],
+                     "lines": [{"id": "regular", "min_g": 100, "max_g": 140}, {"id": "baby", "min_g": 50, "max_g": 70}]},
+            "buyers": [], "beds": []}
+
+
+def _week(b: dict) -> list[float]:
+    days = b["weekdays"] or list(range(7))
+    per = b["usual_kg_per_week"] / len(days)
+    return [round(per, 4) if d in days else 0.0 for d in range(7)]
+
+
+def priors_from_setup(s: dict) -> dict[str, list[float]]:
+    out: dict[str, list[float]] = {}
+    for b in s["buyers"]:
+        key = engine.b2b_key(b["id"], b["line"]) if b["type"] == "business" else engine.hh_key(b["line"])
+        out[key] = [round(a + w, 4) for a, w in zip(out.get(key, [0.0] * 7), _week(b))]
+    for ln in s["crop"]["lines"]:                 # a line with households but no estimate still gets a series
+        if any(b["type"] == "household" and b["line"] == ln["id"] for b in s["buyers"]):
+            out.setdefault(engine.hh_key(ln["id"]), [0.0] * 7)
+    return out
+
+
+def _key(s: dict) -> str:
+    return hashlib.sha256(json.dumps(s, sort_keys=True).encode()).hexdigest()[:16]
+
+
+@lru_cache(maxsize=64)
+def _reference(raw: str) -> dict:
+    s = json.loads(raw)
+    start = date.fromisoformat(s["start"])
+    crop = {"id": "crop", **{k: v for k, v in s["crop"].items()},
+            "lines": [{**ln, "channels": ["B2B", "B2C"]} for ln in s["crop"]["lines"]]}
+    biz = [b for b in s["buyers"] if b["type"] == "business"]
+    hh = [b for b in s["buyers"] if b["type"] == "household"]
+    beds = sorted(s["beds"], key=lambda b: b["sown_on"])
+    batches = [{"id": f"{b['line']}-{b['sown_on']}-{i}", "label": f"Bed {i}", "line": b["line"],
+                "sown_on": b["sown_on"], "seedlings": b["seedlings"]} for i, b in enumerate(beds, 1)]
+    last = {ln["id"]: max((b["sown_on"] for b in beds if b["line"] == ln["id"]), default=None) for ln in s["crop"]["lines"]}
+    return {
+        "crops": [crop],
+        "buyers": [{"id": b["id"], "alias": b["name"], "weekdays": b["weekdays"],
+                    "lines": {b["line"]: {"kg": round(sum(_week(b)) / max(1, sum(1 for v in _week(b) if v)), 2),
+                                          "min_kg": b["min_kg"]}}} for b in biz],
+        "households": [{"id": b["id"], "alias": b["name"], "line": b["line"],
+                        "kg": round(b["usual_kg_per_week"] / 7, 2), "weekdays": b["weekdays"]} for b in hh],
+        "batches": batches,
+        "history": [],
+        "meta": {"day0": start.isoformat(), "shape_until": start.isoformat(), "sandbox": True, "synthetic": False,
+                 "learn_reference": s["learn_reference"], "priors": priors_from_setup(s),
+                 "household_ids": [b["id"] for b in hh], "rev": _key(s),
+                 "last_sown": {k: v for k, v in last.items() if v}, "next_bed": len(beds) + 1},
+    }
+
+
+def reference(setup: dict) -> dict:
+    return _reference(json.dumps(setup, sort_keys=True))
+
+
+DERIVED = ("crops", "buyers", "households", "batches", "history")
+
+
+class SandboxStore:
+    """The visitor's store, seen through the sandbox: reference from the setup, log in sandbox_*."""
+
+    def __init__(self, base: Store, setup: dict | None):
+        self.base, self.setup = base, setup or SetupIn.model_validate(default_setup()).model_dump(mode="json")
+        self.saved = setup is not None
+        self.uid = f"{base.uid}#sandbox"
+
+    def list(self, collection: str) -> list[dict]:
+        if collection in DERIVED:
+            return reference(self.setup)[collection]
+        return self.base.list(f"sandbox_{collection}")
+
+    def get(self, collection: str, id: str) -> dict | None:
+        return self.base.get(f"sandbox_{collection}", id)
+
+    def put(self, collection: str, doc: dict) -> dict:
+        return self.base.put(f"sandbox_{collection}", doc)
+
+    def add(self, collection: str, doc: dict) -> bool:
+        return self.base.add(f"sandbox_{collection}", doc)
+
+    def meta(self) -> dict:
+        return reference(self.setup)["meta"]
+
+    def reset(self, collections: tuple[str, ...] = SANDBOX) -> None:
+        self.base.reset(collections)
+
+    def for_user(self, uid: str) -> SandboxStore:
+        return SandboxStore(self.base.for_user(uid), self.setup)
+
+
+def open_sandbox(base: Store) -> SandboxStore:
+    doc = base.get("sandbox_setup", SETUP_ID)
+    return SandboxStore(base, doc["setup"] if doc else None)
+
+
+def close_day(st, crop, buyers: list[dict], households: list[dict], plans) -> list[dict]:
+    """Today (t) → tomorrow (t+1) from what was entered: tomorrow's orders are served from the harvest
+    logged for it (or, if none, the engine's planned send, harvested oldest-first); every buyer's
+    actual is their order, or 0 on one of their regular weekdays."""
+    t = st.today
+    d = t + timedelta(days=1)
+    iso = d.isoformat()
+    by_id = {b["id"]: b for b in buyers}
+    hh_ids = {h["id"] for h in households}
+    evs: list[dict] = []
+    for ln in crop.lines:
+        line = ln.id
+        orders = {(who, kg) for (day, who, l2), kg in st.known_orders.items() if day == iso and l2 == line}
+        b2b = [BuyerOrder(w, kg, by_id[w]["lines"][line]["min_kg"]) for w, kg in sorted(orders) if w in by_id]
+        hh = [HouseholdOrder(w, kg, st.last_shorted.get(w)) for w, kg in sorted(orders) if w in hh_ids]
+        logged = st.harvested.get((t.isoformat(), line), 0.0) + st.harvested.get((iso, line), 0.0)
+        got = logged
+        if not logged and plans[line].send > 0:
+            shadows = [replace(b) for b in st.alive(crop, line)]
+            for b, kg in take_oldest(crop, shadows, d, plans[line].send):
+                evs.append({"t": "harvest", "batch": b.id, "day": iso, "kg": round(kg, 2), "assumed": True})
+                got += round(kg, 2)
+        rows_b, rows_h = allocate_day(got, b2b, hh, d)
+        evs += [{"t": "short", "household": r.customer_id, "day": iso} for r in rows_h if r.short_kg > 0]
+        evs.append({"t": "served", "day": iso, "line": line,
+                    "b2b_ordered": round(sum(r.ordered_kg for r in rows_b), 2),
+                    "b2b_served": round(sum(r.served_kg for r in rows_b), 2),
+                    "hh_ordered": round(sum(r.ordered_kg for r in rows_h), 2),
+                    "hh_served": round(sum(r.served_kg for r in rows_h), 2), "waste_kg": 0.0})
+        for b in buyers:
+            if line not in b["lines"]:
+                continue
+            kg = dict(orders).get(b["id"])
+            regular = d.weekday() in (b.get("weekdays") or range(7))
+            if kg is not None or regular:
+                evs.append({"t": "actual", "series": engine.b2b_key(b["id"], line), "day": iso, "kg": kg or 0.0})
+        if any(h["line"] == line for h in households):
+            evs.append({"t": "actual", "series": engine.hh_key(line), "day": iso,
+                        "kg": round(sum(kg for w, kg in orders if w in hh_ids), 2)})
+    evs.append({"t": "clock", "day": iso})
+    return evs
+
+
+def _day(iso: str) -> str:
+    d = date.fromisoformat(iso)
+    return f"{d:%a} {d.day} {d:%b}"
+
+
+def describe(ev: dict, names: dict[str, str], labels: dict[str, str]) -> str:
+    """One fixed-format line per event, for the confirm card and the trail."""
+    who = lambda i: names.get(i, f"⚠ unknown buyer {i}")
+    bed = lambda i: labels.get(i, f"⚠ unknown bed {i}")
+    t = ev["t"]
+    if t == "order":
+        return f"ORDER · {who(ev['buyer'])} · {ev['line']} · {ev['kg']:.1f} kg · {_day(ev['day'])}"
+    if t == "harvest":
+        s = f" · sample {ev['big5_g']:.0f} g / {ev['small5_g']:.0f} g" if ev.get("big5_g") else ""
+        a = " · assumed (planned send)" if ev.get("assumed") else ""
+        return f"HARVEST · {bed(ev['batch'])} · {ev['kg']:.1f} kg{s}{a}"
+    if t == "sow":
+        return f"SOW · {ev['line']} · {ev['seedlings']} seedlings · {_day(ev['day'])}"
+    if t == "postpone":
+        return f"POSTPONE · {ev['line']} · sowing of {_day(ev['day'])} · {ev.get('reason', '')}".rstrip(" ·")
+    if t == "loss":
+        return f"LOSS · {bed(ev['batch'])} · {ev['pct']:.0f}% · {ev.get('cause', '')}".rstrip(" ·")
+    if t == "signal":
+        return (f"SIGNAL · {ev['scope']}{' · ' + ev['line'] if ev.get('line') else ''} · {ev['effect_pct']:+.0f}% · "
+                f"{_day(ev['date_from'])}–{_day(ev['date_to'])}")
+    if t == "reference_reset":
+        return "RESET · reference curve back to the starting curve"
+    return t.upper()
+
+
+def form_events(raw: dict, st, crop, labels: dict[str, str], buyer_ids: set[str]) -> list[dict]:
+    """One form submission → primitive events dated the sandbox's today. Raises ValueError with a
+    sentence for people."""
+    try:
+        return _form_events(raw, st, crop, buyer_ids)
+    except (KeyError, TypeError) as e:
+        raise ValueError(f"missing or malformed field {e}") from e
+
+
+def _form_events(raw: dict, st, crop, buyer_ids: set[str]) -> list[dict]:
+    k, t = raw.get("kind"), st.today
+    lines = {ln.id for ln in crop.lines}
+    def line_of(x):
+        if x not in lines:
+            raise ValueError(f"unknown line {x!r}")
+        return x
+    def kg_of(x, hi=500.0):
+        x = float(x)
+        if not 0 < x <= hi:
+            raise ValueError(f"kg must be above 0 and at most {hi:g}")
+        return round(x, 2)
+    def bed_of(x):
+        if x not in st.batches:
+            raise ValueError(f"unknown bed {x!r}")
+        return x
+    if k == "order":
+        d = date.fromisoformat(raw["day"])
+        if not t < d <= t + timedelta(days=14):
+            raise ValueError("an order is for tomorrow or up to 14 days ahead")
+        if raw.get("buyer") not in buyer_ids:
+            raise ValueError(f"unknown buyer {raw.get('buyer')!r}")
+        return [{"t": "order", "day": d.isoformat(), "buyer": raw["buyer"], "line": line_of(raw["line"]), "kg": kg_of(raw["kg"])}]
+    if k == "harvest":
+        ev = {"t": "harvest", "batch": bed_of(raw.get("batch")), "day": t.isoformat(), "kg": kg_of(raw["kg"], 5000)}
+        if raw.get("big5_g") or raw.get("small5_g"):
+            big, small = float(raw["big5_g"]), float(raw["small5_g"])
+            if not big >= small > 0:
+                raise ValueError("sample: the 5 biggest must weigh at least the 5 smallest, both above 0")
+            ev |= {"big5_g": big, "small5_g": small}
+        return [ev]
+    if k == "sow":
+        n = int(raw.get("seedlings", 0))
+        if not 0 < n <= crop.max_seedlings:
+            raise ValueError(f"seedlings must be 1 … {crop.max_seedlings}")
+        return [{"t": "sow", "line": line_of(raw["line"]), "day": t.isoformat(), "seedlings": n}]
+    if k == "postpone":
+        line = line_of(raw["line"])
+        sown = st.last_sown.get(line) == t or (line, t.isoformat()) in st.postponed
+        day = engine.next_sow_day(t, sown, crop.sow_weekdays)
+        return [{"t": "postpone", "line": line, "day": day.isoformat(), "reason": str(raw.get("reason", ""))[:80]}]
+    if k == "loss":
+        pct = float(raw["pct"])
+        if not 0 < pct <= 100:
+            raise ValueError("loss % must be above 0 and at most 100")
+        cause = str(raw.get("cause", ""))[:80]
+        ids = [bed_of(raw["batch"])] if raw.get("batch") else [
+            b.id for b in st.alive(crop, line_of(raw["line"])) if bed_day(crop, b, t) >= 0 and in_bed_plants(crop, b, t) > 0]
+        if not ids:
+            raise ValueError("no bed in the ground on that line")
+        return [{"t": "loss", "batch": i, "day": t.isoformat(), "pct": pct, "cause": cause} for i in ids]
+    if k == "signal":
+        scopes = {"all", "channel:B2B", "channel:B2C"} | {f"buyer:{b}" for b in buyer_ids}
+        if raw.get("scope") not in scopes:
+            raise ValueError(f"unknown scope {raw.get('scope')!r}")
+        line = line_of(raw["line"]) if raw.get("line") else None
+        pct = float(raw["effect_pct"])
+        if not -100 <= pct <= 300:
+            raise ValueError("effect % must be between -100 and +300")
+        d0 = date.fromisoformat(raw["date_from"])
+        d1 = date.fromisoformat(raw["date_to"]) if raw.get("date_to") else t + timedelta(days=182)
+        if not t <= d0 <= d1 <= t + timedelta(days=182):
+            raise ValueError("signal dates run from today, up to 182 days ahead, and from ≤ to")
+        return [{"t": "signal", "scope": raw["scope"], "line": line, "effect_pct": round(pct, 1),
+                 "date_from": d0.isoformat(), "date_to": d1.isoformat(), "cause": str(raw.get("cause", ""))[:120]}]
+    if k == "reference_reset":
+        return [{"t": "reference_reset", "day": t.isoformat()}]
+    raise ValueError(f"unknown form {k!r}")
