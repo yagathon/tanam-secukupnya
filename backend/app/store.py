@@ -25,7 +25,9 @@ from typing import Protocol
 
 SEED_DIR = Path(__file__).resolve().parents[2] / "data" / "seed"
 COLLECTIONS = ("crops", "buyers", "households", "batches", "history")
-WORKSPACE = ("notes", "events")
+DEMO_WORKSPACE = ("notes", "events")
+SANDBOX = ("sandbox_setup", "sandbox_events", "sandbox_notes")
+WORKSPACE = DEMO_WORKSPACE + SANDBOX
 LOCAL_UID = "local"
 _add_lock = threading.Lock()
 
@@ -36,7 +38,7 @@ class Store(Protocol):
     def put(self, collection: str, doc: dict) -> dict: ...
     def add(self, collection: str, doc: dict) -> bool: ...
     def meta(self) -> dict: ...
-    def reset(self) -> None: ...
+    def reset(self, collections: tuple[str, ...] = DEMO_WORKSPACE) -> None: ...
     def for_user(self, uid: str) -> "Store": ...
 
 
@@ -66,8 +68,10 @@ class JsonStore:
             return self._spaces.setdefault(self.uid, {}).setdefault(collection, [])
         return self._ref.get(collection, [])
 
-    def reset(self) -> None:
-        self._spaces.pop(self.uid, None)
+    def reset(self, collections: tuple[str, ...] = DEMO_WORKSPACE) -> None:
+        space = self._spaces.get(self.uid, {})
+        for c in collections:
+            space.pop(c, None)
 
     def list(self, collection: str) -> list[dict]:
         return copy.deepcopy(self._rows(collection))
@@ -168,8 +172,8 @@ class FirestoreStore:
     def meta(self) -> dict:
         return dict(self._meta)
 
-    def reset(self) -> None:
-        for c in WORKSPACE:
+    def reset(self, collections: tuple[str, ...] = DEMO_WORKSPACE) -> None:
+        for c in collections:
             refs = [d.reference for d in self._col(c).stream()]
             for i in range(0, len(refs), 400):
                 batch = self._db.batch()
