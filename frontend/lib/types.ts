@@ -36,6 +36,7 @@ export interface NoteDoc {
   id: string; text: string; sender: string; received_on: string; proposal: Proposal; kind: NoteKind;
   summary_en: string; status: "proposed" | "no_action" | "accepted" | "rejected"; dropped: string[];
   model: string; cached: boolean; events?: unknown[]; preview?: string[];
+  preview_events?: Record<string, unknown>[];
 }
 
 export interface SowSummary {
@@ -45,7 +46,7 @@ export interface TodayLine {
   line: LineId; need_kg: number; ceiling_kg: number; send_kg: number; short_kg: number; rotated: string[];
   sow: SowSummary;
 }
-export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[] }
+export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[]; seq: number }
 
 export interface BatchRow {
   id: string; label: string; sown_on: string; bed_day: number; stage: "nursery" | "bed"; seedlings: number;

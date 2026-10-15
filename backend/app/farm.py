@@ -268,7 +268,8 @@ def today(ws: Store) -> dict:
                             "seeds_g": s.seeds_g, "teaspoons": s.teaspoons,
                             "shortfall_ahead_kg": round(sum(r["kg"] for r in s.shortfall_ahead), 2)}})
     pending = [n for n in ws.list("notes") if n.get("status") == "proposed"]
-    return {"today": st.today.isoformat(), "weekday": st.today.strftime("%A"), "lines": out, "pending": pending}
+    return {"today": st.today.isoformat(), "weekday": st.today.strftime("%A"), "lines": out, "pending": pending,
+            "seq": v.log_key[1] + 1}
 
 
 def note_inputs(ws: Store) -> dict:

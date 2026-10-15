@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
 import { daySentence, friendly, lineName } from "@/lib/format";
 import type { NoteDoc } from "@/lib/types";
 
-export default function TodayTab({ data, reload, api }: TabProps) {
+/** `input` (the sandbox) replaces the note box with the visitor's own input panel. */
+export default function TodayTab({ data, reload, api, input }: TabProps & { input?: ReactNode }) {
   const { state, today, beds } = data;
   const [text, setText] = useState("");
   const [sender, setSender] = useState("farmer");
@@ -83,13 +84,13 @@ export default function TodayTab({ data, reload, api }: TabProps) {
           <span className="small muted">Gemini explains today&apos;s numbers in plain words. The engine decides; Gemini only explains.</span>
         </div>
         {why && <p className={`small ${why.failed ? "bad" : "why"}`}>{why.text}</p>}
-        <p className="small muted">
+        {!input && <p className="small muted">
           Press <strong>Next day →</strong> to let the farm live one day: orders arrive, the farmer harvests and samples, and
           sowing happens on Mondays and Thursdays.
-        </p>
+        </p>}
       </div>
 
-      <div className="card">
+      {input ?? <div className="card">
         <h2>Note from the field</h2>
         <p className="muted small">
           Paste a WhatsApp-style message. Gemini reads it into one farm event; nothing changes until you accept it.
@@ -123,7 +124,7 @@ export default function TodayTab({ data, reload, api }: TabProps) {
         <h3>Waiting for you ({today.pending.length})</h3>
         {today.pending.length === 0 && <p className="empty">No notes waiting.</p>}
         {today.pending.map((n) => <NoteCard key={n.id} note={n} state={state} onDone={reload} api={api} />)}
-      </div>
+      </div>}
     </div>
   );
 }

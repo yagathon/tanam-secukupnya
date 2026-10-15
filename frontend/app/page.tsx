@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import TodayTab from "@/components/TodayTab";
@@ -101,6 +102,7 @@ export default function Home() {
           <h1>Tanam Secukupnya</h1>
           <p className="sub">Plant just enough: a daily planner that keeps a small farm out of the boom-and-bust cycle</p>
         </div>
+        <Link className="small" href="/sandbox">Sandbox →</Link>
         {data && (
           <div className="clock">
             <span>

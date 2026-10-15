@@ -29,7 +29,8 @@ def test_state_shape():
 
 def test_today_shape():
     t = client.get("/api/today").json()
-    assert keys(t) == {"today", "weekday", "lines", "pending"}
+    assert keys(t) == {"today", "weekday", "lines", "pending", "seq"}
+    assert t["seq"] == 1                                    # the seq the next logged event takes
     ln = t["lines"][0]
     assert keys(ln) == {"line", "need_kg", "ceiling_kg", "send_kg", "short_kg", "rotated", "sow"}
     assert keys(ln["sow"]) == {"day", "weekday", "seedlings", "seeds_g", "teaspoons", "shortfall_ahead_kg"}

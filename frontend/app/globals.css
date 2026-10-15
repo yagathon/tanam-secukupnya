@@ -148,3 +148,19 @@ button.primary:hover:not(:disabled) { filter: brightness(1.08); }
   .clock button.primary { flex: 1; }
 }
 .clock button { white-space: nowrap; }
+
+/* sandbox */
+.banner { border-left: 4px solid var(--warn); background: var(--warn-bg); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px 12px; align-items: end; margin: 8px 0; }
+.form-grid label { display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--muted); }
+.form-grid input, .form-grid select { width: 100%; }
+.sheet textarea { width: 100%; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+.chips { display: flex; gap: 3px; flex-wrap: wrap; }
+.chips button { padding: 2px 6px; font-size: 12px; }
+.chips button.on { border-color: var(--leaf); background: var(--leaf-soft); }
+table.edit input, table.edit select { width: 100%; min-width: 60px; }
+.trail td { white-space: nowrap; font-size: 13px; }
+.trail td.inputs { white-space: pre; min-width: 240px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.trail td.changed { background: var(--warn-bg); font-weight: 600; }
+.trail tr.live td:first-child { color: var(--leaf); font-weight: 600; }
+.toast { border-left: 4px solid var(--leaf); }
