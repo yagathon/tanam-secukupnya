@@ -1,5 +1,7 @@
 import { idToken } from "./firebase";
-import type { Beds, Demand, NoteDoc, Season, Sow, State, Today, Tomorrow } from "./types";
+import type {
+  Beds, Demand, NoteDoc, Season, Setup, SetupDoc, Sow, State, Today, Tomorrow, TrailRow,
+} from "./types";
 
 /** A non-2xx answer. `detail` is FastAPI's error text (plain English, written for people). */
 export class ApiError extends Error {
@@ -8,11 +10,11 @@ export class ApiError extends Error {
   }
 }
 
-async function call<T>(path: string, body?: unknown): Promise<T> {
+async function call<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const headers: Record<string, string> = { authorization: `Bearer ${await idToken()}` };
   if (body !== undefined) headers["content-type"] = "application/json";
   const res = await fetch(`/api${path}`, {
-    method: body === undefined ? "GET" : "POST",
+    method: method ?? (body === undefined ? "GET" : "POST"),
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -30,17 +32,29 @@ async function call<T>(path: string, body?: unknown): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export const api = {
-  state: () => call<State>("/state"),
-  today: () => call<Today>("/today"),
-  beds: () => call<Beds>("/beds"),
-  tomorrow: () => call<Tomorrow>("/tomorrow"),
-  sow: () => call<Sow>("/sow"),
-  demand: () => call<Demand>("/demand"),
-  season: () => call<Season>("/season"),
-  readNote: (text: string, sender: string) => call<NoteDoc>("/notes", { text, sender }),
-  why: () => call<{ text: string; model: string; cached: boolean }>("/today/why", {}),
-  decideNote: (id: string, accept: boolean) => call<NoteDoc>(`/notes/${id}/${accept ? "accept" : "reject"}`, {}),
-  nextDay: (from_day: string, days = 1) => call<{ today: string; appended: number }>("/day/next", { from_day, days }),
-  reset: () => call<{ ok: boolean }>("/demo/reset", {}),
-};
+/** The demo farm (base "") or the visitor's own sandbox (base "/sandbox"): same views, other reference. */
+export function makeApi(base: "" | "/sandbox") {
+  const p = (s: string) => `${base}${s}`;
+  return {
+    state: () => call<State>(p("/state")),
+    today: () => call<Today>(p("/today")),
+    beds: () => call<Beds>(p("/beds")),
+    tomorrow: () => call<Tomorrow>(p("/tomorrow")),
+    sow: () => call<Sow>(p("/sow")),
+    demand: () => call<Demand>(p("/demand")),
+    season: () => call<Season>("/season"),
+    readNote: (text: string, sender: string) => call<NoteDoc>(p("/notes"), { text, sender }),
+    why: () => call<{ text: string; model: string; cached: boolean }>(p("/today/why"), {}),
+    decideNote: (id: string, accept: boolean) => call<NoteDoc>(p(`/notes/${id}/${accept ? "accept" : "reject"}`), {}),
+    nextDay: (from_day: string, days = 1) => call<{ today: string; appended: number }>(p("/day/next"), { from_day, days }),
+    reset: () => call<{ ok: boolean }>(base ? "/sandbox/clear" : "/demo/reset", {}),
+    setup: () => call<SetupDoc>("/sandbox/setup"),
+    saveSetup: (s: Setup) => call<SetupDoc>("/sandbox/setup", s, "PUT"),
+    event: (form: Record<string, unknown>, seq: number) =>
+      call<{ events: unknown[]; lines: string[] }>("/sandbox/events", { form, seq }),
+    trail: () => call<{ rows: TrailRow[] }>("/sandbox/trail"),
+  };
+}
+
+export type Api = ReturnType<typeof makeApi>;
+export const api = makeApi("");

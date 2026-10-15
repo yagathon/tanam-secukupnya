@@ -4,11 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
-import { api } from "@/lib/api";
 import { daySentence, friendly, lineName } from "@/lib/format";
 import type { NoteDoc } from "@/lib/types";
 
-export default function TodayTab({ data, reload }: TabProps) {
+export default function TodayTab({ data, reload, api }: TabProps) {
   const { state, today, beds } = data;
   const [text, setText] = useState("");
   const [sender, setSender] = useState("farmer");
@@ -123,7 +122,7 @@ export default function TodayTab({ data, reload }: TabProps) {
 
         <h3>Waiting for you ({today.pending.length})</h3>
         {today.pending.length === 0 && <p className="empty">No notes waiting.</p>}
-        {today.pending.map((n) => <NoteCard key={n.id} note={n} state={state} onDone={reload} />)}
+        {today.pending.map((n) => <NoteCard key={n.id} note={n} state={state} onDone={reload} api={api} />)}
       </div>
     </div>
   );
