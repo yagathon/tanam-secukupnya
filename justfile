@@ -23,6 +23,10 @@ eval set="dev" model="":
 seed-firestore:
     uv run --project backend python scripts/seed_firestore.py
 
+# One-off for the daily-engine launch: also delete the weekly app's collections and ALL visitor workspaces
+seed-firestore-fresh:
+    uv run --project backend python scripts/seed_firestore.py --wipe-workspaces
+
 project := "tanam-secukupnya"
 region := "asia-southeast2"
 

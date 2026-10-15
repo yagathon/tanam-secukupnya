@@ -1,7 +1,8 @@
 """Load the synthetic dataset (data/seed) into Firestore: one doc per row, `_i` keeps file order.
 
-Reference collections are replaced wholesale; visitors' workspaces (users/…) are left alone.
-Usage: uv run --project backend python scripts/seed_firestore.py   (needs ADC on tanam-secukupnya)
+Reference collections are replaced wholesale; visitors' workspaces (users/…) are left alone, unless
+--wipe-workspaces (one-off for the daily-engine launch) also deletes the weekly app's leftovers.
+Usage: uv run --project backend python scripts/seed_firestore.py [--wipe-workspaces]   (needs ADC on tanam-secukupnya)
 """
 
 from __future__ import annotations
@@ -17,9 +18,37 @@ from app.store import COLLECTIONS, FirestoreStore, JsonStore, load_seed  # noqa:
 
 BATCH = 400  # Firestore caps a batch at 500 writes
 
+# The weekly app's reference collections and workspace subcollections. Plan 2 removes them once.
+OBSOLETE = ("farmers", "partners", "orders")
+OLD_WORKSPACE = ("signals", "runs", "notes", "events")
 
-def main(project: str = "tanam-secukupnya") -> None:
+
+def delete_all(db, refs) -> int:
+    refs = list(refs)
+    for k in range(0, len(refs), BATCH):
+        b = db.batch()
+        for r in refs[k:k + BATCH]:
+            b.delete(r)
+        b.commit()
+    return len(refs)
+
+
+def wipe_old(db) -> None:
+    """Drop obsolete reference collections and every visitor workspace (old notes have the weekly
+    proposal shape the daily UI cannot render; visitors simply start at day 0 again)."""
+    for c in OBSOLETE:
+        print(f"{c}: deleted {delete_all(db, (d.reference for d in db.collection(c).stream()))} (obsolete)")
+    n = 0
+    for user in db.collection("users").list_documents():  # includes uids that only have subcollections
+        for c in OLD_WORKSPACE:
+            n += delete_all(db, (d.reference for d in user.collection(c).stream()))
+    print(f"users/*: deleted {n} workspace docs")
+
+
+def main(project: str = "tanam-secukupnya", wipe: bool = False) -> None:
     db = firestore.Client(project=project)
+    if wipe:
+        wipe_old(db)
     ref, meta = load_seed()
     for c in COLLECTIONS:
         old = [d.reference for d in db.collection(c).stream()]
@@ -46,4 +75,5 @@ def main(project: str = "tanam-secukupnya") -> None:
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:])
+    args = [a for a in sys.argv[1:] if a != "--wipe-workspaces"]
+    main(*args, wipe="--wipe-workspaces" in sys.argv)
