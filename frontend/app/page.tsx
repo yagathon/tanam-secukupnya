@@ -6,6 +6,7 @@ import TodayTab from "@/components/TodayTab";
 import BedsTab from "@/components/BedsTab";
 import TomorrowTab from "@/components/TomorrowTab";
 import SowTab from "@/components/SowTab";
+import DemandTab from "@/components/DemandTab";
 import SeasonTab from "@/components/SeasonTab";
 import { api } from "@/lib/api";
 import { friendly, shortDate } from "@/lib/format";
@@ -29,6 +30,7 @@ const TABS: Tab[] = [
   { id: "beds", label: "Beds", hint: "What is growing, and how much is ready each day", view: (p) => <BedsTab {...p} /> },
   { id: "tomorrow", label: "Tomorrow", hint: "The most we can safely send, and who gets it", view: (p) => <TomorrowTab {...p} /> },
   { id: "sow", label: "Sow", hint: "How many seedlings on the next sowing day, and why", view: (p) => <SowTab {...p} /> },
+  { id: "demand", label: "Demand", hint: "Forecast per day with an honest band, and what moved it", view: (p) => <DemandTab {...p} /> },
   { id: "season", label: "Season", hint: "Six months, three strategies: does it actually waste less?", view: () => <SeasonTab /> },
 ];
 
