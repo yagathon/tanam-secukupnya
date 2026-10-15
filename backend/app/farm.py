@@ -187,7 +187,7 @@ def sow(ws: Store) -> dict:
     for lp in v.plans.values():
         p = asdict(lp.sow)
         p = {k: (x.isoformat() if isinstance(x, date) else x) for k, x in p.items()}
-        missed = engine.missed_slots(st.last_sown.get(lp.line), lp.sow.day)
+        missed = engine.missed_slots(st.last_sown.get(lp.line), lp.sow.day, c.sow_weekdays)
         lines.append({**p, "missed": [d.isoformat() for d in missed],
                       "postponed": [{"day": d, "reason": r} for (ln, d), r in st.postponed.items() if ln == lp.line],
                       "basis": {"need": "B2B high + households high", "survival": c.survival,
@@ -247,7 +247,7 @@ def note_inputs(ws: Store) -> dict:
     return {"today": st.today, "ctx": ctx, "beds": {b.label: b.id for b in in_ground}, "lines": lines,
             "max_seedlings": c.max_seedlings,
             "next_sow": {ln: engine.next_sow_day(st.today, st.last_sown.get(ln) == st.today
-                                                 or (ln, st.today.isoformat()) in st.postponed) for ln in lines},
+                                                 or (ln, st.today.isoformat()) in st.postponed, c.sow_weekdays) for ln in lines},
             "seq": v.log_key[1] + 1}
 
 

@@ -128,7 +128,7 @@ def day_events(st: FarmState, crop: Crop, w: W.World, strategy: str, fixed: dict
     nxt = (d + timedelta(days=1)).isoformat()
     evs += [{"t": "order", "day": iso, "buyer": b, "line": line, "kg": kg}
             for (iso, b, line), kg in sorted(w.b2b.items()) if iso == nxt]
-    if t.weekday() in engine.SOW_WEEKDAYS:
+    if t.weekday() in crop.sow_weekdays:
         for ln in crop.lines:
             if st.last_sown.get(ln.id) == t or (ln.id, t.isoformat()) in st.postponed:
                 continue
