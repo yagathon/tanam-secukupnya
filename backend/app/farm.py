@@ -8,13 +8,14 @@ visitor and keyed by the log, so the five views of one screen share one replay.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from collections import OrderedDict
 from dataclasses import asdict, dataclass
 from datetime import date, timedelta
 from functools import lru_cache
 
-from app import engine, notes, sim
+from app import engine, notes, sandbox, sim
 from app import world as W
 from app.allocator import BuyerOrder, HouseholdOrder, allocate_day
 from app.growth import Crop, crop_from_dict, first_ready_day
@@ -55,7 +56,8 @@ class View:
     plans: dict[str, sim.LinePlan]
     log_key: tuple[int, int]
     crop: Crop
-    rev: str | None = None           # sandbox setup revision: a setup edit invalidates the view                       # with the learned reference curve
+    rev: str | None = None           # sandbox setup revision: a setup edit invalidates the view
+    digest: str = ""                 # log content: a clear refilled to the same seqs invalidates it
 
 
 _views: OrderedDict[str, View] = OrderedDict()
@@ -65,18 +67,27 @@ def log_key(docs: list[dict]) -> tuple[int, int]:
     return len(docs), max((d["seq"] for d in docs), default=0)
 
 
+def doc_print(doc: dict) -> str:
+    """Content fingerprint of one log entry: a cleared log refilled to the same seqs differs here."""
+    return hashlib.blake2b(json.dumps(doc, sort_keys=True, default=str).encode(), digest_size=8).hexdigest()
+
+
+def log_digest(docs: list[dict]) -> str:
+    return hashlib.blake2b("".join(doc_print(d) for d in docs).encode(), digest_size=8).hexdigest()
+
+
 def load(ws: Store) -> View:
     """The visitor's state and today's plans (cached until their log changes). Treat as read-only."""
     docs = ws.list("events")
     key = log_key(docs)
     hit = _views.get(ws.uid)
-    rev = ws.meta().get("rev")
-    if hit is not None and hit.log_key == key and hit.rev == rev:
+    rev, digest = ws.meta().get("rev"), log_digest(sorted(docs, key=lambda d: d["seq"]))
+    if hit is not None and hit.log_key == key and hit.rev == rev and hit.digest == digest:
         _views.move_to_end(ws.uid)
         return hit
     c = crop(ws)
     st = replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), c, docs)
-    view = View(st, sim.plan(st, c, ws.list("buyers")), key, current_crop(st, c), rev)
+    view = View(st, sim.plan(st, c, ws.list("buyers")), key, current_crop(st, c), rev, digest)
     _views[ws.uid] = view
     while len(_views) > _CACHE_SIZE:
         _views.popitem(last=False)
@@ -97,14 +108,23 @@ def next_day(ws: Store, from_day: date, days: int) -> dict:
     v = load(ws)
     if v.state.today != from_day:
         return {"today": v.state.today.isoformat(), "appended": 0}
-    c, w = crop(ws), world(ws)
+    c = crop(ws)
+    if ws.meta().get("sandbox"):
+        if sum(1 for d in ws.list("events") if d["kind"] == "day") + days > sandbox.MAX_DAYS:
+            raise ValueError(f"the sandbox holds at most {sandbox.MAX_DAYS} days; clear it to start again")
+        buyers, hh = ws.list("buyers"), ws.list("households")
+        def step(st, plans):
+            return sandbox.close_day(st, current_crop(st, c), buyers, hh, plans)
+    else:
+        w, fixed = world(ws), ws.meta()["fixed_seedlings"]
+        def step(st, plans):
+            return sim.day_events(st, c, w, "tanam", fixed, plans)
     st, plans = copy.deepcopy(v.state), v.plans
-    fixed = ws.meta()["fixed_seedlings"]
     seq = v.log_key[1] + 1
     for i in range(days):
         if i:
-            plans = sim.plan(st, c, ws.list("buyers"))
-        evs = sim.day_events(st, c, w, "tanam", fixed, plans)
+            plans = sim.plan(st, current_crop(st, c), ws.list("buyers"))
+        evs = step(st, plans)
         if not append(ws, seq + i, {"kind": "day", "events": evs}):
             return {"today": load(ws).state.today.isoformat(), "appended": i}
         for ev in evs:
