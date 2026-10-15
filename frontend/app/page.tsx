@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import TodayTab from "@/components/TodayTab";
 import BedsTab from "@/components/BedsTab";
+import TomorrowTab from "@/components/TomorrowTab";
 import { api } from "@/lib/api";
 import { friendly, shortDate } from "@/lib/format";
 import type { Data } from "@/lib/types";
@@ -24,6 +25,7 @@ interface Tab {
 const TABS: Tab[] = [
   { id: "today", label: "Today", hint: "The day in one line, and notes from the field", view: (p) => <TodayTab {...p} /> },
   { id: "beds", label: "Beds", hint: "What is growing, and how much is ready each day", view: (p) => <BedsTab {...p} /> },
+  { id: "tomorrow", label: "Tomorrow", hint: "The most we can safely send, and who gets it", view: (p) => <TomorrowTab {...p} /> },
 ];
 
 export default function Home() {
