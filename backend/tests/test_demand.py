@@ -81,3 +81,36 @@ def test_band_widens_with_horizon():
     lo1, e1, hi1 = demand.band(m, "b2b:a:regular", mon, 1)
     lo9, e9, hi9 = demand.band(m, "b2b:a:regular", mon, 9)
     assert lo1 < e1 < hi1 and e1 == e9 and hi9 - lo9 > hi1 - lo1
+
+
+MON = date(2026, 10, 12)
+
+
+def test_prior_only_key_gets_level_shape_and_wide_sigma():
+    m = demand.fit({}, MON, MON, {"b2b:b1:regular": [5, 0, 0, 5, 0, 0, 0]})
+    f = m.fits["b2b:b1:regular"]
+    assert f.level == 5 and f.shape == [1, 0, 0, 1, 0, 0, 0]
+    assert f.sigma == 2.5
+    assert demand.expected(m, "b2b:b1:regular", MON + timedelta(days=3)) == 5
+
+
+def test_prior_zero_jumps_to_first_actual():
+    hist = {"b2b:b1:regular": {MON: 8.0}}
+    m = demand.fit(hist, MON, MON + timedelta(days=1), {"b2b:b1:regular": [0] * 7})
+    assert m.fits["b2b:b1:regular"].level == 8.0
+
+
+def test_prior_learns_from_zero_days():
+    hist = {"b2b:b1:regular": {MON + timedelta(days=7 * i): 0.0 for i in range(3)}}
+    m = demand.fit(hist, MON, MON + timedelta(days=15), {"b2b:b1:regular": [10, 0, 0, 0, 0, 0, 0]})
+    assert m.fits["b2b:b1:regular"].level < 10
+
+
+def test_no_priors_is_unchanged(pakcoy):
+    from app.state import initial
+    from app.store import JsonStore
+    ws = JsonStore()
+    st = initial({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta())
+    a = demand.fit(st.history, MON, st.today)
+    b = demand.fit(st.history, MON, st.today, {})
+    assert {k: (f.level, f.sigma) for k, f in a.fits.items()} == {k: (f.level, f.sigma) for k, f in b.fits.items()}

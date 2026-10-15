@@ -59,8 +59,10 @@ def series_for(line: str, buyers: list[dict]) -> list[str]:
 
 
 def line_needs(model: demand.DemandModel, buyers: list[dict], line: str, today: date, end: date,
-               known_orders: dict[tuple[str, str, str], float], signals: list[dict]) -> LineNeeds:
-    """known_orders: (iso day, buyer, line) → kg."""
+               known_orders: dict[tuple[str, str, str], float], signals: list[dict],
+               hh_ids: frozenset[str] = frozenset()) -> LineNeeds:
+    """known_orders: (iso day, buyer or household, line) → kg. With `hh_ids`, households' known orders
+    for tomorrow replace the households forecast."""
     tom = today + timedelta(days=1)
     keys = [k for k in series_for(line, buyers) if k in model.fits]
     parts, known = {}, {}
@@ -70,6 +72,11 @@ def line_needs(model: demand.DemandModel, buyers: list[dict], line: str, today: 
             buyer = k.split(":")[1]
             if (tom.isoformat(), buyer, line) in known_orders:
                 known[buyer] = parts[k] = known_orders[tom.isoformat(), buyer, line]
+                continue
+        elif hh_ids:
+            hh = [kg for (iso, who, l2), kg in known_orders.items() if iso == tom.isoformat() and l2 == line and who in hh_ids]
+            if hh:
+                parts[k] = sum(hh)
                 continue
         parts[k] = demand.expected(model, k, tom, f)
     protected, target, rows = {}, {}, []

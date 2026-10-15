@@ -136,3 +136,12 @@ def test_crop_reads_sow_weekdays(pakcoy):
     raw = json.loads((SEED_DIR / "crops.json").read_text())[0]
     assert pakcoy.sow_weekdays == (0, 3)
     assert crop_from_dict({**raw, "sow_weekdays": [2]}).sow_weekdays == (2,)
+
+
+def test_known_household_orders_replace_expected():
+    from app import demand
+    tom = date(2026, 10, 13)
+    m = demand.fit({}, date(2026, 10, 12), date(2026, 10, 12), {"hh:regular": [3] * 7})
+    known = {(tom.isoformat(), "h1", "regular"): 1.5}
+    n = engine.line_needs(m, [], "regular", date(2026, 10, 12), tom, known, [], frozenset({"h1"}))
+    assert n.tomorrow_parts["hh:regular"] == 1.5

@@ -42,7 +42,7 @@ class LinePlan:
 
 
 def demand_model(st: FarmState) -> demand.DemandModel:
-    return demand.fit(st.history, st.shape_until or W.DAY0, st.today + timedelta(days=1))
+    return demand.fit(st.history, st.shape_until or W.DAY0, st.today + timedelta(days=1), st.priors)
 
 
 def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandModel | None = None) -> dict[str, LinePlan]:
@@ -55,7 +55,7 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
         sown_today = st.last_sown.get(ln.id) == st.today or (ln.id, st.today.isoformat()) in st.postponed
         end = engine.horizon_end(crop, ln.id, st.today, sown_today)
         needs = engine.line_needs(model, buyers, ln.id, st.today, st.today + timedelta(days=PLAN_DAYS),
-                                  st.known_orders, st.signals)
+                                  st.known_orders, st.signals, st.household_ids)
         ceil = engine.ceiling(crop, ln.id, batches, needs.protected, st.today, end)
         avail = round(sum(available_kg(crop, b, tom) for b in batches), 2)
         send = min(needs.tomorrow, ceil)

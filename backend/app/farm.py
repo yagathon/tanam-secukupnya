@@ -131,6 +131,10 @@ def _tomorrow_orders(ws: Store, st: FarmState, lp: sim.LinePlan) -> tuple[list[B
     mins = {b["id"]: b["lines"].get(lp.line, {}).get("min_kg", 0.0) for b in ws.list("buyers")}
     buyers = [BuyerOrder(k.split(":")[1], round(kg, 2), mins.get(k.split(":")[1], 0.0))
               for k, kg in lp.needs.tomorrow_parts.items() if k.startswith("b2b:") and kg > 0]
+    if st.household_ids:                     # sandbox: households' orders are entered, not simulated
+        hh = [HouseholdOrder(who, kg, st.last_shorted.get(who)) for (iso, who, l2), kg in sorted(st.known_orders.items())
+              if iso == tom.isoformat() and l2 == lp.line and who in st.household_ids and kg > 0]
+        return buyers, hh
     subs = [h for h in ws.list("households") if h["line"] == lp.line and tom.weekday() in h["weekdays"]]
     hh_kg = lp.needs.tomorrow_parts.get(engine.hh_key(lp.line), 0.0)
     each = round(hh_kg / len(subs), 2) if subs else 0.0
