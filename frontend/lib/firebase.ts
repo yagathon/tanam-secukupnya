@@ -30,7 +30,10 @@ function user(): Promise<User> {
   return ready;
 }
 
-/** A fresh ID token (the SDK refreshes it before it expires). */
+/** A fresh ID token (the SDK refreshes it before it expires). Local dev with NEXT_PUBLIC_AUTH=off
+ *  skips Firebase entirely (the local API runs with AUTH=off and ignores the token), which also
+ *  keeps headless screenshots from stalling on anonymous sign-in. */
 export async function idToken(): Promise<string> {
+  if (process.env.NEXT_PUBLIC_AUTH === "off") return "local";
   return (await user()).getIdToken();
 }

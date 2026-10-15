@@ -1,101 +1,127 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
-import CommitmentsTab from "@/components/CommitmentsTab";
-import ForecastTab from "@/components/ForecastTab";
-import InputsTab from "@/components/InputsTab";
-import PlanTab from "@/components/PlanTab";
-import ScenarioTab from "@/components/ScenarioTab";
 import { api } from "@/lib/api";
-import { shortDate } from "@/lib/series";
+import { friendly, shortDate } from "@/lib/format";
 import type { Data } from "@/lib/types";
 
-const TABS = [
-  { id: "inputs", label: "Inputs", hint: "History and notes from the field" },
-  { id: "forecast", label: "Forecast", hint: "Expected demand with an honest band" },
-  { id: "commitments", label: "Commitments", hint: "Who is promised what" },
-  { id: "plan", label: "Sowing plan", hint: "What to sow, where, by when" },
-  { id: "scenario", label: "Harvest scenario", hint: "When the harvest falls short" },
-] as const;
-type TabId = (typeof TABS)[number]["id"];
+export interface TabProps {
+  data: Data;
+  reload: () => Promise<void>;
+}
+
+interface Tab {
+  id: string;
+  label: string;
+  hint: string;
+  view: (p: TabProps) => ReactNode;
+}
+
+// Each later task adds its tab here, in spec order: Today, Beds, Tomorrow, Sow, Demand, Season.
+const TABS: Tab[] = [];
 
 export default function Home() {
-  const [tab, setTab] = useState<TabId>("inputs");
+  const [tab, setTab] = useState<string>("today");
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const load = useCallback(async () => {
     setError(null);
     try {
-      const [state, fc, plan] = await Promise.all([api.state(), api.forecast(), api.plan()]);
-      setData({ state, series: fc.series, plans: plan.plans });
+      const [state, today, beds, tomorrow, sow, demand] = await Promise.all([
+        api.state(), api.today(), api.beds(), api.tomorrow(), api.sow(), api.demand(),
+      ]);
+      setData({ state, today, beds, tomorrow, sow, demand });
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+      setError(friendly(e));
     }
   }, []);
 
   useEffect(() => {
-    const fromHash = window.location.hash.slice(1) as TabId;
+    const fromHash = window.location.hash.slice(1);
     if (TABS.some((t) => t.id === fromHash)) setTab(fromHash);
     load();
   }, [load]);
 
-  const go = (id: TabId) => {
+  const go = (id: string) => {
     setTab(id);
     history.replaceState(null, "", `#${id}`);
   };
 
-  const i = TABS.findIndex((t) => t.id === tab);
+  // A stale from_day (double click, second browser tab) appends nothing: reloading shows the real day.
+  const advance = async (days: number) => {
+    if (!data) return;
+    setBusy(true);
+    try {
+      await api.nextDay(data.today.today, days);
+      await load();
+    } catch (e) {
+      setError(friendly(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const reset = async () => {
+    if (!window.confirm("Reset your demo farm to day 0? Your notes and simulated days are cleared.")) return;
+    setBusy(true);
+    try {
+      await api.reset();
+      await load();
+    } catch (e) {
+      setError(friendly(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const i = Math.max(0, TABS.findIndex((t) => t.id === tab));
+  const current = TABS[i];
 
   return (
     <main className="shell">
       <header className="top">
         <div>
           <h1>Tanam Secukupnya</h1>
-          <p className="sub">Plant just enough — a sowing planner that breaks the oversupply cycle</p>
+          <p className="sub">Plant just enough: a daily planner that keeps a small farm out of the boom-and-bust cycle</p>
         </div>
         {data && (
-          <div className="today">
-            Today <strong>{shortDate(data.state.today)}</strong>
+          <div className="clock">
+            <span>
+              {data.today.weekday} <strong>{shortDate(data.today.today)}</strong>
+            </span>
             {data.state.synthetic && <span className="pill muted">synthetic data</span>}
+            <button className="primary" disabled={busy} onClick={() => advance(1)}>Next day →</button>
+            <button disabled={busy} onClick={() => advance(7)}>+7 days</button>
+            <button className="ghost" disabled={busy} onClick={reset}>Reset</button>
           </div>
         )}
       </header>
 
-      <nav className="steps" aria-label="Steps">
+      <nav className="steps" aria-label="Tabs">
         {TABS.map((t, n) => (
-          <button key={t.id} className={`step ${t.id === tab ? "on" : ""}`} onClick={() => go(t.id)}>
+          <button key={t.id} className={`step ${t.id === current?.id ? "on" : ""}`} onClick={() => go(t.id)}>
             <span className="num">{n + 1}</span>
             <span className="label">{t.label}</span>
           </button>
         ))}
       </nav>
-      <p className="hint">{TABS[i].hint}</p>
+      {current && <p className="hint">{current.hint}</p>}
 
       {error && (
         <div className="card error">
-          Could not reach the API: {error}
+          {error}
           <button onClick={load}>Retry</button>
         </div>
       )}
       {!data && !error && <div className="card muted">Loading…</div>}
+      {data && current && <section>{current.view({ data, reload: load })}</section>}
 
-      {data && (
-        <section>
-          {tab === "inputs" && <InputsTab data={data} onChange={load} />}
-          {tab === "forecast" && <ForecastTab data={data} />}
-          {tab === "commitments" && <CommitmentsTab data={data} />}
-          {tab === "plan" && <PlanTab data={data} />}
-          {tab === "scenario" && <ScenarioTab data={data} />}
-        </section>
-      )}
-
-      {data && (
+      {data && TABS.length > 1 && (
         <footer className="pager">
-          <button disabled={i === 0} onClick={() => go(TABS[i - 1].id)}>
-            ← {i > 0 ? TABS[i - 1].label : ""}
-          </button>
+          <button disabled={i === 0} onClick={() => go(TABS[i - 1].id)}>← {i > 0 ? TABS[i - 1].label : ""}</button>
           <button disabled={i === TABS.length - 1} onClick={() => go(TABS[i + 1].id)}>
             {i < TABS.length - 1 ? TABS[i + 1].label : ""} →
           </button>

@@ -128,3 +128,16 @@ ul.signals { list-style: none; padding: 0; display: grid; gap: 6px; }
 .proposal { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
 .proposal ul.signals li { line-height: 2; }
 .neg { color: var(--bad); }
+
+.clock { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button.primary { background: var(--leaf); border-color: var(--leaf); color: #fff; font-weight: 600; }
+button.primary:hover:not(:disabled) { filter: brightness(1.08); }
+.sentence { font-size: 16px; line-height: 1.6; }
+.empty { color: var(--muted); font-style: italic; padding: 8px 0; }
+.bad { color: var(--bad); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin-top: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+@media (max-width: 600px) {
+  .clock { width: 100%; }
+  .clock button.primary { flex: 1; }
+}
