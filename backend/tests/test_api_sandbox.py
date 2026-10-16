@@ -1,3 +1,4 @@
+from datetime import date
 import pytest
 from fastapi.testclient import TestClient
 
@@ -260,7 +261,12 @@ def test_example_farm_fills_the_form_and_starts_without_a_shortage():
     ex = client.get(f"{S}/example").json()
     assert client.get(f"{S}/setup").json()["saved"] is False        # loading the example saves nothing
     assert ex["start"] == sb.today_wib().isoformat()
-    assert {b["type"] for b in ex["buyers"]} == {"business", "household"} and len(ex["beds"]) >= 8
+    # the founder's farm (saved in the sandbox 2026-10-17): one baby line, one buyer, beds aged 30/23/16/2 days
+    assert [l["id"] for l in ex["crop"]["lines"]] == ["baby"] and ex["crop"]["growth_curve"][-1] == [35, 250]
+    assert ex["month_pct"] == [30, 26, 24, 20] and ex["year_index"][6:8] == [80, 70]
+    assert [(b["name"], b["usual_kg_per_week"]) for b in ex["buyers"]] == [("Buyer 1", 35)]
+    t = sb.today_wib()
+    assert sorted((t - date.fromisoformat(b["sown_on"])).days for b in ex["beds"]) == [2, 16, 23, 30]
     assert client.put(f"{S}/setup", json=ex).status_code == 200
     lines = client.get(f"{S}/today").json()["lines"]
     assert sum(l["need_kg"] for l in lines) > 5

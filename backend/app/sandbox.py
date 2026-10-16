@@ -171,29 +171,19 @@ def default_setup() -> dict:
 
 
 def example_setup(today: date) -> dict:
-    """A small working farm around `today`: three businesses, three households, a bed per past sowing day.
-    For the demo and the video: Load example farm → Save → a full Today card from day one."""
+    """The founder's own baby-pakcoy farm (saved in the sandbox 2026-10-17), around `today`: one line, one
+    buyer with a weekend-leaning week, payday month, Dec–Jan up and Jul–Aug down. Bed ages are kept, not
+    dates. For the demo and the video: Load example farm → Save → a full Today card from day one."""
     s = default_setup()
-    beds, d = [], today - timedelta(days=45)
-    while d < today:                                             # today's sowing is left for the visitor
-        if d.weekday() in s["crop"]["sow_weekdays"]:
-            beds += [{"line": "regular", "sown_on": d.isoformat(), "seedlings": 500},
-                     {"line": "baby", "sown_on": d.isoformat(), "seedlings": 250}]
-        d += timedelta(days=1)
-    return {**s, "start": today.isoformat(),
-            "month_pct": [32, 27, 22, 19], "year_index": [115, 100, 100, 100, 100, 100, 85, 85, 100, 100, 100, 115],
-            "buyers": [
-                {"name": "Resto Sari Rasa", "type": "business", "line": "regular", "usual_kg_per_week": 60,
-                 "week_pct": [10, 10, 10, 10, 15, 25, 20], "min_kg": 3},
-                {"name": "Hotel Melati", "type": "business", "line": "baby", "usual_kg_per_week": 24,
-                 "week_pct": [0, 25, 0, 25, 0, 50, 0], "min_kg": 2},
-                {"name": "Katering Bu Ani", "type": "business", "line": "regular", "usual_kg_per_week": 20,
-                 "weekdays": [0, 3]},
-                {"name": "Bu Rina", "type": "household", "line": "regular", "usual_kg_per_week": 1, "weekdays": [5]},
-                {"name": "Pak Dedi", "type": "household", "line": "regular", "usual_kg_per_week": 1, "weekdays": [2]},
-                {"name": "Mbak Lia", "type": "household", "line": "baby", "usual_kg_per_week": 0.5, "weekdays": [5]},
-            ],
-            "beds": beds}
+    crop = {**s["crop"],
+            "growth_curve": [[0, 1], [7, 15], [14, 50], [18, 70], [21, 100], [24, 160], [28, 200], [35, 250]],
+            "lines": [{"id": "baby", "min_g": 50, "max_g": 70, "stretch_g": 100}]}
+    return {**s, "crop": crop, "start": today.isoformat(),
+            "month_pct": [30, 26, 24, 20], "year_index": [120, 100, 100, 100, 100, 100, 80, 70, 100, 100, 100, 120],
+            "buyers": [{"name": "Buyer 1", "type": "business", "line": "baby", "usual_kg_per_week": 35,
+                        "week_pct": [14.3, 12.3, 11.3, 10.3, 16.3, 18.3, 17.2], "min_kg": 0}],
+            "beds": [{"line": "baby", "sown_on": (today - timedelta(days=age)).isoformat(), "seedlings": 1000}
+                     for age in (30, 23, 16, 2)]}
 
 
 def bed_no(bed_id: str) -> int:
