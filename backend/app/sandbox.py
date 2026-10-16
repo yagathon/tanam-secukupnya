@@ -84,7 +84,16 @@ class BuyerIn(BaseModel):
     line: str
     usual_kg_per_week: float = Field(0, ge=0, le=5000)
     weekdays: list[int] = Field(default_factory=list, max_length=7)
+    week_pct: list[float] = Field(default_factory=list)   # Mon..Sun % of the week's kg; empty = even over weekdays
     min_kg: float = Field(0, ge=0, le=500)
+
+    @model_validator(mode="after")
+    def _week_pct(self):
+        if self.week_pct:
+            if len(self.week_pct) != 7 or any(v < 0 for v in self.week_pct) or abs(sum(self.week_pct) - 100) > 0.5:
+                raise ValueError(f"buyer {self.name}: weekday % must be 7 numbers (Mon…Sun) adding up to 100")
+            self.weekdays = [d for d, v in enumerate(self.week_pct) if v > 0]
+        return self
 
 
 BED_ID = r"^[a-z0-9_]{1,20}-\d{4}-\d{2}-\d{2}-\d{1,3}$"     # <line>-<sown on>-<number>; the number names "Bed N"
@@ -103,6 +112,22 @@ class SetupIn(BaseModel):
     crop: CropIn
     buyers: list[BuyerIn] = Field(default_factory=list, max_length=MAX_BUYERS)
     beds: list[BedIn] = Field(default_factory=list, max_length=MAX_BEDS)
+    month_pct: list[float] = Field(default_factory=lambda: [25.0] * 4)      # dates 1–7, 8–14, 15–21, 22–end
+    year_index: list[float] = Field(default_factory=lambda: [100.0] * 12)   # Jan..Dec, 100 = a normal month
+
+    @field_validator("month_pct")
+    @classmethod
+    def _month(cls, v):
+        if len(v) != 4 or any(x < 0 for x in v) or abs(sum(v) - 100) > 0.5:
+            raise ValueError("month % must be 4 numbers (dates 1–7, 8–14, 15–21, 22–end) adding up to 100")
+        return v
+
+    @field_validator("year_index")
+    @classmethod
+    def _year(cls, v):
+        if len(v) != 12 or any(not 0 <= x <= 500 for x in v):
+            raise ValueError("year index must be 12 numbers (Jan…Dec) between 0 and 500, 100 = normal")
+        return v
 
     @model_validator(mode="after")
     def _consistent(self):
@@ -205,6 +230,8 @@ def keep_ids(body: dict, old: dict | None, events: list[dict]) -> dict:
 
 
 def _week(b: dict) -> list[float]:
+    if b.get("week_pct"):
+        return [round(b["usual_kg_per_week"] * p / 100, 4) for p in b["week_pct"]]
     days = b["weekdays"] or list(range(7))
     per = b["usual_kg_per_week"] / len(days)
     return [round(per, 4) if d in days else 0.0 for d in range(7)]
@@ -250,6 +277,7 @@ def _reference(raw: str) -> dict:
         "history": [],
         "meta": {"day0": start.isoformat(), "shape_until": start.isoformat(), "sandbox": True, "synthetic": False,
                  "learn_reference": s["learn_reference"], "priors": priors_from_setup(s),
+                 "season": {"month_pct": s.get("month_pct", [25] * 4), "year_index": s.get("year_index", [100] * 12)},
                  "household_ids": [b["id"] for b in hh], "rev": _key(s),
                  "last_sown": {k: v for k, v in last.items() if v}, "next_bed": max(map(bed_no, ids), default=0) + 1},
     }

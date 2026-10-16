@@ -1,4 +1,4 @@
-"""Daily demand: expected(series, d) = shape[weekday] × level × market × signal factors.
+"""Daily demand: expected(series, d) = shape[weekday] × level × season × market × signal factors.
 
 Series: one per B2B buyer × line ("b2b:<buyer>:<line>") plus one pooled households series per
 line ("hh:<line>"). The weekday shape is fixed from history (D7). Each series' level is smoothed
@@ -66,20 +66,31 @@ def prior_fit(key: str, week: list[float]) -> Fit:
     return Fit(key, [round(v / lv, 4) for v in week], lv, PRIOR_SIGMA * lv, lv, lv)
 
 
+def season_factor(season: dict | None, d: date) -> float:
+    """The setup's farm-wide season for day d: month block (1–7, 8–14, 15–21, 22–end; % of a month,
+    25 each = flat) × year index for the month (100 = normal). None (the demo world) = 1."""
+    if not season:
+        return 1.0
+    block = min((d.day - 1) // 7, 3)
+    return season["month_pct"][block] / 25 * season["year_index"][d.month - 1] / 100
+
+
 @dataclass
 class DemandModel:
     fits: dict[str, Fit]
     market: float
     market_buyers: int
+    season: dict | None = None
 
 
 def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
-        priors: dict[str, list[float]] | None = None) -> DemandModel:
+        priors: dict[str, list[float]] | None = None, season: dict | None = None) -> DemandModel:
     """Walk every day before `today` in order: market factor from the B2B ratios of the previous 7
     days, then each series' level update. `shape_until`: shape and baseline are fitted only on days
     before it and then stay fixed, so a market move shows up as m instead of seeping into levels.
     `priors`: series → setup estimate (kg Mon..Sun); such a series starts from the estimate instead of
-    from history, with a wide σ until it has its own residuals."""
+    from history, with a wide σ until it has its own residuals. `season`: see season_factor; it is
+    divided out of every actual, so a December peak the setup predicted doesn't lift the level."""
     priors = priors or {}
     history = {k: history.get(k, {}) for k in list(history) + [k for k in priors if k not in history]}
     days = sorted({d for s in history.values() for d in s if d < today})
@@ -94,8 +105,8 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
             fits[k] = prior_fit(k, priors[k])
             continue
         sh = shapes[k]
-        init = [v / sh[d.weekday()] for d, v in s.items() if days and d < days[0] + timedelta(days=INIT_DAYS) and sh[d.weekday()] > 0]
-        base = [v / sh[d.weekday()] for d, v in s.items() if d < shape_until and sh[d.weekday()] > 0]
+        init = [v / (sh[d.weekday()] * season_factor(season, d)) for d, v in s.items() if days and d < days[0] + timedelta(days=INIT_DAYS) and sh[d.weekday()] > 0]
+        base = [v / (sh[d.weekday()] * season_factor(season, d)) for d, v in s.items() if d < shape_until and sh[d.weekday()] > 0]
         lv = statistics.fmean(init) if init else 0.0
         fits[k] = Fit(k, sh, lv, 0.0, lv, statistics.fmean(base) if base else lv)
     for d in days:
@@ -109,7 +120,7 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
             sh = f.shape[d.weekday()]
             if sh <= 0 or d not in s or (f.baseline <= 0 and k not in priors):
                 continue
-            actual = s[d]
+            actual = s[d] / season_factor(season, d)
             if k in priors and f.baseline <= 0:          # no estimate given: the first order sets the level
                 if actual <= 0:
                     continue
@@ -132,17 +143,17 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
     for k, f in fits.items():
         old = [lv for d, lv in levels_hist[k] if d <= today - timedelta(days=14)]
         f.usual = old[-1] if old else f.level
-    return DemandModel(fits, m, nb)
+    return DemandModel(fits, m, nb, season)
 
 
 def expected(model: DemandModel, key: str, d: date, factor: float = 1.0) -> float:
     f = model.fits[key]
-    return f.shape[d.weekday()] * f.level * model.market * factor
+    return f.shape[d.weekday()] * f.level * model.market * season_factor(model.season, d) * factor
 
 
 def band(model: DemandModel, key: str, d: date, h: int, factor: float = 1.0) -> tuple[float, float, float]:
     """(low, expected, high) for a day h ≥ 1 days ahead."""
     f = model.fits[key]
     e = expected(model, key, d, factor)
-    w = Z80 * f.sigma * math.sqrt(1 + (max(h, 1) - 1) * ALPHA ** 2) * f.shape[d.weekday()] * model.market * factor
+    w = Z80 * f.sigma * math.sqrt(1 + (max(h, 1) - 1) * ALPHA ** 2) * f.shape[d.weekday()] * model.market * season_factor(model.season, d) * factor
     return max(0.0, e - w), e, e + w

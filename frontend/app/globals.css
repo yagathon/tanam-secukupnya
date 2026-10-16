@@ -164,3 +164,6 @@ table.edit input, table.edit select { width: 100%; min-width: 60px; }
 .trail td.changed { background: var(--warn-bg); font-weight: 600; }
 .trail tr.live td:first-child { color: var(--leaf); font-weight: 600; }
 .toast { border-left: 4px solid var(--leaf); }
+.pctrow { display: inline-flex; align-items: center; gap: 4px; }
+.pctrow input { min-width: 11em; }
+input.bad { border-color: var(--bad); }

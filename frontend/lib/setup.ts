@@ -1,5 +1,8 @@
 import type { Setup } from "./types";
 
+const sums100 = (v: number[], n: number) =>
+  v.length === n && v.every((x) => x >= 0) && Math.abs(v.reduce((a, b) => a + b, 0) - 100) <= 0.5;
+
 /** The server's setup rules, client-side, so problems show while typing (the server stays the judge). */
 export function checkSetup(s: Setup): string[] {
   const p: string[] = [];
@@ -21,7 +24,11 @@ export function checkSetup(s: Setup): string[] {
     if (names.has(b.name)) p.push(`buyer name ${b.name} is used twice`);
     names.add(b.name);
     if (!lines.has(b.line)) p.push(`buyer ${b.name}: unknown line ${b.line}`);
+    if (b.week_pct?.length && !sums100(b.week_pct, 7)) p.push(`buyer ${b.name}: weekday % needs 7 numbers (Mon…Sun) adding up to 100`);
   }
+  if (s.month_pct && !sums100(s.month_pct, 4)) p.push("month % needs 4 numbers (dates 1–7, 8–14, 15–21, 22–end) adding up to 100");
+  if (s.year_index && (s.year_index.length !== 12 || s.year_index.some((x) => !(x >= 0 && x <= 500))))
+    p.push("year index needs 12 numbers (Jan…Dec), 0–500");
   if (s.beds.length > 50) p.push("at most 50 beds");
   for (const b of s.beds) {
     if (!lines.has(b.line)) p.push(`bed: unknown line ${b.line}`);

@@ -114,3 +114,29 @@ def test_no_priors_is_unchanged(pakcoy):
     a = demand.fit(st.history, MON, st.today)
     b = demand.fit(st.history, MON, st.today, {})
     assert {k: (f.level, f.sigma) for k, f in a.fits.items()} == {k: (f.level, f.sigma) for k, f in b.fits.items()}
+
+
+SEASON = {"month_pct": [40, 20, 20, 20], "year_index": [100] * 9 + [150] + [100] * 2}   # October 1.5×
+
+
+def test_season_factor_blends_month_block_and_year_index():
+    assert demand.season_factor(None, date(2026, 10, 3)) == 1.0
+    assert demand.season_factor(SEASON, date(2026, 10, 3)) == pytest.approx(1.6 * 1.5)    # 1–7: 40/25
+    assert demand.season_factor(SEASON, date(2026, 10, 31)) == pytest.approx(0.8 * 1.5)   # 22–end: 20/25
+    assert demand.season_factor(SEASON, date(2026, 11, 8)) == pytest.approx(0.8)          # 8–14, Nov = 100
+
+
+def test_fit_divides_the_season_out_of_the_level():
+    """Orders that follow the setup's season exactly are no surprise: the level stays put, and the
+    forecast puts the season back on."""
+    start = date(2026, 10, 1)
+    pri = {"b2b:a:regular": [10.0] * 7}
+    h = {"b2b:a:regular": {start + timedelta(days=i): 10.0 * demand.season_factor(SEASON, start + timedelta(days=i))
+                           for i in range(21)}}
+    today = start + timedelta(days=21)
+    m = demand.fit(h, start, today, pri, SEASON)
+    assert m.fits["b2b:a:regular"].level == pytest.approx(10.0, abs=0.01)
+    d = date(2026, 11, 2)
+    assert demand.expected(m, "b2b:a:regular", d) == pytest.approx(10.0 * 1.6, abs=0.05)
+    blind = demand.fit(h, start, today, pri)
+    assert abs(blind.fits["b2b:a:regular"].level - 10.0) > 1

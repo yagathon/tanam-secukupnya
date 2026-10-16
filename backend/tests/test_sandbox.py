@@ -205,3 +205,36 @@ def test_plan_sends_a_fair_share_when_short():
     from app import sim
     p = sim.plan(st, c, ref["buyers"])["baby"]
     assert 3 < p.send < 17 and p.ceiling == p.send
+
+
+def test_week_pct_shapes_the_prior_and_sets_order_days():
+    s = setup(buyers=[{"name": "R", "type": "business", "line": "regular", "usual_kg_per_week": 100,
+                       "week_pct": [10, 10, 10, 10, 15, 25, 20]}])
+    assert sb.reference(s)["meta"]["priors"]["b2b:b1:regular"] == [10, 10, 10, 10, 15, 25, 20]
+    s = setup(buyers=[{"name": "R", "type": "business", "line": "regular", "usual_kg_per_week": 50,
+                       "week_pct": [0, 50, 0, 0, 50, 0, 0]}])
+    assert s["buyers"][0]["weekdays"] == [1, 4]
+
+
+@pytest.mark.parametrize("bad", [
+    {"buyers": [{"name": "R", "type": "business", "line": "regular", "week_pct": [10] * 7}]},   # sums to 70
+    {"buyers": [{"name": "R", "type": "business", "line": "regular", "week_pct": [50, 50]}]},   # not 7
+    {"month_pct": [30, 30, 30, 30]},
+    {"year_index": [100] * 11},
+    {"year_index": [100] * 11 + [-5]},
+])
+def test_season_inputs_rejected(bad):
+    with pytest.raises(ValidationError):
+        sb.SetupIn.model_validate({**sb.default_setup(), **bad})
+
+
+def test_season_defaults_flat_and_reaches_the_demand_model():
+    s = setup()
+    assert s["month_pct"] == [25, 25, 25, 25] and s["year_index"] == [100] * 12
+    s = setup(start="2026-10-12", month_pct=[40, 20, 20, 20], year_index=[100] * 12,
+              buyers=[{"name": "R", "type": "business", "line": "regular", "usual_kg_per_week": 70}])
+    st, c, ref = _state(s, [])
+    from app import demand, sim
+    m = sim.demand_model(st)
+    assert demand.expected(m, "b2b:b1:regular", date(2026, 11, 2)) == pytest.approx(16.0)
+    assert demand.expected(m, "b2b:b1:regular", date(2026, 10, 12)) == pytest.approx(8.0)

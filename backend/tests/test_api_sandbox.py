@@ -218,3 +218,8 @@ def test_sow_view_follows_setup_sow_weekdays():            # UAT: setup Tue/Fri,
     client.put(f"{S}/setup", json=_setup(crop=crop))       # start Mon 12 Oct → next sowing Tue 13
     assert client.get(f"{S}/state").json()["crop"]["sow_weekdays"] == [1, 4]
     assert {l["day"] for l in client.get(f"{S}/sow").json()["lines"]} == {"2026-10-13"}
+
+
+def test_demand_view_carries_the_setup_season():
+    client.put(f"{S}/setup", json=_setup(month_pct=[40, 20, 20, 20]))
+    assert client.get(f"{S}/demand").json()["season"] == {"month_pct": [40, 20, 20, 20], "year_index": [100] * 12}

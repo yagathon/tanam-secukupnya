@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { bedsFromSheet, buyersFromSheet, curveFromSheet, parseSheet, parseWeekdays, toNumber, toSheet } from "./sheet";
+import { bedsFromSheet, buyersFromSheet, curveFromSheet, parseSheet, numbersFromRow, parseWeekdays, toNumber, toSheet } from "./sheet";
 
 test("parses TSV and CSV, strips BOM, drops blank lines", () => {
   expect(parseSheet("﻿day\tgrams\n0\t5\n\n7\t15\n")).toEqual([["day", "grams"], ["0", "5"], ["7", "15"]]);
@@ -50,4 +50,11 @@ test("a header is recognised by its column, not by a word anywhere in the row", 
     .toEqual({ buyers: [{ name: "A", type: "business", line: "regular", usual_kg_per_week: 3, weekdays: [], min_kg: 0 }] });
   expect(bedsFromSheet("line\tsown on\tseedlings\nregular\t2026-09-20\t800", ["regular"]))
     .toEqual({ beds: [{ line: "regular", sown_on: "2026-09-20", seedlings: 800 }] });
+});
+
+test("numbersFromRow reads one pasted spreadsheet row", () => {
+  expect(numbersFromRow("10\t10\t10\t10\t15\t25\t20")).toEqual([10, 10, 10, 10, 15, 25, 20]);
+  expect(numbersFromRow("32 27,5 22 18,5")).toEqual([32, 27.5, 22, 18.5]);
+  expect(numbersFromRow("  ")).toEqual([]);
+  expect(numbersFromRow("10 x")).toBeNull();
 });

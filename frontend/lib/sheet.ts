@@ -20,6 +20,13 @@ export function toNumber(s: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+/** One pasted spreadsheet row (tabs) or typed numbers (spaces/semicolons); [] if empty, null if any cell isn't a number. */
+export function numbersFromRow(text: string): number[] | null {
+  const cells = text.trim() === "" ? [] : text.trim().split(/[\t;]|\s+/).filter((c) => c !== "");
+  const out = cells.map(toNumber);
+  return out.some((n) => n === null) ? null : (out as number[]);
+}
+
 export function toSheet(rows: (string | number)[][]): string {
   return rows.map((r) => r.join("\t")).join("\n");
 }

@@ -83,6 +83,7 @@ export interface Demand {
   series: { key: string; label: string; line: LineId; usual_kg: number; level_kg: number; shape: number[] }[];
   signals: (Signal & { t?: string })[];
   lines: { line: LineId; days: DemandDay[] }[];
+  season?: Season | null;
 }
 
 export type Strategy = "cobweb" | "fixed" | "tanam";
@@ -105,10 +106,14 @@ export interface SetupCrop {
 }
 export interface SetupBuyer {
   id?: string; name: string; type: "business" | "household"; line: string;
-  usual_kg_per_week: number; weekdays: number[]; min_kg: number;
+  usual_kg_per_week: number; weekdays: number[]; min_kg: number; week_pct?: number[];
 }
 export interface SetupBed { line: string; sown_on: string; seedlings: number }
-export interface Setup { start: string; learn_reference: boolean; crop: SetupCrop; buyers: SetupBuyer[]; beds: SetupBed[] }
+export interface Season { month_pct: number[]; year_index: number[] }
+export interface Setup {
+  start: string; learn_reference: boolean; crop: SetupCrop; buyers: SetupBuyer[]; beds: SetupBed[];
+  month_pct?: number[]; year_index?: number[];
+}
 export interface SetupDoc { saved: boolean; setup: Setup; locked_start: boolean }
 export interface Reference { start: [number, number][]; now: [number, number][]; samples: number[] }
 export interface TrailLine {

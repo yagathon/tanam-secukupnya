@@ -42,7 +42,7 @@ class LinePlan:
 
 
 def demand_model(st: FarmState) -> demand.DemandModel:
-    return demand.fit(st.history, st.shape_until or W.DAY0, st.today + timedelta(days=1), st.priors)
+    return demand.fit(st.history, st.shape_until or W.DAY0, st.today + timedelta(days=1), st.priors, st.season)
 
 
 def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandModel | None = None) -> dict[str, LinePlan]:

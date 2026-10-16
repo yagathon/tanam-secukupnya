@@ -23,3 +23,12 @@ test("stretch limit must not be below max", () => {
     .toContain("line regular: 'up to if short' must be at least max g");
   expect(checkSetup({ ...base, crop: { ...base.crop, lines: [{ ...line, stretch_g: null }] } })).toEqual([]);
 });
+test("weekday, month and year percentages", () => {
+  const b = { name: "A", type: "business" as const, line: "regular", usual_kg_per_week: 1, weekdays: [], min_kg: 0 };
+  expect(checkSetup({ ...base, buyers: [{ ...b, week_pct: [10, 10, 10, 10, 15, 25, 20] }] })).toEqual([]);
+  expect(checkSetup({ ...base, buyers: [{ ...b, week_pct: [10, 10] }] }))
+    .toContain("buyer A: weekday % needs 7 numbers (Mon…Sun) adding up to 100");
+  expect(checkSetup({ ...base, month_pct: [30, 30, 30, 30] }))
+    .toContain("month % needs 4 numbers (dates 1–7, 8–14, 15–21, 22–end) adding up to 100");
+  expect(checkSetup({ ...base, year_index: [100] })).toContain("year index needs 12 numbers (Jan…Dec), 0–500");
+});

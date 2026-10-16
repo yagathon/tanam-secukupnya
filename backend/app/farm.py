@@ -250,7 +250,7 @@ def demand(ws: Store) -> dict:
     text = (f"Market {round((m - 1) * 100):+d}% across {model.market_buyers} buyers this week (cause unknown)"
             if m != 1 else f"No market-wide move ({model.market_buyers} buyers checked)")
     return {"today": st.today.isoformat(), "market": {"factor": m, "buyers": model.market_buyers, "text": text},
-            "series": series, "signals": st.signals,
+            "series": series, "signals": st.signals, "season": st.season,
             "lines": [{"line": lp.line, "days": lp.needs.rows} for lp in v.plans.values()]}
 
 

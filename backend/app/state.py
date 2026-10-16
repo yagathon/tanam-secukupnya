@@ -37,6 +37,7 @@ class FarmState:
     learn: bool = False
     harvested: dict[tuple[str, str], float] = field(default_factory=dict)
     priors: dict[str, list[float]] = field(default_factory=dict)
+    season: dict | None = None
     shape_until: date | None = None
     household_ids: frozenset[str] = frozenset()
     ref_log: list[dict] = field(default_factory=list)
@@ -62,7 +63,7 @@ def initial(ref: dict, meta: dict) -> FarmState:
     st = FarmState(date.fromisoformat(meta["day0"]), batches, history, known,
                    last_sown={k: date.fromisoformat(v) for k, v in meta["last_sown"].items()},
                    next_bed=int(meta["next_bed"]), learn=bool(meta.get("learn_reference", False)),
-                   priors=meta.get("priors", {}),
+                   priors=meta.get("priors", {}), season=meta.get("season"),
                    shape_until=date.fromisoformat(meta["shape_until"]) if meta.get("shape_until") else None,
                    household_ids=frozenset(meta.get("household_ids", [])))
     return st
