@@ -267,7 +267,7 @@ def test_example_farm_fills_the_form_and_starts_without_a_shortage():
     assert [(b["name"], b["usual_kg_per_week"]) for b in ex["buyers"]] == [("Resto WKS", 35), ("Retails", 5)]
     t = sb.today_wib()
     assert sorted(((t - date.fromisoformat(b["sown_on"])).days, b["seedlings"]) for b in ex["beds"]) == \
-        [(2, 500), (9, 1000), (16, 1000), (23, 1000), (30, 1000)]
+        [(2, 1000), (9, 1000), (16, 1000), (23, 1000), (30, 1000)]
     assert client.put(f"{S}/setup", json=ex).status_code == 200
     lines = client.get(f"{S}/today").json()["lines"]
     assert sum(l["need_kg"] for l in lines) > 5

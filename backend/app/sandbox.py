@@ -186,7 +186,7 @@ def example_setup(today: date) -> dict:
                        {"name": "Retails", "type": "business", "line": "baby", "usual_kg_per_week": 5,  # weekend pre-orders
                         "week_pct": [0, 0, 0, 0, 0, 40, 60], "min_kg": 0}],
             "beds": [{"line": "baby", "sown_on": (today - timedelta(days=age)).isoformat(), "seedlings": n}
-                     for age, n in ((30, 1000), (23, 1000), (16, 1000), (9, 1000), (2, 500))]}
+                     for age, n in ((30, 1000), (23, 1000), (16, 1000), (9, 1000), (2, 1000))]}
 
 
 def bed_no(bed_id: str) -> int:
