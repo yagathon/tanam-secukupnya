@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 import CurveChart from "@/components/sandbox/CurveChart";
+import PatternEditor, { MiniBars } from "@/components/sandbox/PatternEditor";
+import YearChart from "@/components/sandbox/YearChart";
 import SheetBox from "@/components/sandbox/SheetBox";
 import type { Api } from "@/lib/api";
 import { friendly } from "@/lib/format";
+import { evenWeek } from "@/lib/pattern";
 import { checkSetup, fromPct, toPct } from "@/lib/setup";
-import { bedsFromSheet, buyersFromSheet, curveFromSheet, numbersFromRow, toSheet, WEEKDAYS } from "@/lib/sheet";
+import { bedsFromSheet, buyersFromSheet, curveFromSheet, toSheet, WEEKDAYS } from "@/lib/sheet";
 import type { Data, Setup, SetupCrop, SetupDoc } from "@/lib/types";
 
 function Num({ value, onChange, step = "any", disabled }: {
@@ -30,27 +33,6 @@ function Days({ value, onChange }: { value: number[]; onChange: (d: number[]) =>
   );
 }
 
-/** A row of numbers, typed with spaces or pasted as one spreadsheet row; keeps the visitor's text while typing. */
-function PctRow({ value, onChange, placeholder }: { value: number[]; onChange: (v: number[]) => void; placeholder: string }) {
-  const [text, setText] = useState(value.join(" "));
-  const [bad, setBad] = useState(false);
-  useEffect(() => {
-    if (JSON.stringify(numbersFromRow(text)) !== JSON.stringify(value)) setText(value.join(" "));
-  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
-  const sum = value.reduce((a, b) => a + b, 0);
-  return (
-    <span className="pctrow">
-      <input value={text} placeholder={placeholder} className={bad ? "bad" : ""} onChange={(e) => {
-        setText(e.target.value);
-        const n = numbersFromRow(e.target.value);
-        setBad(n === null);
-        if (n) onChange(n);
-      }} />
-      {value.length > 0 && <span className="small muted"> Σ {Math.round(sum * 10) / 10}</span>}
-    </span>
-  );
-}
-
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** [field, label, step, typed as %] */
@@ -68,6 +50,7 @@ export default function SetupTab({ doc, data, api, reload }: {
   const [s, setS] = useState<Setup>(doc.setup);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [weekOpen, setWeekOpen] = useState<number | null>(null);
   useEffect(() => setS(doc.setup), [doc.setup]);
 
   const crop = (patch: Partial<SetupCrop>) => setS({ ...s, crop: { ...s.crop, ...patch } });
@@ -218,12 +201,13 @@ export default function SetupTab({ doc, data, api, reload }: {
       <div className="card">
         <h2>Buyers ({s.buyers.length})</h2>
         <table className="edit">
-          <thead><tr><th>Name</th><th>Type</th><th>Line</th><th>Usual kg/week</th><th>Order days</th><th title="Share of the week's kg per day, Mon…Sun, adding up to 100. Empty = even over the order days.">Weekday % (Mon…Sun)</th><th>Min kg</th><th /></tr></thead>
+          <thead><tr><th>Name</th><th>Type</th><th>Line</th><th>Usual kg/week</th><th>Order days</th><th title="Share of the week's kg per day, Mon…Sun, adding up to 100. Empty = even over the order days.">Weekday pattern</th><th>Min kg</th><th /></tr></thead>
           <tbody>
             {s.buyers.map((b, i) => {
               const set = (patch: Partial<typeof b>) => setS({ ...s, buyers: s.buyers.map((x, j) => (j === i ? { ...x, ...patch } : x)) });
               return (
-                <tr key={b.id ?? `new${i}`}>
+                <Fragment key={b.id ?? `new${i}`}>
+                <tr>
                   <td><input value={b.name} onChange={(e) => set({ name: e.target.value })} /></td>
                   <td>
                     <select value={b.type} onChange={(e) => set({ type: e.target.value as typeof b.type })}>
@@ -235,11 +219,23 @@ export default function SetupTab({ doc, data, api, reload }: {
                   <td>{b.week_pct?.length === 7
                     ? <span className="small muted">{b.weekdays.map((d) => WEEKDAYS[d]).join(" ")} (from %)</span>
                     : <Days value={b.weekdays} onChange={(d) => set({ weekdays: d })} />}</td>
-                  <td><PctRow value={b.week_pct ?? []} placeholder="even" onChange={(v) => set({ week_pct: v,
-                    ...(v.length === 7 ? { weekdays: v.flatMap((x, d) => (x > 0 ? [d] : [])) } : {}) })} /></td>
+                  <td><span className="weekpat">
+                    {b.week_pct?.length === 7 ? <MiniBars value={b.week_pct} /> : <span className="small muted">even</span>}
+                    <button className="ghost small" onClick={() => setWeekOpen(weekOpen === i ? null : i)}>
+                      {weekOpen === i ? "Close" : b.week_pct?.length === 7 ? "Edit" : "Set pattern"}</button>
+                  </span></td>
                   <td><Num value={b.min_kg} onChange={(n) => set({ min_kg: n })} /></td>
                   <td><button className="ghost small" onClick={() => setS({ ...s, buyers: s.buyers.filter((_, j) => j !== i) })}>✕</button></td>
                 </tr>
+                {weekOpen === i && <tr><td colSpan={8}>
+                  <p className="small muted">{b.name}: share of the week&apos;s kg per day (adds up to 100). Days above 0 become the
+                    order days. Paste a spreadsheet row of 7 numbers into any cell to fill all.</p>
+                  <PatternEditor labels={WEEKDAYS} value={b.week_pct?.length === 7 ? b.week_pct : evenWeek(b.weekdays)} flat={100 / 7}
+                    target={100} onChange={(v) => set({ week_pct: v, weekdays: v.flatMap((x, d) => (x > 0 ? [d] : [])) })} />
+                  {b.week_pct?.length === 7 && <button className="ghost small" onClick={() => set({ week_pct: undefined })}>
+                    Back to even over the order days</button>}
+                </td></tr>}
+                </Fragment>
               );
             })}
           </tbody>
@@ -248,7 +244,7 @@ export default function SetupTab({ doc, data, api, reload }: {
           name: `Buyer ${s.buyers.length + 1}`, type: "business", line: lineIds[0] ?? "", usual_kg_per_week: 0, weekdays: [], min_kg: 0,
         }] })}>+ buyer</button>
         <p className="small muted">A household has no usual amount: the forecast starts from a small prior and learns from its orders.
-          Weekday %: paste one spreadsheet row of 7 numbers, e.g. <code>10 10 10 10 15 25 20</code>; the days above 0 become the order days.</p>
+          Weekday pattern: empty = even over the order days; &quot;Set pattern&quot; to give some days more, e.g. a weekend peak.</p>
         <SheetBox example={"name\ttype\tline\tusual kg/week\torder days\tmin kg\nResto A\tbusiness\tregular\t20\tMon Thu\t2"}
           copy={() => toSheet([["name", "type", "line", "usual kg/week", "order days", "min kg"],
             ...s.buyers.map((b) => [b.name, b.type, b.line, b.usual_kg_per_week, b.weekdays.map((d) => WEEKDAYS[d]).join(" "), b.min_kg])])}
@@ -259,17 +255,18 @@ export default function SetupTab({ doc, data, api, reload }: {
         <h2>Season (whole farm)</h2>
         <p className="small muted">The forecast is today&apos;s level × weekday % × these. The level still learns from real orders; a peak
           set here is expected, so it doesn&apos;t count as a surprise.</p>
-        <div className="form-grid">
-          <label>Month: % in dates 1–7, 8–14, 15–21, 22–end (25 each = flat)
-            <PctRow value={s.month_pct ?? [25, 25, 25, 25]} placeholder="25 25 25 25" onChange={(v) => setS({ ...s, month_pct: v })} />
-          </label>
-          <label>Year: index per month, Jan…Dec (100 = normal)
-            <PctRow value={s.year_index ?? Array(12).fill(100)} placeholder={MONTHS.map(() => 100).join(" ")}
-              onChange={(v) => setS({ ...s, year_index: v })} />
-          </label>
-        </div>
+        <h3>Month: % of the month&apos;s kg per week of the month</h3>
+        <PatternEditor labels={["1–7", "8–14", "15–21", "22–end"]} value={s.month_pct ?? [25, 25, 25, 25]} flat={25} target={100}
+          onChange={(v) => setS({ ...s, month_pct: v })} />
+        <h3>Year: index per month (100 = normal)</h3>
+        <PatternEditor labels={MONTHS} value={s.year_index ?? Array(12).fill(100)} flat={100} unit=""
+          onChange={(v) => setS({ ...s, year_index: v })} />
         <p className="small muted">e.g. month <code>32 27 22 19</code> (payday at the start); year with Dec and Jan up, Jul and Aug down:{" "}
-          <code>115 100 100 100 100 100 85 85 100 100 100 120</code></p>
+          <code>115 100 100 100 100 100 85 85 100 100 100 120</code>. Paste a row into any cell to fill all.</p>
+        <h3>The year, all three together</h3>
+        <p className="small muted">Every buyer&apos;s week × the month pattern × the year index, day by day from the start: the
+          starting forecast before real orders teach it. It moves as you type, before Save.</p>
+        <YearChart setup={s} />
       </div>
 
       <div className="card">

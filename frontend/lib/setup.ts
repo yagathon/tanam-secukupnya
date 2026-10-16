@@ -33,6 +33,8 @@ export function checkSetup(s: Setup): string[] {
     if (names.has(b.name)) p.push(`buyer name ${b.name} is used twice`);
     names.add(b.name);
     if (!lines.has(b.line)) p.push(`buyer ${b.name}: unknown line ${b.line}`);
+    if (!(b.usual_kg_per_week >= 0)) p.push(`buyer ${b.name}: usual kg/week must be 0 or more`);
+    if (!(b.min_kg >= 0)) p.push(`buyer ${b.name}: min kg must be 0 or more`);
     if (b.week_pct?.length && !sums100(b.week_pct, 7)) p.push(`buyer ${b.name}: weekday % needs 7 numbers (Mon…Sun) adding up to 100`);
   }
   if (s.month_pct && !sums100(s.month_pct, 4)) p.push("month % needs 4 numbers (dates 1–7, 8–14, 15–21, 22–end) adding up to 100");

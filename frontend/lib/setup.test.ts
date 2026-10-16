@@ -45,3 +45,9 @@ test("germination, survival and spread out of range are named in %", () => {
   expect(p).toEqual(expect.arrayContaining(["germination must be 1–100%", "survival must be 1–100%",
     "size spread must be 1–200%"]));
 });
+test("buyer amounts cannot be negative", () => {
+  const b = { name: "A", type: "business" as const, line: "regular", usual_kg_per_week: -2, weekdays: [], min_kg: -1 };
+  const p = checkSetup({ ...base, buyers: [b] });
+  expect(p).toContain("buyer A: usual kg/week must be 0 or more");
+  expect(p).toContain("buyer A: min kg must be 0 or more");
+});

@@ -177,3 +177,8 @@ input.bad { border-color: var(--bad); }
 .act.short .act-title { color: var(--bad); }
 .act ul { margin: 4px 0; padding-left: 18px; }
 .act .row { margin-top: 6px; }
+.pattern { margin: 6px 0 10px; }
+.pattern .cells { display: grid; gap: 4px; }
+.pattern .cells label { font-size: 12px; text-align: center; }
+.pattern .cells input { width: 100%; min-width: 0; text-align: center; padding: 3px 2px; }
+.weekpat { display: flex; align-items: center; gap: 6px; }
