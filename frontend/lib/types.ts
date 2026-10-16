@@ -54,7 +54,7 @@ export interface BatchRow {
   ready_from: string; until: string; available_tomorrow_kg: number; waste_plants: number;
 }
 export interface ChartDay { day: string; available_kg: number; need_kg: number; short_kg: number }
-export interface BedsLine { line: LineId; min_g: number; max_g: number; batches: BatchRow[]; chart: ChartDay[] }
+export interface BedsLine { line: LineId; min_g: number; max_g: number; stretch_g?: number | null; batches: BatchRow[]; chart: ChartDay[] }
 export interface Beds { today: string; lines: BedsLine[] }
 
 export interface DayKg { day: string; kg: number }
@@ -97,7 +97,7 @@ export interface Season {
 /** Everything the tabs need, refetched after every change (Season is loaded by its own tab). */
 export interface Data { state: State; today: Today; beds: Beds; tomorrow: Tomorrow; sow: Sow; demand: Demand; logged?: string[] }
 
-export interface SetupLine { id: string; min_g: number; max_g: number }
+export interface SetupLine { id: string; min_g: number; max_g: number; stretch_g?: number | null }
 export interface SetupCrop {
   name: string; nursery_days: number; growth_curve: [number, number][]; spread_ratio: number;
   germination: number; survival: number; seeds_per_gram: number; grams_per_teaspoon: number;

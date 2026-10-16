@@ -11,7 +11,7 @@ function LineBeds({ l }: { l: BedsLine }) {
   const rows = l.batches.filter((b) => b.stage === "nursery" || b.plants_left > 0 || b.waste_plants > 0);
   return (
     <div className="card">
-      <h2>{lineName(l.line)} <span className="muted small">sells at {l.min_g}–{l.max_g} g a plant</span></h2>
+      <h2>{lineName(l.line)} <span className="muted small">sells at {l.min_g}–{l.max_g} g a plant{l.stretch_g && l.stretch_g > l.max_g ? ` (up to ${l.stretch_g} g if short)` : ""}</span></h2>
       <p className="small muted">
         Next 40 days: kg ready in range each day vs. the need we protect (B2B expected + households low).
         {shortDays.length > 0 && <span className="bad"> {shortDays.length} day(s) short.</span>}

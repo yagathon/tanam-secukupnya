@@ -216,7 +216,7 @@ def beds(ws: Store) -> dict:
         proj = project(c, lp.line, st.alive(c, lp.line), lp.needs.protected, tom, tom + timedelta(days=CHART_DAYS - 1))
         chart = [{"day": p.day.isoformat(), "available_kg": round(p.available_kg, 2), "need_kg": round(p.need_kg, 2),
                   "short_kg": round(p.short_kg, 2)} for p in proj]
-        lines.append({"line": lp.line, "min_g": ln.min_g, "max_g": ln.max_g, "batches": rows, "chart": chart})
+        lines.append({"line": lp.line, "min_g": ln.min_g, "max_g": ln.max_g, "stretch_g": ln.stretch_g, "batches": rows, "chart": chart})
     return {"today": st.today.isoformat(), "lines": lines}
 
 

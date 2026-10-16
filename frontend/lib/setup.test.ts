@@ -17,3 +17,9 @@ test("bed after start", () => {
   expect(checkSetup({ ...base, beds: [{ line: "regular", sown_on: "2026-11-01", seedlings: 5 }] }))
     .toContain("bed sown 2026-11-01 is after the start 2026-10-12");
 });
+test("stretch limit must not be below max", () => {
+  const line = { id: "regular", min_g: 100, max_g: 140, stretch_g: 130 };
+  expect(checkSetup({ ...base, crop: { ...base.crop, lines: [line] } }))
+    .toContain("line regular: 'up to if short' must be at least max g");
+  expect(checkSetup({ ...base, crop: { ...base.crop, lines: [{ ...line, stretch_g: null }] } })).toEqual([]);
+});

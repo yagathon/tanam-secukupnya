@@ -11,7 +11,10 @@ export function checkSetup(s: Setup): string[] {
   });
   if (!c.sow_weekdays.length) p.push("pick at least one sowing weekday");
   const lines = new Set(c.lines.map((l) => l.id));
-  for (const l of c.lines) if (l.min_g >= l.max_g) p.push(`line ${l.id}: min g must be below max g`);
+  for (const l of c.lines) {
+    if (l.min_g >= l.max_g) p.push(`line ${l.id}: min g must be below max g`);
+    if (l.stretch_g != null && l.stretch_g < l.max_g) p.push(`line ${l.id}: 'up to if short' must be at least max g`);
+  }
   const names = new Set<string>();
   if (s.buyers.length > 50) p.push("at most 50 buyers");
   for (const b of s.buyers) {

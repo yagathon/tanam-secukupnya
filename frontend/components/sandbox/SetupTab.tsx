@@ -100,7 +100,7 @@ export default function SetupTab({ doc, data, api, reload }: {
 
         <h3>Lines (size grades)</h3>
         <table className="edit">
-          <thead><tr><th>Line</th><th>Min g</th><th>Max g</th><th /></tr></thead>
+          <thead><tr><th>Line</th><th>Min g</th><th>Max g</th><th title="Buyers still take plants up to this weight when stock is short">Up to if short, g</th><th /></tr></thead>
           <tbody>
             {s.crop.lines.map((l, i) => (
               <tr key={i}>
@@ -110,6 +110,8 @@ export default function SetupTab({ doc, data, api, reload }: {
                 </td>
                 <td><Num value={l.min_g} onChange={(n) => crop({ lines: s.crop.lines.map((x, j) => (j === i ? { ...x, min_g: n } : x)) })} /></td>
                 <td><Num value={l.max_g} onChange={(n) => crop({ lines: s.crop.lines.map((x, j) => (j === i ? { ...x, max_g: n } : x)) })} /></td>
+                <td><Num value={l.stretch_g ?? NaN} onChange={(n) => crop({ lines: s.crop.lines.map((x, j) =>
+                  (j === i ? { ...x, stretch_g: Number.isFinite(n) ? n : null } : x)) })} /></td>
                 <td>
                   <button className="ghost small" disabled={s.crop.lines.length < 2}
                     onClick={() => crop({ lines: s.crop.lines.filter((_, j) => j !== i) })}>✕</button>
@@ -121,6 +123,8 @@ export default function SetupTab({ doc, data, api, reload }: {
         <button className="ghost small" onClick={() => crop({ lines: [...s.crop.lines, { id: `line${s.crop.lines.length + 1}`, min_g: 100, max_g: 200 }] })}>
           + line
         </button>
+        <p className="small muted">Up to if short: when there isn&apos;t enough for everyone, buyers still take slightly bigger plants up to
+          this weight, so stock left in the bed can serve the next days. Empty = only up to max g.</p>
       </div>
 
       <div className="card">
