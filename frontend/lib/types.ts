@@ -95,7 +95,7 @@ export interface Season {
 }
 
 /** Everything the tabs need, refetched after every change (Season is loaded by its own tab). */
-export interface Data { state: State; today: Today; beds: Beds; tomorrow: Tomorrow; sow: Sow; demand: Demand }
+export interface Data { state: State; today: Today; beds: Beds; tomorrow: Tomorrow; sow: Sow; demand: Demand; logged?: string[] }
 
 export interface SetupLine { id: string; min_g: number; max_g: number }
 export interface SetupCrop {

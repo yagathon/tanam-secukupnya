@@ -1,5 +1,5 @@
 import { ApiError } from "./api";
-import type { LineId, Proposal, State, TodayLine } from "./types";
+import type { LineId, Proposal, State, TodayLine, TrailRow } from "./types";
 
 const DAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -40,6 +40,9 @@ export function sowDays(weekdays: number[]): string {
   const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
   return `${TIMES[days.length] ?? `${days.length} times`} a week, on ${list}`;
 }
+
+/** Every entry logged on the open (not yet closed) day: forms and OK'd notes, oldest first. */
+export const loggedToday = (rows: TrailRow[]): string[] => rows.find((r) => r.live)?.inputs ?? [];
 
 export const lineName = (id: LineId) => `Pakcoy ${id}`;
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { ApiError } from "./api";
-import { daySentence, friendly, int, kg, lineName, proposalLines, scopeName, shortDate, sowDays, tsp } from "./format";
-import type { Proposal, State, TodayLine } from "./types";
+import { daySentence, friendly, int, kg, lineName, loggedToday, proposalLines, scopeName, shortDate, sowDays, tsp } from "./format";
+import type { Proposal, State, TodayLine, TrailRow } from "./types";
 
 const state = {
   today: "2026-10-12",
@@ -142,5 +142,14 @@ describe("sowDays", () => {
     expect(sowDays([2])).toBe("once a week, on Wednesdays");
     expect(sowDays([4, 0, 2])).toBe("3 times a week, on Mondays, Wednesdays and Fridays");
     expect(sowDays([0, 1, 2, 3, 4, 5, 6])).toBe("every day");
+  });
+});
+
+describe("loggedToday", () => {
+  const row = (live: boolean, inputs: string[]) => ({ day: "2026-10-12", live, lines: {}, inputs, ref: [] }) as TrailRow;
+  it("is everything logged on the open day, in order, not only the last entry", () => {
+    expect(loggedToday([row(true, ["ORDER · A", "HARVEST · Bed 1"]), row(false, ["SOW · regular"])]))
+      .toEqual(["ORDER · A", "HARVEST · Bed 1"]);
+    expect(loggedToday([])).toEqual([]);
   });
 });

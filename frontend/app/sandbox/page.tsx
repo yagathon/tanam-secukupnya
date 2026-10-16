@@ -13,7 +13,7 @@ import InputPanel from "@/components/sandbox/InputPanel";
 import SetupTab from "@/components/sandbox/SetupTab";
 import TrailTab from "@/components/sandbox/TrailTab";
 import { makeApi } from "@/lib/api";
-import { friendly, shortDate } from "@/lib/format";
+import { friendly, loggedToday, shortDate } from "@/lib/format";
 import type { Data, SetupDoc, TrailRow } from "@/lib/types";
 
 const sbx = makeApi("/sandbox");
@@ -53,7 +53,7 @@ export default function Sandbox() {
       const [state, today, beds, tomorrow, sow, demand, t] = await Promise.all([
         sbx.state(), sbx.today(), sbx.beds(), sbx.tomorrow(), sbx.sow(), sbx.demand(), sbx.trail(),
       ]);
-      setData({ state, today, beds, tomorrow, sow, demand });
+      setData({ state, today, beds, tomorrow, sow, demand, logged: loggedToday(t.rows) });
       setTrail(t.rows);
     } catch (e) {
       setError(friendly(e));

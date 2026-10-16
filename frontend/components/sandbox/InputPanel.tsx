@@ -48,7 +48,6 @@ export default function InputPanel({ data, reload, api }: TabProps) {
   const [form, setForm] = useState<Form>(() => blank("order"));
   const [busy, setBusy] = useState<"form" | "note" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [logged, setLogged] = useState<string[] | null>(null);
   const [text, setText] = useState("");
   const [sender, setSender] = useState("farmer");
   const [noteMsg, setNoteMsg] = useState<string | null>(null);
@@ -71,10 +70,8 @@ export default function InputPanel({ data, reload, api }: TabProps) {
   const submit = async () => {
     setBusy("form");
     setError(null);
-    setLogged(null);
     try {
-      const r = await api.event({ kind, ...form }, today.seq);
-      setLogged(r.lines);
+      await api.event({ kind, ...form }, today.seq);
       setForm(blank(kind));
       await reload();
     } catch (e) {
@@ -186,7 +183,10 @@ export default function InputPanel({ data, reload, api }: TabProps) {
         {kind === "harvest" && <span className="small muted">Not logged by day&apos;s end? The planned send is assumed harvested.</span>}
       </div>
       {error && <p className="small bad">{error}</p>}
-      {logged && <div className="card toast small">Logged: {logged.join(" · ")}</div>}
+      {(data.logged?.length ?? 0) > 0 && <div className="card toast small">
+        <strong>Logged today</strong>
+        <ul>{data.logged!.map((l, i) => <li key={i}>{l}</li>)}</ul>
+      </div>}
 
       <h3>Or write it as a note</h3>
       <p className="small muted">Gemini reads the note into the same log lines; OK stores them, Edit opens them in the form.</p>
