@@ -173,7 +173,8 @@ def default_setup() -> dict:
 def example_setup(today: date) -> dict:
     """The founder's own baby-pakcoy farm (saved in the sandbox 2026-10-17), around `today`: one line, one
     buyer with a weekend-leaning week, payday month, Dec–Jan up and Jul–Aug down. Bed ages are kept, not
-    dates. For the demo and the video: Load example farm → Save → a full Today card from day one."""
+    dates (the 9-day bed keeps early November covered). For the demo and the video: Load example farm → Save →
+    a full Today card from day one."""
     s = default_setup()
     crop = {**s["crop"],
             "growth_curve": [[0, 1], [7, 15], [14, 50], [18, 70], [21, 100], [24, 160], [28, 200], [35, 250]],
@@ -182,8 +183,8 @@ def example_setup(today: date) -> dict:
             "month_pct": [30, 26, 24, 20], "year_index": [120, 100, 100, 100, 100, 100, 80, 70, 100, 100, 100, 120],
             "buyers": [{"name": "Buyer 1", "type": "business", "line": "baby", "usual_kg_per_week": 35,
                         "week_pct": [14.3, 12.3, 11.3, 10.3, 16.3, 18.3, 17.2], "min_kg": 0}],
-            "beds": [{"line": "baby", "sown_on": (today - timedelta(days=age)).isoformat(), "seedlings": 1000}
-                     for age in (30, 23, 16, 2)]}
+            "beds": [{"line": "baby", "sown_on": (today - timedelta(days=age)).isoformat(), "seedlings": n}
+                     for age, n in ((30, 1000), (23, 1000), (16, 1000), (9, 1000), (2, 500))]}
 
 
 def bed_no(bed_id: str) -> int:
