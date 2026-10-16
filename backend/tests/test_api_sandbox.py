@@ -261,10 +261,10 @@ def test_example_farm_fills_the_form_and_starts_without_a_shortage():
     ex = client.get(f"{S}/example").json()
     assert client.get(f"{S}/setup").json()["saved"] is False        # loading the example saves nothing
     assert ex["start"] == sb.today_wib().isoformat()
-    # the founder's farm (saved in the sandbox 2026-10-17): one baby line, one buyer, beds aged 30/23/16/9/2 days
+    # the founder's farm (saved in the sandbox 2026-10-17): one baby line, a resto + weekend retail, beds aged 30/23/16/9/2 days
     assert [l["id"] for l in ex["crop"]["lines"]] == ["baby"] and ex["crop"]["growth_curve"][-1] == [35, 250]
     assert ex["month_pct"] == [30, 26, 24, 20] and ex["year_index"][6:8] == [80, 70]
-    assert [(b["name"], b["usual_kg_per_week"]) for b in ex["buyers"]] == [("Buyer 1", 35)]
+    assert [(b["name"], b["usual_kg_per_week"]) for b in ex["buyers"]] == [("Resto WKS", 35), ("Retails", 5)]
     t = sb.today_wib()
     assert sorted(((t - date.fromisoformat(b["sown_on"])).days, b["seedlings"]) for b in ex["beds"]) == \
         [(2, 500), (9, 1000), (16, 1000), (23, 1000), (30, 1000)]
