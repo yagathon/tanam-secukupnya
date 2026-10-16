@@ -145,3 +145,53 @@ def test_known_household_orders_replace_expected():
     known = {(tom.isoformat(), "h1", "regular"): 1.5}
     n = engine.line_needs(m, [], "regular", date(2026, 10, 12), tom, known, [], frozenset({"h1"}))
     assert n.tomorrow_parts["hh:regular"] == 1.5
+
+
+def _sandbox_crop(baby_stretch=None):
+    from dataclasses import replace
+    from app import sandbox as sb
+    from app.growth import crop_from_dict
+    s = sb.SetupIn.model_validate(sb.default_setup()).model_dump(mode="json")
+    c = crop_from_dict(sb.reference(s)["crops"][0])
+    return replace(c, lines=tuple(replace(ln, stretch_g=baby_stretch) if ln.id == "baby" else ln for ln in c.lines))
+
+
+def test_stretch_keeps_slightly_oversize_plants_sendable_so_ceiling_reserves_stock():
+    """UAT: Monday allowed sending the whole baby bed, then Tue/Wed had nothing — the plants left would
+    have passed 70 g. Restaurants still take baby up to 80 g, so those plants are tomorrow's stock."""
+    mon = date(2026, 10, 26)
+    bed = Batch("x", "Bed 3", "baby", date(2026, 9, 24), 900)          # ~64 g on Monday
+    need = {mon + timedelta(days=i): 10.0 for i in range(1, 5)}
+    end = mon + timedelta(days=4)
+    tue = mon + timedelta(days=1)
+    strict = _sandbox_crop()
+    assert engine.ceiling(strict, "baby", [bed], need, mon, end) == pytest.approx(available_kg(strict, bed, tue), abs=0.01)
+    c = _sandbox_crop(80.0)
+    avail = available_kg(c, bed, tue)
+    ceil = engine.ceiling(c, "baby", [bed], need, mon, end)
+    assert avail > available_kg(strict, bed, tue)                      # 70–80 g plants count
+    assert ceil < avail - 5                                             # some held back for Wed–Fri
+    later = lambda x: sum(p.short_kg for p in project(c, "baby", [bed], need, tue, end, send={tue: x})[1:])
+    assert later(ceil) == pytest.approx(later(0.0), abs=0.05) and later(avail) > later(0.0) + 5
+
+
+def test_fair_send_spreads_a_shortage_instead_of_holding_everything_back():
+    """Re-run of the UAT farm: 25–50 kg ready, 20 kg ordered daily, ceiling 0.04 → three empty days so a
+    later day could be full. A shortage that can't be avoided is shared: each day gets the same share."""
+    c = _sandbox_crop(80.0)
+    mon = date(2026, 10, 26)
+    tue = mon + timedelta(days=1)
+    bed = Batch("x", "Bed 4", "baby", date(2026, 9, 28), 900)          # just coming into range
+    need = {mon + timedelta(days=i): 20.0 for i in range(1, 9)}
+    end = mon + timedelta(days=8)
+    assert engine.ceiling(c, "baby", [bed], need, mon, end) < 1          # the old rule: hold it all
+    fair = engine.fair_send(c, "baby", [bed], need, mon, end)
+    assert 3 < fair < 17
+    served = [p.harvested_kg for p in project(c, "baby", [bed], need, tue, end, send={tue: fair})]
+    assert served[0] == pytest.approx(fair, abs=0.01)
+
+
+def test_fair_send_is_whole_need_when_stock_covers_everything(pakcoy):
+    beds = farm()
+    end = engine.horizon_end(pakcoy, "regular", TODAY, False)
+    assert engine.fair_send(pakcoy, "regular", beds, flat(5), TODAY, end) == pytest.approx(5, abs=0.01)

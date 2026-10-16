@@ -182,3 +182,26 @@ def test_close_day_skips_order_on_line_buyer_lacks():
     from app import sim
     evs = sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
     assert evs[-1]["t"] == "clock"
+
+
+def test_stretch_g_defaults_and_validation():
+    s = setup()
+    assert {ln["id"]: ln["stretch_g"] for ln in s["crop"]["lines"]} == {"regular": 160, "baby": 80}
+    bad = {**sb.default_setup()["crop"], "lines": [{"id": "r", "min_g": 100, "max_g": 140, "stretch_g": 130}]}
+    with pytest.raises(ValidationError):
+        sb.SetupIn.model_validate({**sb.default_setup(), "crop": bad})
+    old = {**sb.default_setup()["crop"], "lines": [{"id": "r", "min_g": 100, "max_g": 140}]}
+    assert sb.SetupIn.model_validate({**sb.default_setup(), "crop": old}).crop.lines[0].stretch_g is None
+    c = crop_from_dict(sb.reference(s)["crops"][0])
+    assert c.line("baby").top_g == 80 and c.line("baby").max_g == 70
+
+
+def test_plan_sends_a_fair_share_when_short():
+    s = setup(start="2026-10-26",
+              buyers=[{"name": "Resto", "type": "business", "line": "baby", "usual_kg_per_week": 140}],
+              beds=[{"line": "baby", "sown_on": "2026-09-28", "seedlings": 900}])
+    st, c, ref = _state(s, [{"seq": 1, "kind": "form", "events": [
+        {"t": "order", "day": "2026-10-27", "buyer": "b1", "line": "baby", "kg": 20.0}]}])
+    from app import sim
+    p = sim.plan(st, c, ref["buyers"])["baby"]
+    assert 3 < p.send < 17 and p.ceiling == p.send

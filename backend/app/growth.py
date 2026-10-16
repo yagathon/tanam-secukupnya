@@ -18,6 +18,12 @@ class Line:
     min_g: float
     max_g: float
     channels: tuple[str, ...]
+    stretch_g: float | None = None   # buyers still take plants up to this when short; None = max_g
+
+    @property
+    def top_g(self) -> float:
+        """The heaviest plant that can still be sent."""
+        return self.stretch_g or self.max_g
 
 
 @dataclass(frozen=True, eq=False)  # hashed by identity: production caches lookups per crop object
@@ -55,7 +61,8 @@ def crop_from_dict(d: dict) -> Crop:
         spread_ratio=float(d["spread_ratio"]), germination=float(d["germination"]), survival=float(d["survival"]),
         seeds_per_gram=float(d["seeds_per_gram"]), grams_per_teaspoon=float(d["grams_per_teaspoon"]),
         max_bed_day=int(d["max_bed_day"]), max_seedlings=int(d.get("max_seedlings_per_sowing", 3000)),
-        lines=tuple(Line(ln["id"], float(ln["min_g"]), float(ln["max_g"]), tuple(ln["channels"])) for ln in d["lines"]),
+        lines=tuple(Line(ln["id"], float(ln["min_g"]), float(ln["max_g"]), tuple(ln["channels"]),
+                         float(ln["stretch_g"]) if ln.get("stretch_g") else None) for ln in d["lines"]),
         sow_weekdays=days,
     )
 
@@ -97,11 +104,11 @@ def share_from(avg: float, spread: float, grams: float) -> float:
 
 
 def in_range_mean(avg: float, spread: float, line: Line) -> float:
-    """Mean weight of the plants inside the line's range (the nearest edge when none are)."""
+    """Mean weight of the sendable plants (min_g … top_g; the nearest edge when none are)."""
     lo, hi = size_range(avg, spread)
-    a, b = max(lo, line.min_g), min(hi, line.max_g)
+    a, b = max(lo, line.min_g), min(hi, line.top_g)
     if b < a:
-        return min(max(avg, line.min_g), line.max_g)
+        return min(max(avg, line.min_g), line.top_g)
     return (a + b) / 2
 
 

@@ -141,6 +141,29 @@ def ceiling(crop: Crop, line: str, batches: list[Batch], need: dict[date, float]
     return _floor2(lo)
 
 
+def fair_send(crop: Crop, line: str, batches: list[Batch], need: dict[date, float], today: date, end: date) -> float:
+    """Tomorrow's share of a shortage that can't be avoided: the largest fraction f such that every day
+    tomorrow … end can get f × its need (or all it could ever get, if less), harvesting oldest first."""
+    tom = today + timedelta(days=1)
+    days = [tom + timedelta(days=i) for i in range((end - tom).days + 1)]
+    caps = {p.day: p.available_kg for p in project(crop, line, batches, need, tom, end, send={d: 0.0 for d in days})}
+
+    def targets(f: float) -> dict[date, float]:
+        return {d: min(f * need.get(d, 0.0), caps[d]) for d in days}
+
+    def ok(f: float) -> bool:
+        t = targets(f)
+        return all(p.harvested_kg >= t[p.day] - EPS_KG for p in project(crop, line, batches, need, tom, end, send=t))
+
+    if ok(1.0):
+        return _floor2(targets(1.0)[tom])
+    lo, hi = 0.0, 1.0
+    for _ in range(25):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if ok(mid) else (lo, mid)
+    return _floor2(targets(lo)[tom])
+
+
 def borrowing(crop: Crop, line: str, batches: list[Batch], need: dict[date, float], today: date, end: date,
               x: float, ceil: float) -> list[dict]:
     """Sending x > ceiling: the later days whose shortfall grows, and by how much."""

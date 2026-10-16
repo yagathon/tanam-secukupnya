@@ -57,6 +57,8 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
         needs = engine.line_needs(model, buyers, ln.id, st.today, st.today + timedelta(days=PLAN_DAYS),
                                   st.known_orders, st.signals, st.household_ids)
         ceil = engine.ceiling(crop, ln.id, batches, needs.protected, st.today, end)
+        if needs.tomorrow > ceil + engine.EPS_KG:      # short either way: share it out instead of holding all back
+            ceil = max(ceil, engine.fair_send(crop, ln.id, batches, needs.protected, st.today, end))
         avail = round(sum(available_kg(crop, b, tom) for b in batches), 2)
         send = min(needs.tomorrow, ceil)
         borrow = engine.borrowing(crop, ln.id, batches, needs.protected, st.today, end, min(needs.tomorrow, avail), ceil) \

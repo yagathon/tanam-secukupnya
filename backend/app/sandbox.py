@@ -35,11 +35,14 @@ class LineIn(BaseModel):
     id: str = Field(pattern=r"^[a-z0-9_]{1,20}$")
     min_g: float = Field(gt=0)
     max_g: float = Field(gt=0)
+    stretch_g: float | None = Field(default=None, gt=0)   # still accepted when short; None = max_g
 
     @model_validator(mode="after")
     def _order(self):
         if self.min_g >= self.max_g:
             raise ValueError(f"line {self.id}: min_g must be below max_g")
+        if self.stretch_g is not None and self.stretch_g < self.max_g:
+            raise ValueError(f"line {self.id}: stretch_g must be at least max_g")
         return self
 
 
@@ -137,7 +140,8 @@ def default_setup() -> dict:
                      "growth_curve": [[0, 5], [7, 15], [14, 45], [18, 70], [21, 100], [24, 125], [27, 145], [30, 160]],
                      "spread_ratio": 0.45, "germination": 0.85, "survival": 0.9, "seeds_per_gram": 400,
                      "grams_per_teaspoon": 3, "max_bed_day": 30, "max_seedlings_per_sowing": 3000, "sow_weekdays": [0, 3],
-                     "lines": [{"id": "regular", "min_g": 100, "max_g": 140}, {"id": "baby", "min_g": 50, "max_g": 70}]},
+                     "lines": [{"id": "regular", "min_g": 100, "max_g": 140, "stretch_g": 160},
+                               {"id": "baby", "min_g": 50, "max_g": 70, "stretch_g": 80}]},
             "buyers": [], "beds": []}
 
 

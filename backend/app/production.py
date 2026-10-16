@@ -65,12 +65,12 @@ def _at(crop: Crop, line_id: str, bd: int, size: float, r: float) -> tuple[float
         return 0.0, 0.0, 0.0
     line = crop.line(line_id)
     avg = size * curve(crop, bd)
-    over = 1.0 if bd > crop.max_bed_day else share_from(avg, r, line.max_g)
+    over = 1.0 if bd > crop.max_bed_day else share_from(avg, r, line.top_g)
     return share_from(avg, r, line.min_g), over, in_range_mean(avg, r, line) / 1000
 
 
 def shares(crop: Crop, b: Batch, d: date) -> tuple[float, float]:
-    """(F_ready, F_over): share at/above the line's minimum, and past its maximum (all of it after max_bed_day)."""
+    """(F_ready, F_over): share at/above the line's minimum, and past what it can still send (top_g) (all of it after max_bed_day)."""
     ready, over, _ = _at(crop, b.line, bed_day(crop, b, d), b.size_factor, spread(crop, b))
     return ready, over
 
