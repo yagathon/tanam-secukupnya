@@ -17,6 +17,7 @@ export interface Household { id: string; alias: string; line: LineId; kg: number
 export interface Sender { id: string; alias: string }
 export interface State {
   today: string; synthetic: boolean; crop: Crop; buyers: Buyer[]; households: Household[]; senders: Sender[];
+  reference?: Reference; sandbox?: boolean;
 }
 
 export interface Signal {
@@ -34,7 +35,8 @@ export interface Proposal {
 export interface NoteDoc {
   id: string; text: string; sender: string; received_on: string; proposal: Proposal; kind: NoteKind;
   summary_en: string; status: "proposed" | "no_action" | "accepted" | "rejected"; dropped: string[];
-  model: string; cached: boolean; events?: unknown[];
+  model: string; cached: boolean; events?: unknown[]; preview?: string[];
+  preview_events?: Record<string, unknown>[];
 }
 
 export interface SowSummary {
@@ -44,11 +46,11 @@ export interface TodayLine {
   line: LineId; need_kg: number; ceiling_kg: number; send_kg: number; short_kg: number; rotated: string[];
   sow: SowSummary;
 }
-export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[] }
+export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[]; seq: number }
 
 export interface BatchRow {
   id: string; label: string; sown_on: string; bed_day: number; stage: "nursery" | "bed"; seedlings: number;
-  plants_left: number; avg_g: number | null; offset_days: number; spread: number; sampled: boolean;
+  plants_left: number; avg_g: number | null; size_pct: number; spread: number; sampled: boolean;
   ready_from: string; until: string; available_tomorrow_kg: number; waste_plants: number;
 }
 export interface ChartDay { day: string; available_kg: number; need_kg: number; short_kg: number }
@@ -94,3 +96,23 @@ export interface Season {
 
 /** Everything the tabs need, refetched after every change (Season is loaded by its own tab). */
 export interface Data { state: State; today: Today; beds: Beds; tomorrow: Tomorrow; sow: Sow; demand: Demand }
+
+export interface SetupLine { id: string; min_g: number; max_g: number }
+export interface SetupCrop {
+  name: string; nursery_days: number; growth_curve: [number, number][]; spread_ratio: number;
+  germination: number; survival: number; seeds_per_gram: number; grams_per_teaspoon: number;
+  max_bed_day: number; max_seedlings_per_sowing: number; sow_weekdays: number[]; lines: SetupLine[];
+}
+export interface SetupBuyer {
+  id?: string; name: string; type: "business" | "household"; line: string;
+  usual_kg_per_week: number; weekdays: number[]; min_kg: number;
+}
+export interface SetupBed { line: string; sown_on: string; seedlings: number }
+export interface Setup { start: string; learn_reference: boolean; crop: SetupCrop; buyers: SetupBuyer[]; beds: SetupBed[] }
+export interface SetupDoc { saved: boolean; setup: Setup; locked_start: boolean }
+export interface Reference { start: [number, number][]; now: [number, number][]; samples: number[] }
+export interface TrailLine {
+  low: number; high: number; ready: number; ceiling: number; send: number;
+  short: number | null; sow_day: string | null; sow_seedlings: number;
+}
+export interface TrailRow { day: string; live: boolean; lines: Record<string, TrailLine>; inputs: string[]; ref: string[] }

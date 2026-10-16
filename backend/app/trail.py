@@ -1,0 +1,78 @@
+"""The decision trail: for every closed day, what the engine decided that morning and what came in.
+
+Replays the sandbox log once, planning at each day boundary; cached per workspace and continued
+from the last day when the log only grew (a setup edit or a clear rebuilds it)."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+from app import farm, sandbox, sim
+from app.state import FarmState, apply, current_crop, initial
+from app.store import Store
+
+
+@dataclass
+class _Cache:
+    rev: str
+    prints: list[str]                # content fingerprint per replayed log entry
+    state: FarmState
+    rows: list[dict] = field(default_factory=list)
+    pending: list[str] = field(default_factory=list)
+    ref_seen: int = 0
+
+
+_cache: dict[str, _Cache] = {}
+
+
+def _row(st, crop, buyers, inputs, ref, live) -> dict:
+    plans = sim.plan(st, crop, buyers)
+    lines = {}
+    for line, p in plans.items():
+        r0 = p.needs.rows[0] if p.needs.rows else {"low": 0, "high": 0}
+        lines[line] = {"low": r0["low"], "high": r0["high"], "ready": round(p.available_tomorrow, 2),
+                       "ceiling": round(p.ceiling, 2), "send": round(p.send, 2), "short": None,
+                       "sow_day": p.sow.day.isoformat() if p.sow.day else None, "sow_seedlings": p.sow.seedlings}
+    return {"day": st.today.isoformat(), "live": live, "lines": lines, "inputs": inputs, "ref": ref}
+
+
+def build(ws: Store) -> dict:
+    meta, docs = ws.meta(), sorted(ws.list("events"), key=lambda d: d["seq"])
+    c = farm.crop(ws)
+    buyers = ws.list("buyers")
+    names = {b["id"]: b["alias"] for b in buyers} | {h["id"]: h["alias"] for h in ws.list("households")}
+    hit = _cache.get(ws.uid)
+    prints = [farm.doc_print(d) for d in docs]
+    if hit is None or hit.rev != meta["rev"] or prints[:len(hit.prints)] != hit.prints:
+        st = initial({"batches": ws.list("batches"), "history": ws.list("history")}, meta)
+        hit = _Cache(meta["rev"], [], st)
+    start = len(hit.prints)
+    st = hit.state
+    for doc, fp in zip(docs[start:], prints[start:], strict=True):
+        labels = {b.id: b.label for b in st.batches.values()}
+        if doc["kind"] == "day":
+            row = _row(st, current_crop(st, c), buyers, hit.pending,
+                       [_ref_line(e) for e in st.ref_log[hit.ref_seen:]], False)
+            hit.ref_seen, hit.pending = len(st.ref_log), []
+        for ev in doc["events"]:
+            if doc["kind"] != "day":
+                hit.pending.append(sandbox.describe(ev, names, labels))
+            if doc["kind"] == "day" and ev["t"] == "served":
+                row["lines"][ev["line"]]["short"] = round(ev["b2b_ordered"] + ev["hh_ordered"]
+                                                          - ev["b2b_served"] - ev["hh_served"], 2)
+            apply(st, c, ev)
+        if doc["kind"] == "day":
+            hit.rows.append(row)
+        hit.prints.append(fp)
+    _cache[ws.uid] = hit
+    live = _row(st, current_crop(st, c), buyers, list(hit.pending),
+                [_ref_line(e) for e in st.ref_log[hit.ref_seen:]], True)
+    return {"rows": [live] + hit.rows[::-1], "replayed_from": start}
+
+
+def _ref_line(e: dict) -> str:
+    if e.get("reset"):
+        return "reference reset to the starting curve"
+    if e["node_days"]:
+        return f"{e['bed']} sample ×{e['ratio']:.2f} → nodes at day {', '.join(str(int(x)) for x in e['node_days'])}"
+    return f"{e['bed']} sample ×{e['ratio']:.2f} (reference held)"

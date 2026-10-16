@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 import TodayTab from "@/components/TodayTab";
@@ -8,13 +9,14 @@ import TomorrowTab from "@/components/TomorrowTab";
 import SowTab from "@/components/SowTab";
 import DemandTab from "@/components/DemandTab";
 import SeasonTab from "@/components/SeasonTab";
-import { api } from "@/lib/api";
+import { api, type Api } from "@/lib/api";
 import { friendly, shortDate } from "@/lib/format";
 import type { Data } from "@/lib/types";
 
 export interface TabProps {
   data: Data;
   reload: () => Promise<void>;
+  api: Api;
 }
 
 interface Tab {
@@ -31,7 +33,7 @@ const TABS: Tab[] = [
   { id: "tomorrow", label: "Tomorrow", hint: "The most we can safely send, and who gets it", view: (p) => <TomorrowTab {...p} /> },
   { id: "sow", label: "Sow", hint: "How many seedlings on the next sowing day, and why", view: (p) => <SowTab {...p} /> },
   { id: "demand", label: "Demand", hint: "Forecast per day with an honest band, and what moved it", view: (p) => <DemandTab {...p} /> },
-  { id: "season", label: "Season", hint: "Six months, three strategies: does it actually waste less?", view: () => <SeasonTab /> },
+  { id: "season", label: "Season", hint: "Six months, three strategies: does it actually waste less?", view: (p) => <SeasonTab api={p.api} /> },
 ];
 
 export default function Home() {
@@ -100,6 +102,7 @@ export default function Home() {
           <h1>Tanam Secukupnya</h1>
           <p className="sub">Plant just enough: a daily planner that keeps a small farm out of the boom-and-bust cycle</p>
         </div>
+        <Link className="small" href="/sandbox">Sandbox →</Link>
         {data && (
           <div className="clock">
             <span>
@@ -130,7 +133,7 @@ export default function Home() {
         </div>
       )}
       {!data && !error && <div className="card muted">Loading…</div>}
-      {data && current && <section>{current.view({ data, reload: load })}</section>}
+      {data && current && <section>{current.view({ data, reload: load, api })}</section>}
 
       {data && TABS.length > 1 && (
         <footer className="pager">

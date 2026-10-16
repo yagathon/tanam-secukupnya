@@ -8,13 +8,14 @@ visitor and keyed by the log, so the five views of one screen share one replay.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from collections import OrderedDict
 from dataclasses import asdict, dataclass
 from datetime import date, timedelta
 from functools import lru_cache
 
-from app import engine, notes, sim
+from app import engine, notes, sandbox, sim
 from app import world as W
 from app.allocator import BuyerOrder, HouseholdOrder, allocate_day
 from app.growth import Crop, crop_from_dict, first_ready_day
@@ -27,7 +28,7 @@ from app.production import (
     spread,
     waste_plants,
 )
-from app.state import FarmState, apply, replay
+from app.state import FarmState, apply, current_crop, replay
 from app.store import SEED_DIR, Store
 
 CHART_DAYS = 40
@@ -35,7 +36,7 @@ SEASON_FILE = SEED_DIR / "season.json"
 _CACHE_SIZE = 256
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=64)
 def _crop(raw: str) -> Crop:
     return crop_from_dict(json.loads(raw))
 
@@ -54,13 +55,30 @@ class View:
     state: FarmState
     plans: dict[str, sim.LinePlan]
     log_key: tuple[int, int]
+    crop: Crop
+    rev: str | None = None           # sandbox setup revision: a setup edit invalidates the view
+    digest: str = ""                 # log content: a clear refilled to the same seqs invalidates it
 
 
 _views: OrderedDict[str, View] = OrderedDict()
 
 
+def replay_check(ws: Store) -> None:
+    """Raise KeyError/ValueError if ws's log does not replay on ws's reference."""
+    replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), crop(ws), ws.list("events"))
+
+
 def log_key(docs: list[dict]) -> tuple[int, int]:
     return len(docs), max((d["seq"] for d in docs), default=0)
+
+
+def doc_print(doc: dict) -> str:
+    """Content fingerprint of one log entry: a cleared log refilled to the same seqs differs here."""
+    return hashlib.blake2b(json.dumps(doc, sort_keys=True, default=str).encode(), digest_size=8).hexdigest()
+
+
+def log_digest(docs: list[dict]) -> str:
+    return hashlib.blake2b("".join(doc_print(d) for d in docs).encode(), digest_size=8).hexdigest()
 
 
 def load(ws: Store) -> View:
@@ -68,12 +86,13 @@ def load(ws: Store) -> View:
     docs = ws.list("events")
     key = log_key(docs)
     hit = _views.get(ws.uid)
-    if hit is not None and hit.log_key == key:
+    rev, digest = ws.meta().get("rev"), log_digest(sorted(docs, key=lambda d: d["seq"]))
+    if hit is not None and hit.log_key == key and hit.rev == rev and hit.digest == digest:
         _views.move_to_end(ws.uid)
         return hit
     c = crop(ws)
     st = replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), c, docs)
-    view = View(st, sim.plan(st, c, ws.list("buyers")), key)
+    view = View(st, sim.plan(st, c, ws.list("buyers")), key, current_crop(st, c), rev, digest)
     _views[ws.uid] = view
     while len(_views) > _CACHE_SIZE:
         _views.popitem(last=False)
@@ -94,19 +113,36 @@ def next_day(ws: Store, from_day: date, days: int) -> dict:
     v = load(ws)
     if v.state.today != from_day:
         return {"today": v.state.today.isoformat(), "appended": 0}
-    c, w = crop(ws), world(ws)
+    c = crop(ws)
+    if ws.meta().get("sandbox"):
+        if sum(1 for d in ws.list("events") if d["kind"] == "day") + days > sandbox.MAX_DAYS:
+            raise ValueError(f"the sandbox holds at most {sandbox.MAX_DAYS} days; clear it to start again")
+        buyers, hh = ws.list("buyers"), ws.list("households")
+        def step(st, plans):
+            return sandbox.close_day(st, current_crop(st, c), buyers, hh, plans)
+    else:
+        w, fixed = world(ws), ws.meta()["fixed_seedlings"]
+        def step(st, plans):
+            return sim.day_events(st, c, w, "tanam", fixed, plans)
     st, plans = copy.deepcopy(v.state), v.plans
-    fixed = ws.meta()["fixed_seedlings"]
     seq = v.log_key[1] + 1
     for i in range(days):
         if i:
-            plans = sim.plan(st, c, ws.list("buyers"))
-        evs = sim.day_events(st, c, w, "tanam", fixed, plans)
+            plans = sim.plan(st, current_crop(st, c), ws.list("buyers"))
+        evs = step(st, plans)
         if not append(ws, seq + i, {"kind": "day", "events": evs}):
             return {"today": load(ws).state.today.isoformat(), "appended": i}
         for ev in evs:
             apply(st, c, ev)
     return {"today": st.today.isoformat(), "appended": days}
+
+
+
+def reference(ws: Store) -> dict:
+    v, base = load(ws), crop(ws)
+    kept = v.state.ref_kept or tuple(() for _ in base.curve)
+    return {"start": [list(p) for p in base.curve], "now": [[x, round(y, 1)] for x, y in v.crop.curve],
+            "samples": [len(k) for k in kept]}
 
 
 # --- views ---
@@ -122,6 +158,10 @@ def _tomorrow_orders(ws: Store, st: FarmState, lp: sim.LinePlan) -> tuple[list[B
     mins = {b["id"]: b["lines"].get(lp.line, {}).get("min_kg", 0.0) for b in ws.list("buyers")}
     buyers = [BuyerOrder(k.split(":")[1], round(kg, 2), mins.get(k.split(":")[1], 0.0))
               for k, kg in lp.needs.tomorrow_parts.items() if k.startswith("b2b:") and kg > 0]
+    if st.household_ids:                     # sandbox: households' orders are entered, not simulated
+        hh = [HouseholdOrder(who, kg, st.last_shorted.get(who)) for (iso, who, l2), kg in sorted(st.known_orders.items())
+              if iso == tom.isoformat() and l2 == lp.line and who in st.household_ids and kg > 0]
+        return buyers, hh
     subs = [h for h in ws.list("households") if h["line"] == lp.line and tom.weekday() in h["weekdays"]]
     hh_kg = lp.needs.tomorrow_parts.get(engine.hh_key(lp.line), 0.0)
     each = round(hh_kg / len(subs), 2) if subs else 0.0
@@ -154,7 +194,7 @@ def tomorrow(ws: Store) -> dict:
 
 def beds(ws: Store) -> dict:
     v = load(ws)
-    st, c = v.state, crop(ws)
+    st, c = v.state, v.crop
     tom = st.today + timedelta(days=1)
     lines = []
     for lp in v.plans.values():
@@ -167,8 +207,8 @@ def beds(ws: Store) -> dict:
                 "stage": "nursery" if bd < 0 else "bed", "seedlings": b.seedlings,
                 "plants_left": round(in_bed_plants(c, b, st.today)),
                 "avg_g": round(avg_g(c, b, st.today)) if bd >= 0 else None,
-                "offset_days": round(b.growth_offset_days, 1), "spread": round(spread(c, b), 2), "sampled": b.sampled,
-                "ready_from": first_ready_day(c, ln, b.sown_on, b.growth_offset_days, b.spread_ratio).isoformat(),
+                "size_pct": round(b.size_factor * 100), "spread": round(spread(c, b), 2), "sampled": b.sampled,
+                "ready_from": first_ready_day(c, ln, b.sown_on, b.size_factor, b.spread_ratio).isoformat(),
                 "until": (b.sown_on + timedelta(days=c.nursery_days + c.max_bed_day)).isoformat(),
                 "available_tomorrow_kg": round(available_kg(c, b, tom), 2),
                 "waste_plants": round(waste_plants(c, b, st.today)),
@@ -182,12 +222,12 @@ def beds(ws: Store) -> dict:
 
 def sow(ws: Store) -> dict:
     v = load(ws)
-    st, c = v.state, crop(ws)
+    st, c = v.state, v.crop
     lines = []
     for lp in v.plans.values():
         p = asdict(lp.sow)
         p = {k: (x.isoformat() if isinstance(x, date) else x) for k, x in p.items()}
-        missed = engine.missed_slots(st.last_sown.get(lp.line), lp.sow.day)
+        missed = engine.missed_slots(st.last_sown.get(lp.line), lp.sow.day, c.sow_weekdays)
         lines.append({**p, "missed": [d.isoformat() for d in missed],
                       "postponed": [{"day": d, "reason": r} for (ln, d), r in st.postponed.items() if ln == lp.line],
                       "basis": {"need": "B2B high + households high", "survival": c.survival,
@@ -228,14 +268,15 @@ def today(ws: Store) -> dict:
                             "seeds_g": s.seeds_g, "teaspoons": s.teaspoons,
                             "shortfall_ahead_kg": round(sum(r["kg"] for r in s.shortfall_ahead), 2)}})
     pending = [n for n in ws.list("notes") if n.get("status") == "proposed"]
-    return {"today": st.today.isoformat(), "weekday": st.today.strftime("%A"), "lines": out, "pending": pending}
+    return {"today": st.today.isoformat(), "weekday": st.today.strftime("%A"), "lines": out, "pending": pending,
+            "seq": v.log_key[1] + 1}
 
 
 def note_inputs(ws: Store) -> dict:
     """What reading and sanitizing a note needs: the Gemini context, bed label → batch id, the sowing
     day a "postponed" note refers to (per line), and the log seq an accepted note would take."""
     v = load(ws)
-    st, c = v.state, crop(ws)
+    st, c = v.state, v.crop
     in_ground = [b for b in sorted(st.alive(c), key=lambda b: b.sown_on)
                  if bed_day(c, b, st.today) >= 0 and in_bed_plants(c, b, st.today) > 0]
     model = sim.demand_model(st)
@@ -247,7 +288,7 @@ def note_inputs(ws: Store) -> dict:
     return {"today": st.today, "ctx": ctx, "beds": {b.label: b.id for b in in_ground}, "lines": lines,
             "max_seedlings": c.max_seedlings,
             "next_sow": {ln: engine.next_sow_day(st.today, st.last_sown.get(ln) == st.today
-                                                 or (ln, st.today.isoformat()) in st.postponed) for ln in lines},
+                                                 or (ln, st.today.isoformat()) in st.postponed, c.sow_weekdays) for ln in lines},
             "seq": v.log_key[1] + 1}
 
 

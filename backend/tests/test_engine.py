@@ -118,3 +118,30 @@ def test_signal_factor_scopes():
     assert engine.signal_factor(sig, "b2b:resto_b:regular", d) == 1.0
     assert engine.signal_factor(sig, "hh:baby", d) == 1.2 and engine.signal_factor(sig, "hh:regular", d) == 1.0
     assert engine.signal_factor(sig, "b2b:resto_a:regular", date(2026, 10, 26)) == 1.0
+
+
+def test_next_sow_day_custom_weekdays():
+    tue = date(2026, 10, 13)
+    assert engine.next_sow_day(tue, False, (1, 4)) == tue           # sowing day, not sown yet
+    assert engine.next_sow_day(tue, True, (1, 4)) == date(2026, 10, 16)  # Fri
+
+
+def test_missed_slots_custom_weekdays():
+    assert engine.missed_slots(date(2026, 10, 12), date(2026, 10, 19), (2,)) == [date(2026, 10, 14)]
+
+
+def test_crop_reads_sow_weekdays(pakcoy):
+    from app.growth import crop_from_dict
+    import json; from app.store import SEED_DIR
+    raw = json.loads((SEED_DIR / "crops.json").read_text())[0]
+    assert pakcoy.sow_weekdays == (0, 3)
+    assert crop_from_dict({**raw, "sow_weekdays": [2]}).sow_weekdays == (2,)
+
+
+def test_known_household_orders_replace_expected():
+    from app import demand
+    tom = date(2026, 10, 13)
+    m = demand.fit({}, date(2026, 10, 12), date(2026, 10, 12), {"hh:regular": [3] * 7})
+    known = {(tom.isoformat(), "h1", "regular"): 1.5}
+    n = engine.line_needs(m, [], "regular", date(2026, 10, 12), tom, known, [], frozenset({"h1"}))
+    assert n.tomorrow_parts["hh:regular"] == 1.5

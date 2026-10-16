@@ -24,7 +24,7 @@ from app.production import (
     take_oldest,
     waste_plants,
 )
-from app.state import FarmState, apply
+from app.state import FarmState, apply, current_crop
 
 PLAN_DAYS = 45
 STRATEGIES = ("cobweb", "fixed", "tanam")
@@ -42,10 +42,11 @@ class LinePlan:
 
 
 def demand_model(st: FarmState) -> demand.DemandModel:
-    return demand.fit(st.history, W.DAY0, st.today + timedelta(days=1))
+    return demand.fit(st.history, st.shape_until or W.DAY0, st.today + timedelta(days=1), st.priors)
 
 
 def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandModel | None = None) -> dict[str, LinePlan]:
+    crop = current_crop(st, crop)
     model = model or demand_model(st)
     out = {}
     tom = st.today + timedelta(days=1)
@@ -54,7 +55,7 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
         sown_today = st.last_sown.get(ln.id) == st.today or (ln.id, st.today.isoformat()) in st.postponed
         end = engine.horizon_end(crop, ln.id, st.today, sown_today)
         needs = engine.line_needs(model, buyers, ln.id, st.today, st.today + timedelta(days=PLAN_DAYS),
-                                  st.known_orders, st.signals)
+                                  st.known_orders, st.signals, st.household_ids)
         ceil = engine.ceiling(crop, ln.id, batches, needs.protected, st.today, end)
         avail = round(sum(available_kg(crop, b, tom) for b in batches), 2)
         send = min(needs.tomorrow, ceil)
@@ -67,13 +68,13 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
 
 
 def _truth(crop: Crop, w: W.World, b: Batch) -> Batch:
-    off, r = w.growth_truth(crop, b.line, b.sown_on)
-    return replace(b, growth_offset_days=off, spread_ratio=r)
+    size, r = w.growth_truth(crop, b.line, b.sown_on)
+    return replace(b, size_factor=size, spread_ratio=r)
 
 
 def _sample(crop: Crop, b: Batch, d: date) -> tuple[float, float]:
     """5 biggest and 5 smallest weighed together (true growth; the 5 extremes sit ~90% out on the spread)."""
-    avg = curve(crop, bed_day(crop, b, d) + b.growth_offset_days)
+    avg = b.size_factor * curve(crop, bed_day(crop, b, d))
     k = 0.9 * b.spread_ratio / 2
     return round(5 * avg * (1 + k)), round(5 * avg * (1 - k))
 
@@ -92,6 +93,7 @@ def _cobweb(st: FarmState, crop: Crop, w: W.World, line: str, fixed: int) -> int
 def day_events(st: FarmState, crop: Crop, w: W.World, strategy: str, fixed: dict[str, int],
                plans: dict[str, LinePlan] | None = None) -> list[dict]:
     """Everything that happens from today (t) to tomorrow (t+1), as primitive events."""
+    crop = current_crop(st, crop)
     t = st.today
     d = t + timedelta(days=1)
     evs: list[dict] = []
@@ -128,7 +130,7 @@ def day_events(st: FarmState, crop: Crop, w: W.World, strategy: str, fixed: dict
     nxt = (d + timedelta(days=1)).isoformat()
     evs += [{"t": "order", "day": iso, "buyer": b, "line": line, "kg": kg}
             for (iso, b, line), kg in sorted(w.b2b.items()) if iso == nxt]
-    if t.weekday() in engine.SOW_WEEKDAYS:
+    if t.weekday() in crop.sow_weekdays:
         for ln in crop.lines:
             if st.last_sown.get(ln.id) == t or (ln.id, t.isoformat()) in st.postponed:
                 continue

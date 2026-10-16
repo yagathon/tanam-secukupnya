@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 
-import { api } from "@/lib/api";
+import type { Api } from "@/lib/api";
 import { friendly, proposalLines, shortDate } from "@/lib/format";
-import { conflict, readAgain } from "@/lib/notes";
+import { conflict, editable, readAgain } from "@/lib/notes";
 import type { NoteDoc, State } from "@/lib/types";
 
 /** A proposed note: what Gemini read, what was dropped, and Accept / Reject. If the farm moved on
- *  since it was read (409), offer to read the same text again. */
-export default function NoteCard({ note, state, onDone }: { note: NoteDoc; state: State; onDone: () => Promise<void> }) {
+ *  since it was read (409), offer to read the same text again. With `onEdit` (the sandbox), the card also
+ *  shows the exact log lines OK would store, and an Edit button that hands the reading to the form. */
+export default function NoteCard({ note, state, onDone, api, onEdit }: {
+  note: NoteDoc; state: State; onDone: () => Promise<void>; api: Api; onEdit?: (note: NoteDoc) => void;
+}) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ text: string; stale: boolean } | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -45,6 +48,9 @@ export default function NoteCard({ note, state, onDone }: { note: NoteDoc; state
       ) : (
         <p>{note.summary_en}</p>
       )}
+      {note.preview?.length ? (
+        <ul className="preview">{note.preview.map((l) => <li key={l}>{l}</li>)}</ul>
+      ) : null}
       {note.dropped?.length > 0 && <p className="small muted">Ignored: {note.dropped.join("; ")}</p>}
       {error?.text && <p className="small bad">{error.text}</p>}
       {info && <p className="small muted">{info}</p>}
@@ -52,7 +58,7 @@ export default function NoteCard({ note, state, onDone }: { note: NoteDoc; state
         {error?.stale ? (
           <button className="primary" disabled={busy}
             onClick={() => run(async () => {
-              const n = await readAgain(note);
+              const n = await readAgain(note, api);
               if (n.status === "proposed") return;
               setInfo(`Read again: ${n.summary_en} Nothing to apply; reject this note if it is no longer needed.`);
               setError({ text: "", stale: true });
@@ -61,9 +67,14 @@ export default function NoteCard({ note, state, onDone }: { note: NoteDoc; state
             Read again
           </button>
         ) : (
-          <button className="primary" disabled={busy} onClick={() => run(() => api.decideNote(note.id, true))}>Accept</button>
+          <button className="primary" disabled={busy} onClick={() => run(() => api.decideNote(note.id, true))}>
+            {onEdit ? "OK" : "Accept"}
+          </button>
         )}
-        <button disabled={busy} onClick={() => run(() => api.decideNote(note.id, false))}>Reject</button>
+        {onEdit && editable(note) && <button disabled={busy} onClick={() => onEdit(note)}>Edit</button>}
+        <button disabled={busy} onClick={() => run(() => api.decideNote(note.id, false))}>
+          {onEdit ? "Discard" : "Reject"}
+        </button>
       </div>
     </div>
   );

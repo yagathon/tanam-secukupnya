@@ -34,6 +34,7 @@ class Crop:
     max_bed_day: int
     max_seedlings: int
     lines: tuple[Line, ...]
+    sow_weekdays: tuple[int, ...] = (0, 3)  # Mon, Thu
 
     def line(self, line_id: str) -> Line:
         for ln in self.lines:
@@ -44,6 +45,9 @@ class Crop:
 
 def crop_from_dict(d: dict) -> Crop:
     pts = tuple((float(x), float(y)) for x, y in d["growth_curve"])
+    days = tuple(int(x) for x in d.get("sow_weekdays", [0, 3]))
+    if not days or any(not 0 <= x <= 6 for x in days):
+        raise ValueError(f"{d['id']}: sow_weekdays must be a non-empty list of weekdays 0..6")
     if len(pts) < 2 or any(b[0] <= a[0] or b[1] <= a[1] for a, b in zip(pts, pts[1:])):
         raise ValueError(f"{d['id']}: growth_curve must be strictly increasing in day and grams")
     return Crop(
@@ -52,6 +56,7 @@ def crop_from_dict(d: dict) -> Crop:
         seeds_per_gram=float(d["seeds_per_gram"]), grams_per_teaspoon=float(d["grams_per_teaspoon"]),
         max_bed_day=int(d["max_bed_day"]), max_seedlings=int(d.get("max_seedlings_per_sowing", 3000)),
         lines=tuple(Line(ln["id"], float(ln["min_g"]), float(ln["max_g"]), tuple(ln["channels"])) for ln in d["lines"]),
+        sow_weekdays=days,
     )
 
 
@@ -100,11 +105,11 @@ def in_range_mean(avg: float, spread: float, line: Line) -> float:
     return (a + b) / 2
 
 
-def first_ready_day(crop: Crop, line: Line, sown_on: date, offset: float = 0.0, spread: float | None = None) -> date:
+def first_ready_day(crop: Crop, line: Line, sown_on: date, size: float = 1.0, spread: float | None = None) -> date:
     """First day a quarter of the batch's plants are in the line's range."""
     r = crop.spread_ratio if spread is None else spread
     for bd in range(crop.max_bed_day + 1):
-        if share_from(curve(crop, bd + offset), r, line.min_g) >= READY_SHARE:
+        if share_from(size * curve(crop, bd), r, line.min_g) >= READY_SHARE:
             return sown_on + timedelta(days=crop.nursery_days + bd)
     return sown_on + timedelta(days=crop.nursery_days + crop.max_bed_day)
 

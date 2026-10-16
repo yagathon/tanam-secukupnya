@@ -1,4 +1,4 @@
-import { api, ApiError } from "./api";
+import { type Api, ApiError } from "./api";
 import type { NoteDoc } from "./types";
 
 /** The three 409s from accept: the day moved on (read it again), already decided elsewhere, or a race (try again). */
@@ -13,8 +13,13 @@ export function conflict(e: unknown): Conflict {
 
 /** Read a stale note's text again. The old note is rejected only once the new reading is a proposal,
  *  so a Gemini refusal or an empty reading never loses the farmer's message. */
-export async function readAgain(note: NoteDoc, a: Pick<typeof api, "readNote" | "decideNote"> = api): Promise<NoteDoc> {
+export async function readAgain(note: NoteDoc, a: Pick<Api, "readNote" | "decideNote">): Promise<NoteDoc> {
   const n = await a.readNote(note.text, note.sender);
   if (n.status === "proposed") await a.decideNote(note.id, false);
   return n;
+}
+
+/** Edit hands the reading to one form, so it is offered only for a note that reads as exactly one event. */
+export function editable(note: NoteDoc): boolean {
+  return note.preview_events?.length === 1;
 }

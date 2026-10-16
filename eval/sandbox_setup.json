@@ -1,0 +1,20 @@
+{
+  "start": "2026-10-19",
+  "learn_reference": true,
+  "crop": {"name": "Pakcoy", "nursery_days": 15,
+           "growth_curve": [[0, 5], [7, 15], [14, 45], [18, 70], [21, 100], [24, 125], [27, 145], [30, 160]],
+           "spread_ratio": 0.45, "germination": 0.85, "survival": 0.9, "seeds_per_gram": 400,
+           "grams_per_teaspoon": 3, "max_bed_day": 30, "max_seedlings_per_sowing": 3000, "sow_weekdays": [0, 3],
+           "lines": [{"id": "regular", "min_g": 100, "max_g": 140}, {"id": "baby", "min_g": 50, "max_g": 70}]},
+  "buyers": [
+    {"name": "Restaurant A", "type": "business", "line": "regular", "usual_kg_per_week": 30, "weekdays": [1, 4], "min_kg": 5},
+    {"name": "Caterer B", "type": "business", "line": "regular", "usual_kg_per_week": 14, "weekdays": [0, 2, 4], "min_kg": 0},
+    {"name": "Hotel C", "type": "business", "line": "baby", "usual_kg_per_week": 4, "weekdays": [], "min_kg": 0},
+    {"name": "Household 1", "type": "household", "line": "regular", "usual_kg_per_week": 1, "weekdays": [], "min_kg": 0}
+  ],
+  "beds": [
+    {"line": "regular", "sown_on": "2026-09-15", "seedlings": 900},
+    {"line": "regular", "sown_on": "2026-09-22", "seedlings": 900},
+    {"line": "baby", "sown_on": "2026-09-25", "seedlings": 300}
+  ]
+}

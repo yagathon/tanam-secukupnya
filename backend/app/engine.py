@@ -59,8 +59,10 @@ def series_for(line: str, buyers: list[dict]) -> list[str]:
 
 
 def line_needs(model: demand.DemandModel, buyers: list[dict], line: str, today: date, end: date,
-               known_orders: dict[tuple[str, str, str], float], signals: list[dict]) -> LineNeeds:
-    """known_orders: (iso day, buyer, line) → kg."""
+               known_orders: dict[tuple[str, str, str], float], signals: list[dict],
+               hh_ids: frozenset[str] = frozenset()) -> LineNeeds:
+    """known_orders: (iso day, buyer or household, line) → kg. With `hh_ids`, households' known orders
+    for tomorrow replace the households forecast."""
     tom = today + timedelta(days=1)
     keys = [k for k in series_for(line, buyers) if k in model.fits]
     parts, known = {}, {}
@@ -70,6 +72,11 @@ def line_needs(model: demand.DemandModel, buyers: list[dict], line: str, today: 
             buyer = k.split(":")[1]
             if (tom.isoformat(), buyer, line) in known_orders:
                 known[buyer] = parts[k] = known_orders[tom.isoformat(), buyer, line]
+                continue
+        elif hh_ids:
+            hh = [kg for (iso, who, l2), kg in known_orders.items() if iso == tom.isoformat() and l2 == line and who in hh_ids]
+            if hh:
+                parts[k] = sum(hh)
                 continue
         parts[k] = demand.expected(model, k, tom, f)
     protected, target, rows = {}, {}, []
@@ -94,16 +101,16 @@ def line_needs(model: demand.DemandModel, buyers: list[dict], line: str, today: 
     return LineNeeds(line, sum(parts.values()), parts, known, protected, target, rows)
 
 
-def next_sow_day(today: date, sown_today: bool) -> date:
+def next_sow_day(today: date, sown_today: bool, weekdays: tuple[int, ...] = SOW_WEEKDAYS) -> date:
     d = today + timedelta(days=1 if sown_today else 0)
-    while d.weekday() not in SOW_WEEKDAYS:
+    while d.weekday() not in weekdays:
         d += timedelta(days=1)
     return d
 
 
 def horizon_end(crop: Crop, line: str, today: date, sown_today: bool) -> date:
     """(b)'s horizon: through the first ready day of the next sowing's batch."""
-    return first_ready_day(crop, crop.line(line), next_sow_day(today, sown_today))
+    return first_ready_day(crop, crop.line(line), next_sow_day(today, sown_today, crop.sow_weekdays))
 
 
 def _future_short(crop, line, batches, need, tom, end, x) -> float:
@@ -158,13 +165,13 @@ class SowPlan:
     shortfall_ahead: list[dict]
 
 
-def missed_slots(last_sown: date | None, day: date) -> list[date]:
-    """Mon/Thu sowing days strictly between the last real sowing and `day` (they have no batch)."""
+def missed_slots(last_sown: date | None, day: date, weekdays: tuple[int, ...] = SOW_WEEKDAYS) -> list[date]:
+    """Sowing days strictly between the last real sowing and `day` (they have no batch)."""
     if last_sown is None:
         return []
     out, d = [], last_sown + timedelta(days=1)
     while d < day:
-        if d.weekday() in SOW_WEEKDAYS:
+        if d.weekday() in weekdays:
             out.append(d)
         d += timedelta(days=1)
     return out
@@ -176,14 +183,15 @@ def sow_next(crop: Crop, line: str, batches: list[Batch], protected: dict[date, 
     reach shortfall-free against the sowing target. Coverage: its first ready day until the following
     sowing's first ready day. Earlier days left uncovered by missed sowings are shortfall ahead."""
     ln = crop.line(line)
-    day = next_sow_day(today, sown_today)
-    following = next_sow_day(day + timedelta(days=1), False)
+    wd = crop.sow_weekdays
+    day = next_sow_day(today, sown_today, wd)
+    following = next_sow_day(day + timedelta(days=1), False, wd)
     start = first_ready_day(crop, ln, day)
     end = first_ready_day(crop, ln, following) - timedelta(days=1)
     # Size as if the following sowing gets the same count, over both windows: a batch's tail runs into
     # the next window, so sizing one window alone makes sowings swing big/small/big.
-    end2 = first_ready_day(crop, ln, next_sow_day(following + timedelta(days=1), False)) - timedelta(days=1)
-    missed = missed_slots(last_sown, day)
+    end2 = first_ready_day(crop, ln, next_sow_day(following + timedelta(days=1), False, wd)) - timedelta(days=1)
+    missed = missed_slots(last_sown, day, wd)
     cov_start = min([first_ready_day(crop, ln, m) for m in missed] + [start])
     tom = today + timedelta(days=1)
     need = {d: (target.get(d, 0.0) if d >= cov_start else protected.get(d, 0.0))

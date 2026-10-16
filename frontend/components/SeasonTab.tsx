@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { api } from "@/lib/api";
+import type { Api } from "@/lib/api";
 import { friendly, int, shortDate } from "@/lib/format";
 import type { Season, SeasonMetrics, Strategy } from "@/lib/types";
 
@@ -22,12 +22,12 @@ const METRICS: { key: keyof SeasonMetrics; label: string; better: "low" | "high"
   { key: "sowing_cv", label: "Swing in sowing (CV)", better: "low", fmt: (n) => n.toFixed(2) },
 ];
 
-export default function SeasonTab() {
+export default function SeasonTab({ api }: { api: Api }) {
   const [s, setS] = useState<Season | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     api.season().then(setS).catch((e) => setError(friendly(e)));
-  }, []);
+  }, [api]);
   if (error) return <div className="card error">{error}</div>;
   if (!s) return <div className="card muted">Loading the season…</div>;
   if (!s.runs.length) return <div className="card empty">The season comparison has not been computed (run `just season`).</div>;
