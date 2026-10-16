@@ -53,3 +53,10 @@ test("the Sow form opens on the line due today, else a line that is in use", () 
     new Set(["baby"]), "2026-10-12")).toBe("baby");
   expect(sowLineDefault(["regular"], [], new Set(), "2026-10-12")).toBe("regular");
 });
+
+test("a sowing day that needs no seedlings says so instead of 'Sow 0'", () => {
+  const s = todayActions({ ...base, sow: { ...sow, seedlings: 0, seeds_g: 0, teaspoons: 0 } }, "2026-10-12")
+    .find((a) => a.kind === "sow")!;
+  expect(s.title).toBe("No sowing needed today: the beds in the ground cover the orders it would serve");
+  expect(s.prefill).toEqual([]);
+});

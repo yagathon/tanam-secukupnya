@@ -254,3 +254,28 @@ def test_today_card_says_when_something_is_sellable_again():
     ln = _today_line()
     assert ln["send_kg"] == 0 and ln["harvest_plan"] == [] and ln["cover_pct"] == 0
     assert ln["sellable_from"] > "2026-10-13"
+
+
+def test_example_farm_fills_the_form_and_starts_without_a_shortage():
+    ex = client.get(f"{S}/example").json()
+    assert client.get(f"{S}/setup").json()["saved"] is False        # loading the example saves nothing
+    assert ex["start"] == sb.today_wib().isoformat()
+    assert {b["type"] for b in ex["buyers"]} == {"business", "household"} and len(ex["beds"]) >= 8
+    assert client.put(f"{S}/setup", json=ex).status_code == 200
+    lines = client.get(f"{S}/today").json()["lines"]
+    assert sum(l["need_kg"] for l in lines) > 5
+    assert all(l["short_kg"] < 0.05 for l in lines)
+
+
+def test_reset_setup_clears_the_log_and_the_setup():
+    client.put(f"{S}/setup", json=_setup())
+    client.post(f"{S}/events", json={"form": {"kind": "sow", "line": "regular", "seedlings": 100}, "seq": 1})
+    assert client.post(f"{S}/clear", json={"setup": True}).json() == {"ok": True}
+    doc = client.get(f"{S}/setup").json()
+    assert doc["saved"] is False and doc["setup"]["buyers"] == [] and not doc["locked_start"]
+
+
+def test_clear_keeps_the_setup():
+    client.put(f"{S}/setup", json=_setup())
+    client.post(f"{S}/clear")
+    assert client.get(f"{S}/setup").json()["saved"] is True

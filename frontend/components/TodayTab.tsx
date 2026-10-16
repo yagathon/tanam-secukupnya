@@ -96,6 +96,8 @@ export default function TodayTab({ data, reload, api, input, onAct }: TabProps &
           <span className="small muted">Gemini explains today&apos;s numbers in plain words. The engine decides; Gemini only explains.</span>
         </div>
         {why && <p className={`small ${why.failed ? "bad" : "why"}`}>{why.text}</p>}
+        {onAct && <p className="small muted">Looking back? <strong>Trail</strong> shows every earlier day: what was advised that
+          morning and what you logged.</p>}
         {!input && <p className="small muted">
           Press <strong>Next day →</strong> to let the farm live one day: orders arrive, the farmer harvests and samples, and
           sowing happens {sowDays(state.crop.sow_weekdays ?? [0, 3])}.

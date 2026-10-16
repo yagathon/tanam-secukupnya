@@ -90,6 +90,29 @@ export default function SetupTab({ doc, data, api, reload }: {
     }
   };
 
+  const loadExample = async () => {
+    if ((s.buyers.length || s.beds.length) && !window.confirm("Replace this form with the example farm? Nothing is saved until you press Save.")) return;
+    setError(null);
+    try {
+      setS(await api.example());
+    } catch (e) {
+      setError(friendly(e));
+    }
+  };
+
+  const resetSetup = async () => {
+    if (!window.confirm("Delete the setup and every logged day and note? The sandbox starts blank.")) return;
+    setBusy(true);
+    try {
+      await api.reset(true);
+      await reload();
+    } catch (e) {
+      setError(friendly(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const resetReference = async () => {
     if (!data || !window.confirm("Put the reference curve back to the starting curve? Samples so far stop counting.")) return;
     setBusy(true);
@@ -284,6 +307,12 @@ export default function SetupTab({ doc, data, api, reload }: {
           </button>
           {dirty && <button className="ghost" disabled={busy} onClick={() => setS(doc.setup)}>Undo changes</button>}
           {doc.saved && <span className="small muted">Saving replays every logged day on the new setup.</span>}
+        </div>
+        <div className="row wrap">
+          {!doc.locked_start && <button className="ghost" disabled={busy} onClick={loadExample}>Load example farm</button>}
+          {doc.saved && <button className="ghost" disabled={busy} onClick={resetSetup}>Reset setup</button>}
+          <span className="small muted">Example farm: 3 businesses, 3 households and a bed per past sowing day, ready to save.
+            Reset setup: back to a blank sandbox.</span>
         </div>
       </div>
     </div>

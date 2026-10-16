@@ -170,6 +170,32 @@ def default_setup() -> dict:
             "buyers": [], "beds": []}
 
 
+def example_setup(today: date) -> dict:
+    """A small working farm around `today`: three businesses, three households, a bed per past sowing day.
+    For the demo and the video: Load example farm → Save → a full Today card from day one."""
+    s = default_setup()
+    beds, d = [], today - timedelta(days=45)
+    while d < today:                                             # today's sowing is left for the visitor
+        if d.weekday() in s["crop"]["sow_weekdays"]:
+            beds += [{"line": "regular", "sown_on": d.isoformat(), "seedlings": 500},
+                     {"line": "baby", "sown_on": d.isoformat(), "seedlings": 250}]
+        d += timedelta(days=1)
+    return {**s, "start": today.isoformat(),
+            "month_pct": [32, 27, 22, 19], "year_index": [115, 100, 100, 100, 100, 100, 85, 85, 100, 100, 100, 115],
+            "buyers": [
+                {"name": "Resto Sari Rasa", "type": "business", "line": "regular", "usual_kg_per_week": 60,
+                 "week_pct": [10, 10, 10, 10, 15, 25, 20], "min_kg": 3},
+                {"name": "Hotel Melati", "type": "business", "line": "baby", "usual_kg_per_week": 24,
+                 "week_pct": [0, 25, 0, 25, 0, 50, 0], "min_kg": 2},
+                {"name": "Katering Bu Ani", "type": "business", "line": "regular", "usual_kg_per_week": 20,
+                 "weekdays": [0, 3]},
+                {"name": "Bu Rina", "type": "household", "line": "regular", "usual_kg_per_week": 1, "weekdays": [5]},
+                {"name": "Pak Dedi", "type": "household", "line": "regular", "usual_kg_per_week": 1, "weekdays": [2]},
+                {"name": "Mbak Lia", "type": "household", "line": "baby", "usual_kg_per_week": 0.5, "weekdays": [5]},
+            ],
+            "beds": beds}
+
+
 def bed_no(bed_id: str) -> int:
     return int(bed_id.rsplit("-", 1)[1])
 

@@ -47,7 +47,8 @@ export function makeApi(base: "" | "/sandbox") {
     why: () => call<{ text: string; model: string; cached: boolean }>(p("/today/why"), {}),
     decideNote: (id: string, accept: boolean) => call<NoteDoc>(p(`/notes/${id}/${accept ? "accept" : "reject"}`), {}),
     nextDay: (from_day: string, days = 1) => call<{ today: string; appended: number }>(p("/day/next"), { from_day, days }),
-    reset: () => call<{ ok: boolean }>(base ? "/sandbox/clear" : "/demo/reset", {}),
+    reset: (setup = false) => call<{ ok: boolean }>(base ? "/sandbox/clear" : "/demo/reset", setup ? { setup } : {}),
+    example: () => call<Setup>("/sandbox/example"),
     setup: () => call<SetupDoc>("/sandbox/setup"),
     saveSetup: (s: Setup) => call<SetupDoc>("/sandbox/setup", s, "PUT"),
     event: (form: Record<string, unknown>, seq: number) =>

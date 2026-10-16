@@ -21,3 +21,14 @@ test("the demo api keeps its paths and resets the demo", async () => {
   await makeApi("/sandbox").reset();
   expect(f.mock.calls.map((c) => c[0])).toEqual(["/api/today", "/api/demo/reset", "/api/sandbox/clear"]);
 });
+
+test("sandbox reset can take the setup too, and the example farm is a GET", async () => {
+  const f = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("{}", { status: 200 }));
+  const a = makeApi("/sandbox");
+  await a.reset(true);
+  await a.example();
+  expect(f.mock.calls[0][0]).toBe("/api/sandbox/clear");
+  expect(JSON.parse((f.mock.calls[0][1] as RequestInit).body as string)).toEqual({ setup: true });
+  expect(f.mock.calls[1][0]).toBe("/api/sandbox/example");
+  expect((f.mock.calls[1][1] as RequestInit | undefined)?.method ?? "GET").toBe("GET");
+});

@@ -31,7 +31,9 @@ export function todayActions(l: TodayLine, today: string): TodayAction[] {
   }
   const s = l.sow;
   const ahead = s.shortfall_ahead_kg > 0 ? [`Still short ${kg(s.shortfall_ahead_kg)} before it is ready`] : [];
-  if (s.day === today) out.push({
+  if (s.day === today && s.seedlings <= 0) out.push({ kind: "sow", lines: ahead, prefill: [], done: false,
+    title: "No sowing needed today: the beds in the ground cover the orders it would serve" });
+  else if (s.day === today) out.push({
     kind: "sow", title: `Sow ${int(s.seedlings)} seedlings`, done: done.sown,
     lines: [`≈ ${s.seeds_g} g seed ≈ ${tsp(s.teaspoons)}`, ...ahead],
     prefill: [{ label: "Log sowing", kind: "sow", form: { line: l.line, seedlings: String(s.seedlings) } }],

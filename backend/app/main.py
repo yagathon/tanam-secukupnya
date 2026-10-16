@@ -13,7 +13,7 @@ import os
 import threading
 from datetime import date
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field, ValidationError
 
 from app import farm, gemini, notes, sandbox, trail
@@ -289,9 +289,17 @@ def get_trail(ws: Store = Depends(workspace)) -> dict:
     return trail.build(_sandbox_ws(ws))
 
 
+@sbx.get("/example")
+def get_example() -> dict:
+    """An example farm for the setup form; nothing is saved until the visitor presses Save."""
+    return sandbox.example_setup(sandbox.today_wib())
+
+
 @sbx.post("/clear")
-def clear(ws: Store = Depends(workspace)) -> dict:
-    _sandbox_ws(ws).reset(("sandbox_events", "sandbox_notes"))
+def clear(body: dict | None = Body(None), ws: Store = Depends(workspace)) -> dict:
+    """Clear the logged days and notes; with {"setup": true} the setup goes too (a blank start)."""
+    keep_setup = not (body or {}).get("setup")
+    _sandbox_ws(ws).reset(("sandbox_events", "sandbox_notes") if keep_setup else sandbox.SANDBOX)
     return {"ok": True}
 
 

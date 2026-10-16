@@ -100,7 +100,7 @@ export default function Sandbox() {
   const view = VIEWS.find((v) => v.id === tab);
   const label = (id: string) => (id === "setup" ? "Setup" : id === "trail" ? "Trail" : VIEWS.find((v) => v.id === id)!.label);
   const hint = tab === "setup" ? "Your crop, buyers and beds. Change them any time: every logged day replays on the new setup."
-    : tab === "trail" ? "Every day's decision, frozen when the day closed, with what you logged that day" : view?.hint;
+    : tab === "trail" ? "Every day's decision as it stood that morning, with what you logged that day" : view?.hint;
 
   return (
     <main className="shell">
