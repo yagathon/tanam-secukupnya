@@ -3,6 +3,12 @@ import type { Setup } from "./types";
 const sums100 = (v: number[], n: number) =>
   v.length === n && v.every((x) => x >= 0) && Math.abs(v.reduce((a, b) => a + b, 0) - 100) <= 0.5;
 
+/** Shares are typed as % (85) and stored as 0–1 (0.85); rounded so 0.45 shows as 45, not 45.00000000000001. */
+export const toPct = (x: number) => Math.round(x * 1e4) / 100;
+export const fromPct = (x: number) => Math.round(x * 100) / 1e4;
+
+const inPct = (x: number, hi: number) => x > 0 && x <= hi;
+
 /** The server's setup rules, client-side, so problems show while typing (the server stays the judge). */
 export function checkSetup(s: Setup): string[] {
   const p: string[] = [];
@@ -12,6 +18,9 @@ export function checkSetup(s: Setup): string[] {
     if (i && (d <= c.growth_curve[i - 1][0] || g <= c.growth_curve[i - 1][1]))
       p.push(`curve point ${i + 1}: days and grams must both increase`);
   });
+  if (!inPct(c.germination, 1)) p.push("germination must be 1–100%");
+  if (!inPct(c.survival, 1)) p.push("survival must be 1–100%");
+  if (!inPct(c.spread_ratio, 2)) p.push("size spread must be 1–200%");
   if (!c.sow_weekdays.length) p.push("pick at least one sowing weekday");
   const lines = new Set(c.lines.map((l) => l.id));
   for (const l of c.lines) {

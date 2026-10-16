@@ -6,7 +6,7 @@ import CurveChart from "@/components/sandbox/CurveChart";
 import SheetBox from "@/components/sandbox/SheetBox";
 import type { Api } from "@/lib/api";
 import { friendly } from "@/lib/format";
-import { checkSetup } from "@/lib/setup";
+import { checkSetup, fromPct, toPct } from "@/lib/setup";
 import { bedsFromSheet, buyersFromSheet, curveFromSheet, numbersFromRow, toSheet, WEEKDAYS } from "@/lib/sheet";
 import type { Data, Setup, SetupCrop, SetupDoc } from "@/lib/types";
 
@@ -53,10 +53,12 @@ function PctRow({ value, onChange, placeholder }: { value: number[]; onChange: (
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const CROP_FIELDS: [keyof SetupCrop, string, string?][] = [
-  ["nursery_days", "Nursery days", "1"], ["max_bed_day", "Last bed day", "1"], ["spread_ratio", "Size spread (±)"],
-  ["germination", "Germination (0–1)"], ["survival", "Survival to harvest (0–1)"], ["seeds_per_gram", "Seeds per gram"],
-  ["grams_per_teaspoon", "Grams per teaspoon"], ["max_seedlings_per_sowing", "Max seedlings per sowing", "1"],
+/** [field, label, step, typed as %] */
+const CROP_FIELDS: [keyof SetupCrop, string, string?, boolean?][] = [
+  ["nursery_days", "Nursery days", "1"], ["max_bed_day", "Last bed day", "1"], ["spread_ratio", "Size spread, %", "any", true],
+  ["germination", "Germination, %", "any", true], ["survival", "Survival to harvest, %", "any", true],
+  ["seeds_per_gram", "Seeds per gram"], ["grams_per_teaspoon", "Grams per teaspoon"],
+  ["max_seedlings_per_sowing", "Max seedlings per sowing", "1"],
 ];
 
 /** The visitor's farm: crop, curve, buyers, beds. Nothing is logged until Save. */
@@ -113,10 +115,14 @@ export default function SetupTab({ doc, data, api, reload }: {
             Start date
             <input type="date" value={s.start} disabled={doc.locked_start} onChange={(e) => setS({ ...s, start: e.target.value })} />
           </label>
-          {CROP_FIELDS.map(([k, label, step]) => (
-            <label key={k}>{label}<Num value={s.crop[k] as number} step={step} onChange={(n) => crop({ [k]: n })} /></label>
+          {CROP_FIELDS.map(([k, label, step, pct]) => (
+            <label key={k}>{label}<Num value={pct ? toPct(s.crop[k] as number) : s.crop[k] as number} step={step}
+              onChange={(n) => crop({ [k]: pct ? fromPct(n) : n })} /></label>
           ))}
         </div>
+        <p className="small muted">Size spread: weigh the 5 biggest and the 5 smallest plants of one bed; the gap between their
+          averages as % of the bed&apos;s average plant. 45% = when the average is 100 g, the bed runs from ~78 g to ~122 g.
+          Each harvest sample measures it again per bed.</p>
         {doc.locked_start && <p className="small muted">Locked — clear the sandbox to change the start.</p>}
         <p className="small muted">Sowing days</p>
         <Days value={s.crop.sow_weekdays} onChange={(d) => crop({ sow_weekdays: d })} />

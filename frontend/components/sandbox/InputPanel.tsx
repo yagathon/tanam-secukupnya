@@ -5,11 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
 import { friendly, lineName } from "@/lib/format";
-import type { Prefill } from "@/lib/today";
+import { sowLineDefault, type Prefill } from "@/lib/today";
 import type { NoteDoc } from "@/lib/types";
 
 type Kind = "order" | "harvest" | "sow" | "loss" | "signal" | "postpone";
 type Form = Record<string, string>;
+/** One line under the form: what this kind of entry means. */
+const HINTS: Record<Kind, string> = {
+  order: "A buyer's order for a coming day. 0 kg = they skip this time; no entry = not known yet.",
+  harvest: "What you cut from one bed today. Weighing the 5 biggest and 5 smallest teaches the app how this bed grows.",
+  sow: "Seedlings started today for this line.",
+  loss: "Plants lost in the ground (pests, rain, …) as a % of what was there.",
+  signal: "Something you know will change orders, e.g. Resto A halves orders for 2 weeks = −50%. The forecast follows it.",
+  postpone: "Today's sowing does not happen (rain, no seedlings). The next sowing grows to make up for it.",
+};
 const KINDS: [Kind, string][] = [
   ["order", "Order"], ["harvest", "Harvest"], ["sow", "Sow"], ["loss", "Loss"], ["signal", "Signal"], ["postpone", "Postpone"],
 ];
@@ -33,9 +42,11 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
   const inGround = beds.lines.flatMap((l) => l.batches.filter((b) => b.stage === "bed" && b.plants_left > 0)
     .map((b) => ({ ...b, line: l.line })));
   const planned = (line: string) => String(sow.lines.find((s) => s.line === line)?.seedlings ?? "");
+  const inUse = new Set([...people.map((p) => p.line), ...inGround.map((b) => b.line)]);
+  const sowLine = sowLineDefault(lines, sow.lines, inUse, t);
 
   const blank = (k: Kind): Form => {
-    const line = lines[0] ?? "";
+    const line = k === "sow" || k === "postpone" ? sowLine : lines.find((l) => inUse.has(l)) ?? lines[0] ?? "";
     switch (k) {
       case "order": return { buyer: people[0]?.id ?? "", line: people[0]?.line ?? line, kg: "", day: addDays(t, 1) };
       case "harvest": return { batch: inGround[0]?.id ?? "", kg: "", big5_g: "", small5_g: "" };
@@ -187,6 +198,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
         </>}
         {kind === "postpone" && <>{lineSelect()}{field("reason", "Reason", "text")}</>}
       </div>
+      <p className="small muted">{HINTS[kind]}</p>
       <div className="row wrap">
         <button className="primary" disabled={!!busy} onClick={submit}>{busy === "form" ? "Logging…" : "Log it"}</button>
         {kind === "harvest" && <span className="small muted">Not logged by day&apos;s end? The planned send is assumed harvested.</span>}

@@ -252,3 +252,18 @@ def test_explicit_zero_order_is_a_real_zero():
     from app import sim
     evs = sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
     assert {e["series"]: e["kg"] for e in evs if e["t"] == "actual"} == {"b2b:b1:regular": 0.0}
+
+
+def test_sowing_days_before_the_sandbox_start_are_not_missed():
+    """UAT: a bed sown 5 weeks before the start listed every Mon/Thu since as 'no sowing recorded'."""
+    from app import farm
+    from app.store import JsonStore
+    base = JsonStore().for_user("t-missed")
+    base.reset(sb.SANDBOX)
+    s = sb.SetupIn.model_validate({**sb.default_setup(), "start": "2026-10-12",
+        "beds": [{"line": "regular", "sown_on": "2026-09-05", "seedlings": 900}]}).model_dump(mode="json")
+    ws = sb.SandboxStore(base, s)
+    reg = lambda: next(l for l in farm.sow(ws)["lines"] if l["line"] == "regular")
+    assert reg()["missed"] == []
+    farm.next_day(ws, farm.load(ws).state.today, 1)                     # Mon 12 Oct passes unsown
+    assert reg()["missed"] == ["2026-10-12"]

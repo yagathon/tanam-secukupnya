@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { todayActions } from "./today";
+import { sowLineDefault, todayActions } from "./today";
 import type { TodayLine } from "./types";
 
 const sow = { day: "2026-10-12", weekday: "Mon", seedlings: 900, seeds_g: 2.6, teaspoons: 0.9, shortfall_ahead_kg: 0 };
@@ -41,4 +41,15 @@ test("a shortage says how much of the orders it covers, or when anything is sell
 test("nothing ordered: no harvest, no shortage", () => {
   const a = todayActions({ ...base, need_kg: 0, send_kg: 0, cover_pct: null, harvest_plan: [] }, "2026-10-12");
   expect(a.map((x) => x.kind)).toEqual(["idle", "sow"]);
+});
+
+test("the Sow form opens on the line due today, else a line that is in use", () => {
+  const due = (line: string, day: string, seedlings = 500) => ({ line, day, seedlings });
+  expect(sowLineDefault(["regular", "baby"], [due("regular", "2026-10-15"), due("baby", "2026-10-12")],
+    new Set(["regular", "baby"]), "2026-10-12")).toBe("baby");
+  expect(sowLineDefault(["regular", "baby"], [due("regular", "2026-10-15"), due("baby", "2026-10-15")],
+    new Set(["baby"]), "2026-10-12")).toBe("baby");
+  expect(sowLineDefault(["regular", "baby"], [due("regular", "2026-10-12", 0), due("baby", "2026-10-15")],
+    new Set(["baby"]), "2026-10-12")).toBe("baby");
+  expect(sowLineDefault(["regular"], [], new Set(), "2026-10-12")).toBe("regular");
 });

@@ -40,3 +40,11 @@ export function todayActions(l: TodayLine, today: string): TodayAction[] {
     lines: ahead, prefill: [], done: false });
   return out;
 }
+
+/** Which line the Sow form opens on: the one due today, else one with buyers or beds, else the first. */
+export function sowLineDefault(lines: string[], due: { line: string; day: string; seedlings: number }[],
+  inUse: Set<string>, today: string): string {
+  return due.find((d) => d.day === today && d.seedlings > 0 && inUse.has(d.line))?.line
+    ?? due.find((d) => d.day === today && d.seedlings > 0)?.line
+    ?? lines.find((l) => inUse.has(l)) ?? lines[0] ?? "";
+}

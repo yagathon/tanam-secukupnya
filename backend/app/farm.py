@@ -225,11 +225,12 @@ def sow(ws: Store) -> dict:
     v = load(ws)
     st, c = v.state, v.crop
     lines = []
+    day0 = date.fromisoformat(ws.meta()["day0"])                    # nothing is logged before the start
     for lp in v.plans.values():
         p = asdict(lp.sow)
         p = {k: (x.isoformat() if isinstance(x, date) else x) for k, x in p.items()}
         missed = engine.missed_slots(st.last_sown.get(lp.line), lp.sow.day, c.sow_weekdays)
-        lines.append({**p, "missed": [d.isoformat() for d in missed],
+        lines.append({**p, "missed": [d.isoformat() for d in missed if d >= day0],
                       "postponed": [{"day": d, "reason": r} for (ln, d), r in st.postponed.items() if ln == lp.line],
                       "basis": {"need": "B2B high + households high", "survival": c.survival,
                                 "germination": c.germination, "seeds_per_gram": c.seeds_per_gram,
