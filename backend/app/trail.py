@@ -1,4 +1,5 @@
-"""The decision trail: for every closed day, what the engine decided that morning and what came in.
+"""The decision trail: for every closed day, what the engine decided that morning (before any of the
+day's entries) and what came in.
 
 Replays the sandbox log once, planning at each day boundary; cached per workspace and continued
 from the last day when the log only grew (a setup edit or a clear rebuilds it)."""
@@ -20,6 +21,7 @@ class _Cache:
     rows: list[dict] = field(default_factory=list)
     pending: list[str] = field(default_factory=list)
     ref_seen: int = 0
+    morning: dict | None = None      # today's plan, taken before the day's first entry
 
 
 _cache: dict[str, _Cache] = {}
@@ -50,10 +52,11 @@ def build(ws: Store) -> dict:
     st = hit.state
     for doc, fp in zip(docs[start:], prints[start:], strict=True):
         labels = {b.id: b.label for b in st.batches.values()}
+        if hit.morning is None:
+            hit.morning = _row(st, current_crop(st, c), buyers, [], [], False)
         if doc["kind"] == "day":
-            row = _row(st, current_crop(st, c), buyers, hit.pending,
-                       [_ref_line(e) for e in st.ref_log[hit.ref_seen:]], False)
-            hit.ref_seen, hit.pending = len(st.ref_log), []
+            row = {**hit.morning, "inputs": hit.pending, "ref": [_ref_line(e) for e in st.ref_log[hit.ref_seen:]]}
+            hit.ref_seen, hit.pending, hit.morning = len(st.ref_log), [], None
         for ev in doc["events"]:
             if doc["kind"] != "day":
                 hit.pending.append(sandbox.describe(ev, names, labels))

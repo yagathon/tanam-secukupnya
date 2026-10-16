@@ -63,3 +63,20 @@ def test_clear_then_same_seqs_is_not_served_from_cache():        # a sandbox cle
     fresh = replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), farm.crop(ws),
                    ws.list("events"))
     assert farm.load(ws).state.known_orders == fresh.known_orders
+
+
+def test_closed_day_keeps_the_morning_recommendation():
+    """UAT: Monday's row showed ceiling 0.0 because it was planned after the harvest was logged.
+    The trail is what the engine said that morning, before the day's entries."""
+    ws = _ws()
+    morning = trail.build(ws)["rows"][0]["lines"]["regular"]
+    assert morning["send"] > 1
+    bed = next(b.id for b in farm.load(ws).state.batches.values() if b.line == "regular")
+    farm.append(ws, farm.load(ws).log_key[1] + 1, {"kind": "form", "events": [
+        {"t": "harvest", "day": "2026-10-12", "batch": bed, "kg": morning["send"]}]})
+    farm.next_day(ws, farm.load(ws).state.today, 1)
+    closed = trail.build(ws)["rows"][1]
+    assert closed["day"] == "2026-10-12"
+    assert {k: closed["lines"]["regular"][k] for k in ("ready", "ceiling", "send")} == \
+        {k: morning[k] for k in ("ready", "ceiling", "send")}
+    assert closed["inputs"] and closed["inputs"][0].startswith("HARVEST")
