@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
 import { friendly, lineName } from "@/lib/format";
+import type { Prefill } from "@/lib/today";
 import type { NoteDoc } from "@/lib/types";
 
 type Kind = "order" | "harvest" | "sow" | "loss" | "signal" | "postpone";
@@ -19,8 +20,9 @@ const addDays = (iso: string, n: number) => {
   return d.toISOString().slice(0, 10);
 };
 
-/** The visitor's own day: one small form per event kind, and Gemini notes whose reading can be OK'd or edited. */
-export default function InputPanel({ data, reload, api }: TabProps) {
+/** The visitor's own day: one small form per event kind, and Gemini notes whose reading can be OK'd or edited.
+ *  `prefill` (from a Today button) opens a form already filled in; `n` makes a repeat click count again. */
+export default function InputPanel({ data, reload, api, prefill }: TabProps & { prefill?: { p: Prefill; n: number } }) {
   const { state, today, beds, sow } = data;
   const t = today.today;
   const lines = state.crop.lines.map((l) => l.id);
@@ -53,6 +55,13 @@ export default function InputPanel({ data, reload, api }: TabProps) {
   const [noteMsg, setNoteMsg] = useState<string | null>(null);
 
   const pick = (k: Kind, f?: Form) => { setKind(k); setForm(f ?? blank(k)); setError(null); };
+  const top = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!prefill) return;
+    pick(prefill.p.kind, { ...blank(prefill.p.kind), ...prefill.p.form });
+    top.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefill?.n]);
   const set = (patch: Form) => setForm({ ...form, ...patch });
   const field = (name: string, label: string, type = "number", extra: Record<string, string> = {}) => (
     <label>{label}<input type={type} step="any" value={form[name] ?? ""} {...extra} onChange={(e) => set({ [name]: e.target.value })} /></label>
@@ -122,7 +131,7 @@ export default function InputPanel({ data, reload, api }: TabProps) {
   };
 
   return (
-    <div className="card">
+    <div className="card" ref={top}>
       <h2>Log the day</h2>
       <div className="seg">
         {KINDS.map(([k, label]) => <button key={k} className={k === kind ? "on" : ""} onClick={() => pick(k)}>{label}</button>)}

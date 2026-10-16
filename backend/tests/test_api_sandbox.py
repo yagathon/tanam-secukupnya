@@ -223,3 +223,34 @@ def test_sow_view_follows_setup_sow_weekdays():            # UAT: setup Tue/Fri,
 def test_demand_view_carries_the_setup_season():
     client.put(f"{S}/setup", json=_setup(month_pct=[40, 20, 20, 20]))
     assert client.get(f"{S}/demand").json()["season"] == {"month_pct": [40, 20, 20, 20], "year_index": [100] * 12}
+
+
+def _today_line():
+    return client.get(f"{S}/today").json()["lines"][0]
+
+
+def test_today_card_harvest_plan_and_done_flags():
+    """Design A: per line, what to harvest from which bed (a prediction, with its basis), and ✓ once logged."""
+    client.put(f"{S}/setup", json=_setup())
+    client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": 3,
+                                             "day": "2026-10-13"}, "seq": 1})
+    ln = _today_line()
+    assert ln["done"] == {"sown": False, "harvested": False}
+    plan = ln["harvest_plan"]
+    assert plan and plan[0]["batch"] == _first_bed_id() and plan[0]["label"] == "Bed 1"
+    assert sum(p["kg"] for p in plan) == pytest.approx(ln["send_kg"], abs=0.02)
+    assert plan[0]["avg_g"] > 0 and plan[0]["sampled"] is False
+    assert ln["cover_pct"] == 100 and ln["sellable_from"] is None
+    client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": _first_bed_id(), "kg": 3}, "seq": 2})
+    assert _today_line()["done"]["harvested"] is True
+    client.post(f"{S}/events", json={"form": {"kind": "sow", "line": "regular", "seedlings": 500}, "seq": 3})
+    assert _today_line()["done"]["sown"] is True
+
+
+def test_today_card_says_when_something_is_sellable_again():
+    client.put(f"{S}/setup", json=_setup(beds=[{"line": "regular", "sown_on": "2026-10-01", "seedlings": 900}]))
+    client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": 3,
+                                             "day": "2026-10-13"}, "seq": 1})
+    ln = _today_line()
+    assert ln["send_kg"] == 0 and ln["harvest_plan"] == [] and ln["cover_pct"] == 0
+    assert ln["sellable_from"] > "2026-10-13"

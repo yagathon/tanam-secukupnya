@@ -167,3 +167,13 @@ table.edit input, table.edit select { width: 100%; min-width: 60px; }
 .pctrow { display: inline-flex; align-items: center; gap: 4px; }
 .pctrow input { min-width: 11em; }
 input.bad { border-color: var(--bad); }
+
+/* Today, as things to do (sandbox) */
+.act { border-left: 4px solid var(--leaf); padding: 8px 12px; margin: 10px 0; }
+.act.short { border-color: var(--bad); }
+.act.idle, .act.info { border-color: var(--line); }
+.act.done { opacity: 0.6; }
+.act-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+.act.short .act-title { color: var(--bad); }
+.act ul { margin: 4px 0; padding-left: 18px; }
+.act .row { margin-top: 6px; }

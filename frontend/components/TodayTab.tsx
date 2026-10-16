@@ -5,10 +5,12 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
 import { daySentence, friendly, lineName, sowDays } from "@/lib/format";
+import { todayActions, type Prefill } from "@/lib/today";
 import type { NoteDoc } from "@/lib/types";
 
-/** `input` (the sandbox) replaces the note box with the visitor's own input panel. */
-export default function TodayTab({ data, reload, api, input }: TabProps & { input?: ReactNode }) {
+/** `input` (the sandbox) replaces the note box with the visitor's own input panel; `onAct` turns each line
+ *  into things to do, whose buttons fill that panel's form. */
+export default function TodayTab({ data, reload, api, input, onAct }: TabProps & { input?: ReactNode; onAct?: (p: Prefill) => void }) {
   const { state, today, beds } = data;
   const [text, setText] = useState("");
   const [sender, setSender] = useState("farmer");
@@ -76,7 +78,17 @@ export default function TodayTab({ data, reload, api, input }: TabProps & { inpu
         {today.lines.map((l) => (
           <div key={l.line} className="card">
             <h3>{lineName(l.line)}</h3>
-            <p className={`sentence ${l.short_kg > 0.005 ? "bad" : ""}`}>{daySentence(l)}</p>
+            {!onAct && <p className={`sentence ${l.short_kg > 0.005 ? "bad" : ""}`}>{daySentence(l)}</p>}
+            {onAct && todayActions(l, today.today).map((a) => (
+              <div key={a.kind} className={`act ${a.kind} ${a.prefill.length === 0 && a.kind === "sow" ? "info" : ""} ${a.done ? "done" : ""}`}>
+                <p className="act-title">{a.done ? "✓ " : ""}{a.title}</p>
+                {a.lines.length > 0 && <ul className="small">{a.lines.map((t) => <li key={t}>{t}</li>)}</ul>}
+                {!a.done && a.prefill.length > 0 && <div className="row wrap">
+                  {a.prefill.map((p) => <button key={p.label} className="small" onClick={() => onAct(p)}>
+                    {p.kind === "harvest" ? `Log ${p.label}` : p.label}</button>)}
+                </div>}
+              </div>
+            ))}
           </div>
         ))}
         <div className="row wrap">

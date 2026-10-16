@@ -26,6 +26,7 @@ from app.production import (
     in_bed_plants,
     project,
     spread,
+    take_oldest,
     waste_plants,
 )
 from app.state import FarmState, apply, current_crop, replay
@@ -254,10 +255,27 @@ def demand(ws: Store) -> dict:
             "lines": [{"line": lp.line, "days": lp.needs.rows} for lp in v.plans.values()]}
 
 
+def _harvest_plan(c: Crop, st: FarmState, line: str, kg: float) -> list[dict]:
+    """Which beds the planned send comes from (oldest first), with the predicted size it rests on."""
+    tom = st.today + timedelta(days=1)
+    shadows = [copy.copy(b) for b in sorted(st.alive(c, line), key=lambda b: b.sown_on)]
+    return [{"batch": b.id, "label": b.label, "kg": round(k, 2), "avg_g": round(avg_g(c, b, tom)), "sampled": b.sampled}
+            for b, k in take_oldest(c, shadows, tom, kg) if k > 0.005] if kg > 0 else []
+
+
+def _sellable_from(c: Crop, st: FarmState, line: str) -> str | None:
+    """With nothing sellable tomorrow: the first day a bed of this line reaches the line's size."""
+    ln, tom = c.line(line), st.today + timedelta(days=1)
+    days = [first_ready_day(c, ln, b.sown_on, b.size_factor, b.spread_ratio) for b in st.alive(c, line)]
+    later = [d for d in days if d > tom]
+    return min(later).isoformat() if later else None
+
+
 def today(ws: Store) -> dict:
     v = load(ws)
-    st = v.state
+    st, c = v.state, v.crop
     t = tomorrow(ws)
+    iso = st.today.isoformat()
     out = []
     for lp, tl in zip(v.plans.values(), t["lines"]):
         s = lp.sow
@@ -266,7 +284,12 @@ def today(ws: Store) -> dict:
                     "rotated": [h["alias"] for h in tl["households"] if h["served_kg"] < h["ordered_kg"]],
                     "sow": {"day": s.day.isoformat(), "weekday": s.day.strftime("%a"), "seedlings": s.seedlings,
                             "seeds_g": s.seeds_g, "teaspoons": s.teaspoons,
-                            "shortfall_ahead_kg": round(sum(r["kg"] for r in s.shortfall_ahead), 2)}})
+                            "shortfall_ahead_kg": round(sum(r["kg"] for r in s.shortfall_ahead), 2)},
+                    "done": {"sown": st.last_sown.get(lp.line) == st.today or (lp.line, iso) in st.postponed,
+                             "harvested": st.harvested.get((iso, lp.line), 0.0) > 0},
+                    "harvest_plan": _harvest_plan(c, st, lp.line, lp.send),
+                    "cover_pct": round(100 * min(1.0, lp.send / tl["need_kg"])) if tl["need_kg"] > 0.005 else None,
+                    "sellable_from": _sellable_from(c, st, lp.line) if lp.available_tomorrow < 0.01 else None})
     pending = [n for n in ws.list("notes") if n.get("status") == "proposed"]
     return {"today": st.today.isoformat(), "weekday": st.today.strftime("%A"), "lines": out, "pending": pending,
             "seq": v.log_key[1] + 1}

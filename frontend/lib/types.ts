@@ -42,9 +42,12 @@ export interface NoteDoc {
 export interface SowSummary {
   day: string; weekday: string; seedlings: number; seeds_g: number; teaspoons: number; shortfall_ahead_kg: number;
 }
+export interface HarvestPick { batch: string; label: string; kg: number; avg_g: number; sampled: boolean }
 export interface TodayLine {
   line: LineId; need_kg: number; ceiling_kg: number; send_kg: number; short_kg: number; rotated: string[];
   sow: SowSummary;
+  done?: { sown: boolean; harvested: boolean }; harvest_plan?: HarvestPick[];
+  cover_pct?: number | null; sellable_from?: string | null;
 }
 export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[]; seq: number }
 
