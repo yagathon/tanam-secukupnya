@@ -7,7 +7,7 @@ export interface CropLine { id: LineId; min_g: number; max_g: number; channels: 
 export interface Crop {
   id: string; name: string; nursery_days: number; growth_curve: [number, number][]; spread_ratio: number;
   germination: number; survival: number; seeds_per_gram: number; grams_per_teaspoon: number; max_bed_day: number;
-  max_seedlings_per_sowing: number; lines: CropLine[];
+  max_seedlings_per_sowing: number; sow_weekdays: number[]; lines: CropLine[];
 }
 export interface Buyer {
   id: string; alias: string; segment: string; weekdays: number[];

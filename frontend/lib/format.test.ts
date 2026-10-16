@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ApiError } from "./api";
-import { daySentence, friendly, int, kg, lineName, proposalLines, scopeName, shortDate, tsp } from "./format";
+import { daySentence, friendly, int, kg, lineName, proposalLines, scopeName, shortDate, sowDays, tsp } from "./format";
 import type { Proposal, State, TodayLine } from "./types";
 
 const state = {
@@ -133,5 +133,14 @@ describe("friendly", () => {
     expect(friendly(new ApiError(503, "<html><body>Service Unavailable</body></html>")))
       .toBe("The server had a problem. Try again in a moment.");
     expect(friendly(new ApiError(500, "Internal Server Error"))).toBe("The server had a problem. Try again in a moment.");
+  });
+});
+
+describe("sowDays", () => {
+  it("names the setup's sowing weekdays (0 = Monday) and how often", () => {
+    expect(sowDays([0, 3])).toBe("twice a week, on Mondays and Thursdays");
+    expect(sowDays([2])).toBe("once a week, on Wednesdays");
+    expect(sowDays([4, 0, 2])).toBe("3 times a week, on Mondays, Wednesdays and Fridays");
+    expect(sowDays([0, 1, 2, 3, 4, 5, 6])).toBe("every day");
   });
 });

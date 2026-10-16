@@ -211,3 +211,10 @@ def test_legacy_setup_doc_still_opens():
     s = sb.SetupIn.model_validate(_setup()).model_dump(mode="json")
     main.store.for_user("local").put("sandbox_setup", {"id": sb.SETUP_ID, "setup": s})
     assert client.get(f"{S}/setup").json()["saved"] is True
+
+
+def test_sow_view_follows_setup_sow_weekdays():            # UAT: setup Tue/Fri, Sow tab must not say Mon/Thu
+    crop = {**sb.default_setup()["crop"], "sow_weekdays": [1, 4]}
+    client.put(f"{S}/setup", json=_setup(crop=crop))       # start Mon 12 Oct → next sowing Tue 13
+    assert client.get(f"{S}/state").json()["crop"]["sow_weekdays"] == [1, 4]
+    assert {l["day"] for l in client.get(f"{S}/sow").json()["lines"]} == {"2026-10-13"}

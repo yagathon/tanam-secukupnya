@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
-import { daySentence, friendly, lineName } from "@/lib/format";
+import { daySentence, friendly, lineName, sowDays } from "@/lib/format";
 import type { NoteDoc } from "@/lib/types";
 
 /** `input` (the sandbox) replaces the note box with the visitor's own input panel. */
@@ -86,7 +86,7 @@ export default function TodayTab({ data, reload, api, input }: TabProps & { inpu
         {why && <p className={`small ${why.failed ? "bad" : "why"}`}>{why.text}</p>}
         {!input && <p className="small muted">
           Press <strong>Next day →</strong> to let the farm live one day: orders arrive, the farmer harvests and samples, and
-          sowing happens on Mondays and Thursdays.
+          sowing happens {sowDays(state.crop.sow_weekdays ?? [0, 3])}.
         </p>}
       </div>
 

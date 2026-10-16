@@ -1,7 +1,7 @@
 "use client";
 
 import type { TabProps } from "@/app/page";
-import { int, kg, lineName, shortDate, tsp } from "@/lib/format";
+import { int, kg, lineName, shortDate, sowDays, tsp } from "@/lib/format";
 import type { SowLine } from "@/lib/types";
 
 function LineSow({ s }: { s: SowLine }) {
@@ -49,7 +49,7 @@ function LineSow({ s }: { s: SowLine }) {
 export default function SowTab({ data }: TabProps) {
   return (
     <div className="grid">
-      <p className="muted small">We sow twice a week, on Mondays and Thursdays. Each sowing covers the days until the next one is ready.</p>
+      <p className="muted small">We sow {sowDays(data.state.crop.sow_weekdays ?? [0, 3])}. Each sowing covers the days until the next one is ready.</p>
       {data.sow.lines.map((s) => <LineSow key={s.line} s={s} />)}
     </div>
   );

@@ -29,6 +29,18 @@ export function tsp(x: number): string {
   return `${whole > 0 ? whole : ""}${f === 1 ? "" : sym}`.trim() + " tsp";
 }
 
+const WEEKDAYS = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays"];
+const TIMES = ["", "once", "twice"];
+
+/** The crop's sowing weekdays (0 = Monday) as a phrase: "twice a week, on Mondays and Thursdays". */
+export function sowDays(weekdays: number[]): string {
+  const days = [...new Set(weekdays)].sort((a, b) => a - b);
+  if (days.length === 7) return "every day";
+  const names = days.map((d) => WEEKDAYS[d]);
+  const list = names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
+  return `${TIMES[days.length] ?? `${days.length} times`} a week, on ${list}`;
+}
+
 export const lineName = (id: LineId) => `Pakcoy ${id}`;
 
 /** The one-line day summary from spec §10, per line. */
