@@ -90,7 +90,7 @@ def test_close_day_with_nothing_set_up():                      # Review Focus 3
     assert not [e for e in evs if e["t"] in ("harvest", "short")]
 
 
-def test_close_day_zero_fills_regular_weekday_and_serves_orders():
+def test_close_day_missing_order_is_unknown_not_zero_and_serves_orders():
     start = date(2026, 10, 12)                                   # Monday → closes into Tuesday
     s = setup(start=start.isoformat(),
               buyers=[{"name": "Restaurant A", "type": "business", "line": "regular", "usual_kg_per_week": 10, "weekdays": [1, 4]},
@@ -101,7 +101,7 @@ def test_close_day_zero_fills_regular_weekday_and_serves_orders():
     from app import sim
     evs = sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
     acts = {e["series"]: e["kg"] for e in evs if e["t"] == "actual"}
-    assert acts["b2b:b1:regular"] == 4.0 and acts["b2b:b2:regular"] == 0.0
+    assert acts["b2b:b1:regular"] == 4.0 and "b2b:b2:regular" not in acts     # UAT: no order logged ≠ 0 kg
     served = next(e for e in evs if e["t"] == "served" and e["line"] == "regular")
     assert served["b2b_ordered"] == 4.0
     assert [e for e in evs if e["t"] == "harvest"]               # assumed harvest of the planned send
@@ -134,6 +134,8 @@ def test_describe_formats():
         == "HARVEST · Bed 3 · 20.0 kg · sample 640 g / 410 g"
     assert sb.describe({"t": "order", "day": "2026-10-16", "buyer": "zz", "line": "regular", "kg": 1}, names, labels) \
         == "ORDER · ⚠ unknown buyer zz · regular · 1.0 kg · Fri 16 Oct"
+    assert sb.describe({"t": "order", "day": "2026-10-16", "buyer": "b1", "line": "regular", "kg": 0}, names, labels) \
+        == "ORDER · Restaurant A · regular · no order · Fri 16 Oct"
 
 
 def test_form_loss_without_bed_expands_to_line():
@@ -238,3 +240,15 @@ def test_season_defaults_flat_and_reaches_the_demand_model():
     m = sim.demand_model(st)
     assert demand.expected(m, "b2b:b1:regular", date(2026, 11, 2)) == pytest.approx(16.0)
     assert demand.expected(m, "b2b:b1:regular", date(2026, 10, 12)) == pytest.approx(8.0)
+
+
+def test_explicit_zero_order_is_a_real_zero():
+    s = setup(start="2026-10-12",
+              buyers=[{"name": "Caterer B", "type": "business", "line": "regular", "usual_kg_per_week": 5, "weekdays": [1]}])
+    st, c, ref = _state(s)
+    ev = sb.form_events({"kind": "order", "buyer": "b1", "line": "regular", "kg": 0, "day": "2026-10-13"},
+                         st, c, {}, {"b1": {"regular"}})
+    st, c, ref = _state(s, [{"seq": 1, "kind": "form", "events": ev}])
+    from app import sim
+    evs = sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
+    assert {e["series"]: e["kg"] for e in evs if e["t"] == "actual"} == {"b2b:b1:regular": 0.0}

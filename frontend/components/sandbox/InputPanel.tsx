@@ -135,7 +135,7 @@ export default function InputPanel({ data, reload, api }: TabProps) {
             </select>
           </label>
           {lineSelect()}
-          {field("kg", "kg")}
+          {field("kg", "kg (0 = no order this time)")}
           {field("day", "For day", "date", { min: addDays(t, 1), max: addDays(t, 14) })}
         </>}
         {kind === "harvest" && <>
