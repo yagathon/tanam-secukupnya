@@ -83,17 +83,17 @@ def line_needs(model: demand.DemandModel, buyers: list[dict], line: str, today: 
     d = tom
     while d <= end:
         h = (d - today).days
-        e_all = hi_all = lo_all = b2b_e = b2b_hi = 0.0
-        hh_lo = hh_hi = 0.0
+        e_all = hi_all = lo_all = b2b_e = 0.0
+        hh_lo = hh_e = 0.0
         for k in keys:
             lo, e, hi = demand.band(model, k, d, h, signal_factor(signals, k, d))
             e_all, lo_all, hi_all = e_all + e, lo_all + lo, hi_all + hi
             if k.startswith("b2b:"):
-                b2b_e, b2b_hi = b2b_e + e, b2b_hi + hi
+                b2b_e += e
             else:
-                hh_lo, hh_hi = hh_lo + lo, hh_hi + hi
+                hh_lo, hh_e = hh_lo + lo, hh_e + e
         protected[d] = b2b_e + hh_lo
-        target[d] = b2b_hi + hh_hi
+        target[d] = b2b_e + hh_e                   # "pas": expected, no buffer — a shortfall is bought at the market
         rows.append({"day": d.isoformat(), "low": round(lo_all, 2), "expected": round(e_all, 2),
                      "high": round(hi_all, 2), "protected": round(protected[d], 2), "target": round(target[d], 2)})
         d += timedelta(days=1)

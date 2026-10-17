@@ -39,7 +39,7 @@ export default function DemandTab({ data }: TabProps) {
           <div className="legend">
             <span><i style={{ background: "var(--leaf-soft)" }} />band (80%)</span>
             <span><i style={{ background: "var(--leaf)" }} />expected</span>
-            <span><i style={{ background: "var(--sky)" }} />sowing target (B2B high + households high)</span>
+            <span><i style={{ background: "var(--sky)" }} />sowing target (expected orders, no buffer)</span>
           </div>
         </div>
       ))}

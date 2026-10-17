@@ -240,7 +240,7 @@ def sow(ws: Store) -> dict:
         missed = engine.missed_slots(st.last_sown.get(lp.line), lp.sow.day, c.sow_weekdays)
         lines.append({**p, "missed": [d.isoformat() for d in missed if d >= day0],
                       "postponed": [{"day": d, "reason": r} for (ln, d), r in st.postponed.items() if ln == lp.line],
-                      "basis": {"need": "B2B high + households high", "survival": c.survival,
+                      "basis": {"need": "Expected orders (no buffer)", "survival": c.survival,
                                 "germination": c.germination, "seeds_per_gram": c.seeds_per_gram,
                                 "grams_per_teaspoon": c.grams_per_teaspoon, "max_seedlings": c.max_seedlings}})
     return {"today": st.today.isoformat(), "lines": lines}

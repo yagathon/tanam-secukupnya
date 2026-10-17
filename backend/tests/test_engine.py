@@ -195,3 +195,16 @@ def test_fair_send_is_whole_need_when_stock_covers_everything(pakcoy):
     beds = farm()
     end = engine.horizon_end(pakcoy, "regular", TODAY, False)
     assert engine.fair_send(pakcoy, "regular", beds, flat(5), TODAY, end) == pytest.approx(5, abs=0.01)
+
+
+def test_the_sowing_target_is_expected_demand_with_no_buffer():
+    """Founder 2026-10-17: waste hurts more than a shortfall (covered from the market), so sow for 'pas'."""
+    from app import demand
+    today = date(2026, 10, 12)
+    hist = {"b2b:b1:regular": {today - timedelta(days=i): 4.0 + (i % 3) for i in range(1, 29)},
+            "hh:regular": {today - timedelta(days=i): 2.0 + (i % 2) for i in range(1, 29)}}
+    buyers = [{"id": "b1", "lines": {"regular": {"min_kg": 0}}}]
+    m = demand.fit(hist, today, today, {})
+    n = engine.line_needs(m, buyers, "regular", today, today + timedelta(days=14), {}, [])
+    assert all(r["high"] > r["expected"] for r in n.rows)            # there is a band to ignore
+    assert all(r["target"] == pytest.approx(r["expected"], abs=0.01) for r in n.rows)
