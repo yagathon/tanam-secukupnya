@@ -1,8 +1,11 @@
 """Daily demand: expected(series, d) = shape[weekday] × level × season × market × signal factors.
 
 Series: one per B2B buyer × line ("b2b:<buyer>:<line>") plus one pooled households series per
-line ("hh:<line>"). The weekday shape is fixed from history (D7). Each series' level is smoothed
-from actual ÷ (shape × market), so a market-wide drop is carried by `market` alone, never twice.
+line ("hh:<line>"). The weekday shape is fixed from history (D7). A level changes only on confirmed
+evidence: each finished week (Mon–Sun) is judged on its total, actual ÷ forecast, as above (> +10%),
+below (< −10%) or normal; three weeks in a row on the same side move the level by their mean ratio.
+A few high days or one big order never move it. Actuals are divided by the market factor, so a
+market-wide drop is carried by `market` alone, never twice.
 """
 
 from __future__ import annotations
@@ -12,7 +15,8 @@ import statistics
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-ALPHA, ALPHA_SHIFT = 0.2, 0.6
+ALPHA = 0.2                      # only widens the band with the horizon now; levels move by weeks
+WEEK_BAND, CONFIRM = 0.10, 3     # a week counts above/below past ±10%; 3 in a row move the level
 Z80 = 1.28
 MARKET_WINDOW, MARKET_MIN_BUYERS, MARKET_AGREE, MARKET_MIN_MOVE = 7, 3, 0.6, 0.05
 INIT_DAYS = 14
@@ -27,6 +31,7 @@ class Fit:
     sigma: float                     # σ of one-step residuals, in level units
     usual: float                     # level 14 days ago (for "usual 6.0 → now 4.2")
     baseline: float                  # mean of actual ÷ shape over the shape period (the market check's yardstick)
+    streak: tuple[str, int] = ("", 0)  # ("above" | "below" | "", finished weeks in a row on that side)
 
 
 def _sd(xs: list[float]) -> float:
@@ -99,16 +104,40 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
     resid: dict[str, list[float]] = {k: [] for k in history}
     levels_hist: dict[str, list[tuple[date, float]]] = {k: [] for k in history}
     ratio_log: list[tuple[date, str, float]] = []  # (day, buyer, actual ÷ (shape × level))
+    week: dict[str, list] = {k: [None, 0.0, 0.0] for k in history}   # [Monday, actual sum, forecast sum]
+    qs: dict[str, list[float]] = {k: [] for k in history}             # the ratios of the current streak
+
+    def close_week(k: str, on: date) -> None:
+        """Judge series k's finished week on its total; on 3 in a row, move the level (`on` = the day after)."""
+        mon, a, fc = week[k]
+        week[k] = [None, 0.0, 0.0]
+        if mon is None or fc <= 0:
+            return
+        f, q = fits[k], a / fc
+        side = "above" if q > 1 + WEEK_BAND else "below" if q < 1 - WEEK_BAND else ""
+        if not side:
+            f.streak, qs[k] = ("", 0), []
+            return
+        if f.streak[0] != side:
+            qs[k] = []
+        qs[k].append(q)
+        f.streak = (side, len(qs[k]))
+        if len(qs[k]) >= CONFIRM:
+            f.level = max(0.0, f.level * statistics.fmean(qs[k]))
+            f.streak, qs[k] = ("", 0), []
+            levels_hist[k].append((on, f.level))
     m, nb = 1.0, 0
     for k, s in history.items():
         if k in priors:
             fits[k] = prior_fit(k, priors[k])
+            levels_hist[k].append((date.min, fits[k].level))
             continue
         sh = shapes[k]
         init = [v / (sh[d.weekday()] * season_factor(season, d)) for d, v in s.items() if days and d < days[0] + timedelta(days=INIT_DAYS) and sh[d.weekday()] > 0]
         base = [v / (sh[d.weekday()] * season_factor(season, d)) for d, v in s.items() if d < shape_until and sh[d.weekday()] > 0]
         lv = statistics.fmean(init) if init else 0.0
         fits[k] = Fit(k, sh, lv, 0.0, lv, statistics.fmean(base) if base else lv)
+        levels_hist[k].append((date.min, lv))
     for d in days:
         window = {}
         for (dd, buyer, q) in ratio_log:
@@ -130,16 +159,20 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
                 continue
             if k.startswith("b2b:"):
                 ratio_log.append((d, k.split(":")[1], actual / (sh * f.baseline)))
+            mon = d - timedelta(days=d.weekday())
+            if week[k][0] is not None and week[k][0] != mon:
+                close_week(k, d)
+            week[k][0] = mon
+            week[k][1] += actual / m
+            week[k][2] += sh * f.level
             r = actual / (sh * m) - f.level
             rs = resid[k]
-            wide = PRIOR_SIGMA if k in priors else 0.15
-            sigma = _sd(rs[-28:]) if len(rs) >= 5 else abs(f.level) * wide
-            last = rs[-2:] + [r]
-            shift = len(last) == 3 and len({x > 0 for x in last}) == 1 and all(abs(x) > 0.5 * sigma for x in last)
-            f.level = max(0.0, f.level + (ALPHA_SHIFT if shift else ALPHA) * r)
             rs.append(r)
+            wide = PRIOR_SIGMA if k in priors else 0.15
             f.sigma = _sd(rs[-28:]) if len(rs) >= 5 else abs(f.level) * wide
-            levels_hist[k].append((d, f.level))
+    for k in history:                                   # the last week counts once it has fully passed
+        if week[k][0] is not None and week[k][0] + timedelta(days=7) <= today:
+            close_week(k, week[k][0] + timedelta(days=7))
     for k, f in fits.items():
         old = [lv for d, lv in levels_hist[k] if d <= today - timedelta(days=14)]
         f.usual = old[-1] if old else f.level

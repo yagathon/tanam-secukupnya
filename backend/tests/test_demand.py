@@ -33,21 +33,69 @@ def test_shape_is_fixed_by_history_before_shape_until():
     assert m1.fits["b2b:a:regular"].shape[6] == 0          # never orders on Sunday
 
 
-def test_one_low_order_moves_level_a_little_three_a_lot():
+def _weeks(h, today, weeks, mult, key="b2b:a:regular"):
+    """Append `weeks` full weeks after `today` at base × `mult` (keeping the weekday pattern)."""
+    hh = {k: dict(v) for k, v in h.items()}
+    for i in range(7 * weeks):
+        d = today + timedelta(days=i)
+        if d.weekday() != 6:
+            hh[key][d] = 6.0 * (1.5 if d.weekday() == 5 else 1.0) * (mult[i // 7] if isinstance(mult, list) else mult)
+    return hh, today + timedelta(days=7 * weeks)
+
+
+def test_three_high_days_do_not_move_the_level():
     h = history()
     today = D0 + timedelta(days=56)
     base = demand.fit(h, today, today).fits["b2b:a:regular"].level
+    hh = {k: dict(v) for k, v in h.items()}
+    for i in range(3):
+        hh["b2b:a:regular"][today + timedelta(days=i)] = 12.0
+    assert demand.fit(hh, today, today + timedelta(days=3)).fits["b2b:a:regular"].level == pytest.approx(base)
 
-    def after(n):
-        hh = {k: dict(v) for k, v in h.items()}
-        days = [d for d in (today + timedelta(days=i) for i in range(7)) if d.weekday() not in (5, 6)][:n]
-        for d in days:
-            hh["b2b:a:regular"][d] = 3.0
-        return demand.fit(hh, today, days[-1] + timedelta(days=1)).fits["b2b:a:regular"].level
 
-    one, three = after(1), after(3)
-    assert base * 0.75 < one < base * 0.95
-    assert three < base * 0.65
+def test_two_weeks_above_then_a_normal_week_do_not_move_the_level():
+    h = history()
+    today = D0 + timedelta(days=56)
+    base = demand.fit(h, today, today).fits["b2b:a:regular"].level
+    hh, end = _weeks(h, today, 3, [1.3, 1.3, 1.0])
+    f = demand.fit(hh, today, end).fits["b2b:a:regular"]
+    assert f.level == pytest.approx(base)
+    assert f.streak == ("", 0)
+
+
+def test_three_weeks_above_move_the_level_by_their_mean():
+    h = history()
+    today = D0 + timedelta(days=56)
+    base = demand.fit(h, today, today).fits["b2b:a:regular"].level
+    hh, end = _weeks(h, today, 2, [1.2, 1.3])
+    f2 = demand.fit(hh, today, end).fits["b2b:a:regular"]
+    assert f2.level == pytest.approx(base) and f2.streak == ("above", 2)
+    hh, end = _weeks(h, today, 3, [1.2, 1.3, 1.4])
+    f3 = demand.fit(hh, today, end).fits["b2b:a:regular"]
+    assert f3.level == pytest.approx(base * 1.3, rel=0.01)
+    assert f3.streak == ("", 0)
+    later = demand.fit(_weeks(h, today, 4, [1.2, 1.3, 1.4, 1.3])[0], today, today + timedelta(days=28))
+    assert later.fits["b2b:a:regular"].usual == pytest.approx(base)    # a week after the move, "usual" (14 days ago) is the old level
+
+
+def test_three_weeks_below_move_the_level_down_the_same_way():
+    h = history()
+    today = D0 + timedelta(days=56)
+    base = demand.fit(h, today, today).fits["b2b:a:regular"].level
+    hh, end = _weeks(h, today, 3, 0.8)
+    assert demand.fit(hh, today, end).fits["b2b:a:regular"].level == pytest.approx(base * 0.8, rel=0.01)
+
+
+def test_the_week_verdict_is_on_its_total_not_its_days():
+    h = history()
+    today = D0 + timedelta(days=56)
+    base = demand.fit(h, today, today).fits["b2b:a:regular"].level
+    hh = {k: dict(v) for k, v in h.items()}
+    for w in range(3):                       # Monday tripled, the rest a third lower: the week sums to normal
+        for i in range(6):
+            d = today + timedelta(days=7 * w + i)
+            hh["b2b:a:regular"][d] = 6.0 * (1.5 if d.weekday() == 5 else 1.0) * (2.25 if i == 0 else 0.75)
+    assert demand.fit(hh, today, today + timedelta(days=21)).fits["b2b:a:regular"].level == pytest.approx(base)
 
 
 def test_market_factor_needs_three_buyers_agreeing():
@@ -102,8 +150,9 @@ def test_prior_zero_jumps_to_first_actual():
 
 def test_prior_learns_from_zero_days():
     hist = {"b2b:b1:regular": {MON + timedelta(days=7 * i): 0.0 for i in range(3)}}
-    m = demand.fit(hist, MON, MON + timedelta(days=15), {"b2b:b1:regular": [10, 0, 0, 0, 0, 0, 0]})
-    assert m.fits["b2b:b1:regular"].level < 10
+    pri = {"b2b:b1:regular": [10, 0, 0, 0, 0, 0, 0]}
+    assert demand.fit(hist, MON, MON + timedelta(days=15), pri).fits["b2b:b1:regular"].level == 10   # 2 weeks: not yet
+    assert demand.fit(hist, MON, MON + timedelta(days=21), pri).fits["b2b:b1:regular"].level < 10    # 3rd week confirms
 
 
 def test_no_priors_is_unchanged(pakcoy):
