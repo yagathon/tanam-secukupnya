@@ -191,6 +191,7 @@ def tomorrow(ws: Store) -> dict:
             "households": [{"id": r.customer_id, "alias": names.get(r.customer_id, r.customer_id),
                             "ordered_kg": round(r.ordered_kg, 2), "served_kg": round(r.served_kg, 2)} for r in rows_h],
             "borrowing": lp.borrowing,
+            "debt_kg": lp.debt, "debt_limit_kg": lp.debt_limit,       # short_kg > 0 with no debt left: a market day
         })
     return {"today": st.today.isoformat(), "lines": lines}
 
@@ -305,7 +306,8 @@ def today(ws: Store) -> dict:
                     "extra_kg": round(max(0.0, lp.ceiling - lp.needs.tomorrow), 2),
                     "harvest_plan": _harvest_plan(c, st, lp.line, lp.send),
                     "cover_pct": round(100 * min(1.0, lp.send / tl["need_kg"])) if tl["need_kg"] > 0.005 else None,
-                    "sellable_from": _sellable_from(c, st, lp.line) if lp.available_tomorrow < 0.01 else None})
+                    "sellable_from": _sellable_from(c, st, lp.line) if lp.available_tomorrow < 0.01 else None,
+                    "debt_kg": lp.debt, "debt_limit_kg": lp.debt_limit})
     pending = [n for n in ws.list("notes") if n.get("status") == "proposed"]
     return {"today": st.today.isoformat(), "weekday": st.today.strftime("%A"), "lines": out, "pending": pending,
             "seq": v.log_key[1] + 1}

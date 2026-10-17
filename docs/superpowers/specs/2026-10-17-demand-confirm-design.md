@@ -93,6 +93,24 @@ The founder's principles (2026-10-17):
 - Basis label: "Expected orders (no buffer)".
 - `protected` (the harvest ceiling's floor: B2B expected + households low) is unchanged.
 
+### E. Short supply: borrow from later days, then a market day (founder 2026-10-17)
+
+- Replaces "share the unavoidable shortage evenly" (`fair_send`, removed).
+- When the field can't cover every day until the next sowing is ready, tomorrow is served **whole** by
+  borrowing plants meant for later days.
+- **Debt** = the shortfall after tomorrow that the full send adds, over what those days would be short
+  anyway (harvesting nothing tomorrow). The unavoidable base is not debt, so it never triggers a market
+  day on its own.
+- **Limit** = one average day of expected orders (mean `target` over the next 7 days).
+- Debt ≤ limit → send the full need. Debt > limit → **market day**: send only the safe ceiling; the
+  rest (`short_kg`) is bought at the market.
+- The debt is recomputed every day from the field and the forecast, so a debt that later beds or lower
+  orders cover heals by itself with no market day.
+- The demo world gets the same behaviour (its harvest uses the same cap).
+- API: `today` and `tomorrow` lines gain `debt_kg` and `debt_limit_kg`.
+- Deferred to after the demo: market-buy kg confirmed over 3 weeks raises sowing (symmetric with waste
+  lowering it).
+
 ## Visible in the UI
 
 - **Order form:** the one-off checkbox. The trail shows "one-off" on such an order.

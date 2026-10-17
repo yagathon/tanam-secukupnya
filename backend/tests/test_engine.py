@@ -175,26 +175,47 @@ def test_stretch_keeps_slightly_oversize_plants_sendable_so_ceiling_reserves_sto
     assert later(ceil) == pytest.approx(later(0.0), abs=0.05) and later(avail) > later(0.0) + 5
 
 
-def test_fair_send_spreads_a_shortage_instead_of_holding_everything_back():
-    """Re-run of the UAT farm: 25–50 kg ready, 20 kg ordered daily, ceiling 0.04 → three empty days so a
-    later day could be full. A shortage that can't be avoided is shared: each day gets the same share."""
-    c = _sandbox_crop(80.0)
-    mon = date(2026, 10, 26)
-    tue = mon + timedelta(days=1)
-    bed = Batch("x", "Bed 4", "baby", date(2026, 9, 28), 900)          # just coming into range
-    need = {mon + timedelta(days=i): 20.0 for i in range(1, 9)}
-    end = mon + timedelta(days=8)
-    assert engine.ceiling(c, "baby", [bed], need, mon, end) < 1          # the old rule: hold it all
-    fair = engine.fair_send(c, "baby", [bed], need, mon, end)
-    assert 3 < fair < 17
-    served = [p.harvested_kg for p in project(c, "baby", [bed], need, tue, end, send={tue: fair})]
-    assert served[0] == pytest.approx(fair, abs=0.01)
+def _uat_bed(seedlings, kg, later_kg=None):
+    """The UAT baby bed just coming into range; `kg` ordered tomorrow, `later_kg` (default `kg`) after."""
+    c, mon = _sandbox_crop(80.0), date(2026, 10, 26)
+    need = {mon + timedelta(days=i): (kg if i == 1 or later_kg is None else later_kg) for i in range(1, 9)}
+    return c, mon, [Batch("x", "Bed 4", "baby", date(2026, 9, 28), seedlings)], need, mon + timedelta(days=8)
 
 
-def test_fair_send_is_whole_need_when_stock_covers_everything(pakcoy):
-    beds = farm()
-    end = engine.horizon_end(pakcoy, "regular", TODAY, False)
-    assert engine.fair_send(pakcoy, "regular", beds, flat(5), TODAY, end) == pytest.approx(5, abs=0.01)
+def test_tomorrow_is_served_whole_by_borrowing_while_the_debt_stays_within_one_day():
+    """Founder 2026-10-17: patch a shortfall from later days' plants first, up to a limit, instead of
+    sharing it out as a little short every day. 1200 seedlings, 10 kg a day: borrowing costs later days
+    ~7 kg, under one average day (10 kg)."""
+    c, mon, beds, need, end = _uat_bed(1200, 10.0)
+    assert engine.ceiling(c, "baby", beds, need, mon, end) < 10                 # the safe ceiling alone is short
+    cap, debt, limit = engine.borrow_cap(c, "baby", beds, need, need, mon, end, 10.0)
+    assert cap == pytest.approx(10.0) and limit == pytest.approx(10.0)
+    assert 0 < debt <= limit
+
+
+def test_past_the_limit_only_the_safe_ceiling_is_sent_and_the_market_covers_the_rest():
+    """900 seedlings: serving 10 kg whole would cost later days ~13 kg, more than one day's orders, so
+    tomorrow is a market day: the field sends its safe ceiling and keeps the rest for later days."""
+    c, mon, beds, need, end = _uat_bed(900, 10.0)
+    cap, debt, limit = engine.borrow_cap(c, "baby", beds, need, need, mon, end, 10.0)
+    assert cap == pytest.approx(engine.ceiling(c, "baby", beds, need, mon, end))
+    assert debt == pytest.approx(0, abs=engine.EPS_KG)                          # holding back repays the debt
+
+
+def test_a_debt_that_heals_itself_needs_no_market_day():
+    """Same bed, but the forecast after tomorrow comes in smaller (7 kg): the debt is recomputed from the
+    field and the forecast every day, so it shrinks under the limit and tomorrow is served whole."""
+    c, mon, beds, need, end = _uat_bed(900, 10.0, later_kg=7.0)
+    assert engine.ceiling(c, "baby", beds, need, mon, end) < 10                 # still borrowing
+    cap, debt, limit = engine.borrow_cap(c, "baby", beds, need, need, mon, end, 10.0)
+    assert cap == pytest.approx(10.0) and 0 < debt <= limit
+
+
+def test_borrowing_never_takes_plants_that_are_not_ready():
+    c, mon, beds, need, end = _uat_bed(1200, 10.0)
+    avail = available_kg(c, beds[0], mon + timedelta(days=1))
+    cap, _, _ = engine.borrow_cap(c, "baby", beds, need, need, mon, end, avail + 5)
+    assert cap <= avail + 1e-9
 
 
 def test_the_sowing_target_is_expected_demand_with_no_buffer():

@@ -141,27 +141,26 @@ def ceiling(crop: Crop, line: str, batches: list[Batch], need: dict[date, float]
     return _floor2(lo)
 
 
-def fair_send(crop: Crop, line: str, batches: list[Batch], need: dict[date, float], today: date, end: date) -> float:
-    """Tomorrow's share of a shortage that can't be avoided: the largest fraction f such that every day
-    tomorrow … end can get f × its need (or all it could ever get, if less), harvesting oldest first."""
+def borrow_cap(crop: Crop, line: str, batches: list[Batch], protected: dict[date, float], target: dict[date, float],
+               today: date, end: date, need: float) -> tuple[float, float, float]:
+    """Tomorrow's harvest cap when the safe ceiling can't cover tomorrow (founder 2026-10-17). Serve it
+    whole from plants ready now, borrowing from later days, while the debt (the shortfall after tomorrow
+    that borrowing adds) stays within one average day of expected orders. Past that, tomorrow is a market
+    day: the field sends only the safe ceiling and the market covers the rest. The debt is recomputed
+    from the field and the forecast every day, so a debt that heals itself never sends anyone to market.
+    Returns (cap, debt, limit)."""
     tom = today + timedelta(days=1)
-    days = [tom + timedelta(days=i) for i in range((end - tom).days + 1)]
-    caps = {p.day: p.available_kg for p in project(crop, line, batches, need, tom, end, send={d: 0.0 for d in days})}
-
-    def targets(f: float) -> dict[date, float]:
-        return {d: min(f * need.get(d, 0.0), caps[d]) for d in days}
-
-    def ok(f: float) -> bool:
-        t = targets(f)
-        return all(p.harvested_kg >= t[p.day] - EPS_KG for p in project(crop, line, batches, need, tom, end, send=t))
-
-    if ok(1.0):
-        return _floor2(targets(1.0)[tom])
-    lo, hi = 0.0, 1.0
-    for _ in range(25):
-        mid = (lo + hi) / 2
-        lo, hi = (mid, hi) if ok(mid) else (lo, mid)
-    return _floor2(targets(lo)[tom])
+    ceil = ceiling(crop, line, batches, protected, today, end)
+    week = [target[d] for d in (tom + timedelta(days=i) for i in range(7)) if d in target]
+    limit = sum(week) / len(week) if week else 0.0
+    full = min(need, sum(available_kg(crop, b, tom) for b in batches if b.line == line))
+    if full <= ceil + EPS_KG:
+        return ceil, 0.0, limit
+    base = _future_short(crop, line, batches, protected, tom, end, 0.0)
+    debt = _future_short(crop, line, batches, protected, tom, end, full) - base
+    if debt <= limit + EPS_KG:
+        return _floor2(full), round(debt, 2), limit
+    return ceil, round(max(0.0, _future_short(crop, line, batches, protected, tom, end, ceil) - base), 2), limit
 
 
 def borrowing(crop: Crop, line: str, batches: list[Batch], need: dict[date, float], today: date, end: date,

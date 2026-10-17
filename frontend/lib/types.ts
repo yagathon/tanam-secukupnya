@@ -49,6 +49,8 @@ export interface TodayLine {
   done?: { sown: boolean; harvested: boolean }; harvest_plan?: HarvestPick[];
   cover_pct?: number | null; sellable_from?: string | null;
   demand?: { alias: string; kg: number; known: boolean }[]; extra_kg?: number;
+  /** Shortfall after tomorrow that borrowing adds, and the limit (one average day) past which a market day comes. */
+  debt_kg?: number; debt_limit_kg?: number;
 }
 export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[]; seq: number }
 
@@ -73,6 +75,7 @@ export interface TomorrowLine {
   buyers: { id: string; alias: string; known: boolean; ordered_kg: number; served_kg: number; min_kg: number }[];
   households: { id: string; alias: string; ordered_kg: number; served_kg: number }[];
   borrowing: DayKg[];
+  debt_kg: number; debt_limit_kg: number;
 }
 export interface Tomorrow { today: string; lines: TomorrowLine[] }
 

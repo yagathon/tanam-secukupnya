@@ -12,14 +12,17 @@ function LineTomorrow({ l }: { l: TomorrowLine }) {
       <div className="kpis">
         <div><span className="small muted">Need</span><strong>{kg(l.need_kg)}</strong></div>
         <div><span className="small muted">Ready in range</span><strong>{kg(l.available_kg)}</strong></div>
-        <div><span className="small muted">Max safe to send</span><strong>{kg(l.ceiling_kg)}</strong></div>
+        <div><span className="small muted">Max to send</span><strong>{kg(l.ceiling_kg)}</strong></div>
         <div><span className="small muted">Send</span><strong className={short ? "bad" : ""}>{kg(l.send_kg)}</strong></div>
       </div>
       <p className="small muted">
-        Max safe = the most we can pick tomorrow without making any later day (until the next sowing is ready) shorter than
-        it would be anyway.
+        When the field can&apos;t cover every day until the next sowing is ready, tomorrow is served whole by borrowing
+        plants meant for later days, as long as that debt stays within one average day of orders
+        ({kg(l.debt_limit_kg)}). Past that, tomorrow is a market day: the field sends only what is safe and the rest is
+        bought at the market, so the field catches up. The debt is recomputed every day, so it can heal by itself.
       </p>
-      {short && <p className="bad">Short {kg(l.short_kg)}: B2B minimums first, the rest pro-rata; households that were shorted least recently rotate out.</p>}
+      {l.debt_kg > 0.005 && !short && <p>Borrowed from later days: {kg(l.debt_kg)} of {kg(l.debt_limit_kg)}.</p>}
+      {short && <p className="bad">Market day: buy {kg(l.short_kg)} at the market. From the field: B2B minimums first, the rest pro-rata; households that were shorted least recently rotate out.</p>}
 
       <h3>Restaurants & caterers</h3>
       {l.buyers.length === 0 ? <p className="empty">No B2B orders for this line.</p> : (
@@ -57,8 +60,8 @@ function LineTomorrow({ l }: { l: TomorrowLine }) {
 
       {l.borrowing.length > 0 && (
         <>
-          <h3>If we sent the full need anyway</h3>
-          <p className="small muted">Picking more than the safe maximum borrows from later days:</p>
+          <h3>Borrowed from later days</h3>
+          <p className="small muted">Tomorrow&apos;s send takes plants these days would have had:</p>
           <ul>{l.borrowing.map((b) => <li key={b.day} className="bad">borrowing from {shortDate(b.day)}: −{kg(b.kg)}</li>)}</ul>
         </>
       )}

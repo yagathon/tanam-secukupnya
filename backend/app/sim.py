@@ -39,6 +39,8 @@ class LinePlan:
     send: float
     borrowing: list[dict]
     sow: engine.SowPlan
+    debt: float = 0.0            # shortfall after tomorrow that borrowing adds (kg)
+    debt_limit: float = 0.0      # one average day of expected orders: past it, tomorrow is a market day
 
 
 def demand_model(st: FarmState) -> demand.DemandModel:
@@ -56,16 +58,16 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
         end = engine.horizon_end(crop, ln.id, st.today, sown_today)
         needs = engine.line_needs(model, buyers, ln.id, st.today, st.today + timedelta(days=PLAN_DAYS),
                                   st.known_orders, st.signals, st.household_ids)
-        ceil = engine.ceiling(crop, ln.id, batches, needs.protected, st.today, end)
-        if needs.tomorrow > ceil + engine.EPS_KG:      # short either way: share it out instead of holding all back
-            ceil = max(ceil, engine.fair_send(crop, ln.id, batches, needs.protected, st.today, end))
+        safe = engine.ceiling(crop, ln.id, batches, needs.protected, st.today, end)
+        ceil, debt, limit = engine.borrow_cap(crop, ln.id, batches, needs.protected, needs.target, st.today, end,
+                                              needs.tomorrow)                  # borrow up to one day, then market
         avail = round(sum(available_kg(crop, b, tom) for b in batches), 2)
         send = min(needs.tomorrow, ceil)
-        borrow = engine.borrowing(crop, ln.id, batches, needs.protected, st.today, end, min(needs.tomorrow, avail), ceil) \
-            if needs.tomorrow > ceil + engine.EPS_KG else []
+        borrow = engine.borrowing(crop, ln.id, batches, needs.protected, st.today, end, send, safe) \
+            if send > safe + engine.EPS_KG else []
         sow = engine.sow_next(crop, ln.id, batches, needs.protected, needs.target, st.today,
                               st.last_sown.get(ln.id), sown_today)
-        out[ln.id] = LinePlan(ln.id, needs, avail, ceil, round(send, 2), borrow, sow)
+        out[ln.id] = LinePlan(ln.id, needs, avail, ceil, round(send, 2), borrow, sow, debt, round(limit, 2))
     return out
 
 

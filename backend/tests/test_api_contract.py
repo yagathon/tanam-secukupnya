@@ -33,7 +33,7 @@ def test_today_shape():
     assert t["seq"] == 1                                    # the seq the next logged event takes
     ln = t["lines"][0]
     assert keys(ln) == {"line", "need_kg", "ceiling_kg", "send_kg", "short_kg", "rotated", "sow",
-                        "done", "demand", "extra_kg", "harvest_plan", "cover_pct", "sellable_from"}
+                        "done", "demand", "extra_kg", "harvest_plan", "cover_pct", "sellable_from", "debt_kg", "debt_limit_kg"}
     assert keys(ln["done"]) == {"sown", "harvested"}
     assert keys(ln["sow"]) == {"day", "weekday", "seedlings", "seeds_g", "teaspoons", "shortfall_ahead_kg"}
 
@@ -51,7 +51,7 @@ def test_beds_shape():
 def test_tomorrow_shape():
     ln = client.get("/api/tomorrow").json()["lines"][0]
     assert keys(ln) == {"line", "day", "need_kg", "available_kg", "ceiling_kg", "send_kg", "short_kg", "buyers",
-                        "households", "borrowing"}
+                        "households", "borrowing", "debt_kg", "debt_limit_kg"}
     assert keys(ln["buyers"][0]) == {"id", "alias", "known", "ordered_kg", "served_kg", "min_kg"}
     assert keys(ln["households"][0]) == {"id", "alias", "ordered_kg", "served_kg"}
 

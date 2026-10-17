@@ -42,9 +42,15 @@ describe("daySentence", () => {
     line: "regular", need_kg: 47, ceiling_kg: 42, send_kg: 42, short_kg: 5, rotated: ["Household 03"],
     sow: { day: "2026-10-15", weekday: "Thu", seedlings: 1350, seeds_g: 4.0, teaspoons: 4 / 3, shortfall_ahead_kg: 0 },
   };
-  it("says who rotates when short", () => {
+  it("calls a short day a market day and says who rotates", () => {
     expect(daySentence(base)).toBe(
-      "Max safe tomorrow 42.0 kg · need 47.0 kg · short 5.00 kg → Household 03 rotates · Thu: sow 1,350 seedlings ≈ 4.0 g ≈ 1⅓ tsp",
+      "Market day: buy 5.00 kg at the market · send 42.0 kg of 47.0 kg → Household 03 rotates · Thu: sow 1,350 seedlings ≈ 4.0 g ≈ 1⅓ tsp",
+    );
+  });
+  it("says how much is borrowed from later days, against the limit", () => {
+    const lent = { ...base, ceiling_kg: 47, send_kg: 47, short_kg: 0, rotated: [], debt_kg: 3.2, debt_limit_kg: 6 };
+    expect(daySentence(lent)).toBe(
+      "Send 47.0 kg tomorrow · borrowed 3.20 kg from later days (market at 6.00 kg) · Thu: sow 1,350 seedlings ≈ 4.0 g ≈ 1⅓ tsp",
     );
   });
   it("says send when nothing is short", () => {

@@ -53,9 +53,11 @@ export function daySentence(l: TodayLine): string {
   let head: string;
   if (l.need_kg < 0.005) head = "Nothing to send tomorrow";
   else if (l.short_kg > 0.005) {
-    head = `Max safe tomorrow ${l.ceiling_kg.toFixed(1)} kg · need ${l.need_kg.toFixed(1)} kg · short ${kg(l.short_kg)}`;
+    head = `Market day: buy ${kg(l.short_kg)} at the market · send ${l.send_kg.toFixed(1)} kg of ${l.need_kg.toFixed(1)} kg`;
     if (l.rotated.length) head += ` → ${l.rotated.join(", ")} ${l.rotated.length === 1 ? "rotates" : "rotate"}`;
-  } else head = `Send ${kg(l.send_kg)} tomorrow (max safe ${kg(l.ceiling_kg)})`;
+  } else if ((l.debt_kg ?? 0) > 0.005)
+    head = `Send ${kg(l.send_kg)} tomorrow · borrowed ${kg(l.debt_kg ?? 0)} from later days (market at ${kg(l.debt_limit_kg ?? 0)})`;
+  else head = `Send ${kg(l.send_kg)} tomorrow (max safe ${kg(l.ceiling_kg)})`;
   const ahead = s.shortfall_ahead_kg > 0.005 ? ` · ${kg(s.shortfall_ahead_kg)} short ahead` : "";
   return `${head} · ${sow}${ahead}`;
 }
