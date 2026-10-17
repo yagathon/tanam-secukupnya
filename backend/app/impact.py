@@ -1,4 +1,4 @@
-"""Impact: the sandbox as logged vs. the same days under the old habit (a fixed sowing once a week).
+"""Impact: the sandbox as logged vs. the same days under the old habit (1,000 seedlings every Thursday).
 
 The habit run replays the log with three changes: its own sowing replaces every logged one, each day's
 harvested kg (logged or assumed) is taken oldest bed first from its beds, and a logged loss hits its bed
@@ -19,6 +19,7 @@ from app.production import Batch, apply_loss, avg_g, bed_day, plants0, take_olde
 from app.state import FarmState, apply, current_crop, initial
 
 HABIT_SEEDLINGS = 1000
+HABIT_WEEKDAY = 3                    # Thursday: the founder's sowing day before Tanam
 
 
 def _close(c: Crop, st: FarmState, closed: dict[str, date]) -> None:
@@ -48,7 +49,7 @@ def _row(beds: list[dict], delivered: dict[str, float]) -> dict:
 
 def build(ref: dict, meta: dict, crop: Crop, docs: list[dict], seedlings: int = HABIT_SEEDLINGS) -> dict:
     docs = sorted(docs, key=lambda d: d["seq"])
-    weekday = crop.sow_weekdays[0]
+    weekday = HABIT_WEEKDAY
     setup_ids = {b["id"] for b in ref["batches"]}
 
     real = initial(ref, meta)

@@ -41,13 +41,13 @@ def test_impact_before_setup_is_409():
     assert client.get(f"{S}/impact").status_code == 409
 
 
-def test_habit_sows_its_seedlings_once_a_week_on_the_first_sowing_day():
+def test_habit_sows_its_seedlings_once_a_week_on_thursday():
     client.put(f"{S}/setup", json=_setup())
-    _days(14)                                                     # Mon 12 → Mon 26: three Mondays
+    _days(14)                                                     # Mon 12 → Mon 26: Thursdays 15 and 22
     r = client.get(f"{S}/impact").json()
-    assert r["habit"] == {"seedlings": 1000, "weekday": 0}
+    assert r["habit"] == {"seedlings": 1000, "weekday": 3}
     lines = len(sb.default_setup()["crop"]["lines"])                # the habit sows every line
-    assert r["rows"]["habit"]["beds"] == 3 * lines and r["rows"]["habit"]["seedlings"] == 3000 * lines
+    assert r["rows"]["habit"]["beds"] == 2 * lines and r["rows"]["habit"]["seedlings"] == 2000 * lines
     assert r["rows"]["tanam"]["beds"] == 0                        # nothing sown in the log
     assert r["rows"]["before"]["beds"] == 1 and r["rows"]["before"]["seedlings"] == 900
 
