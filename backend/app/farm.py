@@ -255,12 +255,15 @@ def demand(ws: Store) -> dict:
         kind, *rest = k.split(":")
         label = names.get(rest[0], rest[0]) if kind == "b2b" else f"Households ({rest[0]})"
         series.append({"key": k, "label": label, "line": rest[-1], "usual_kg": round(f.usual, 2),
-                       "level_kg": round(f.level, 2), "shape": f.shape})
+                       "level_kg": round(f.level, 2), "shape": f.shape,
+                       "streak": {"side": f.streak[0], "weeks": f.streak[1]}})
     m = model.market
     text = (f"Market {round((m - 1) * 100):+d}% across {model.market_buyers} buyers this week (cause unknown)"
             if m != 1 else f"No market-wide move ({model.market_buyers} buyers checked)")
+    season = st.season and {**model.season, "setup_month_pct": st.season["month_pct"],   # effective, as learned
+                            "learned_blocks": model.learned_blocks}
     return {"today": st.today.isoformat(), "market": {"factor": m, "buyers": model.market_buyers, "text": text},
-            "series": series, "signals": st.signals, "season": st.season,
+            "series": series, "signals": st.signals, "season": season,
             "lines": [{"line": lp.line, "days": lp.needs.rows} for lp in v.plans.values()]}
 
 

@@ -13,7 +13,8 @@ type Kind = "order" | "harvest" | "sow" | "loss" | "signal" | "postpone";
 type Form = Record<string, string>;
 /** One line under the form: what this kind of entry means. */
 const HINTS: Record<Kind, string> = {
-  order: "A buyer's order for a coming day. 0 kg = they skip this time; no entry = not known yet.",
+  order: "A buyer's order for a coming day. 0 kg = they skip this time; no entry = not known yet. "
+    + "One-off: an extra or catch-up order; it is planned and served, but the forecast never learns from it.",
   harvest: "What you cut from one bed today. Weighing the 5 biggest and 5 smallest teaches the app how this bed grows. "
     + "Left in bed: how much of a full bed you still see standing after cutting (empty = 0%).",
   sow: "Seedlings started today for this line.",
@@ -52,7 +53,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
   const blank = (k: Kind): Form => {
     const line = k === "sow" || k === "postpone" ? sowLine : lines.find((l) => inUse.has(l)) ?? lines[0] ?? "";
     switch (k) {
-      case "order": return { buyer: people[0]?.id ?? "", line: people[0]?.line ?? line, kg: "", day: addDays(t, 1) };
+      case "order": return { buyer: people[0]?.id ?? "", line: people[0]?.line ?? line, kg: "", day: addDays(t, 1), oneoff: "" };
       case "harvest": return { batch: inGround[0]?.id ?? "", kg: "", big5_g: "", small5_g: "", left_pct: "", empty: "" };
       case "sow": return { line, seedlings: planned(line) };
       case "loss": return { line, batch: "", pct: "", cause: "" };
@@ -150,7 +151,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
     const k = ev.t as Kind;
     const byBatch = inGround.find((b) => b.id === ev.batch)?.line ?? lines[0] ?? "";
     const f: Record<Kind, () => Form> = {
-      order: () => ({ buyer: s("buyer"), line: s("line"), kg: s("kg"), day: s("day") }),
+      order: () => ({ buyer: s("buyer"), line: s("line"), kg: s("kg"), day: s("day"), oneoff: "" }),
       harvest: () => ({ batch: s("batch"), kg: s("kg"), big5_g: s("big5_g"), small5_g: s("small5_g") }),
       sow: () => ({ line: s("line"), seedlings: s("seedlings") }),
       loss: () => ({ line: byBatch, batch: s("batch"), pct: s("pct"), cause: s("cause") }),
@@ -183,6 +184,8 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
           {lineSelect()}
           {field("kg", "kg (0 = no order this time)")}
           {field("day", "For day", "date", { min: addDays(t, 1), max: addDays(t, 14) })}
+          <label className="row"><input type="checkbox" checked={!!form.oneoff}
+            onChange={(e) => set({ oneoff: e.target.checked ? "1" : "" })} /> One-off (not used for the forecast)</label>
         </>}
         {kind === "harvest" && <>
           <label>Bed

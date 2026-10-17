@@ -1,4 +1,4 @@
-import type { Setup } from "./types";
+import type { DemandSeason, Setup, Streak } from "./types";
 
 type Buyer = Setup["buyers"][number];
 const r4 = (x: number) => Math.round(x * 1e4) / 1e4;
@@ -36,4 +36,19 @@ export function yearCurve(s: Setup): YearRow[] {
     for (const l of lines) kg[l] = r4(kg[l]);
     return { day, kg };
   });
+}
+
+export const BLOCKS = ["1–7", "8–14", "15–21", "22–end"];
+
+/** "2 of 3 weeks above": why the level has or hasn't moved yet. */
+export function streakText(s: Streak): string {
+  return s.side && s.weeks ? `${s.weeks} of 3 weeks ${s.side}` : "";
+}
+
+/** The month blocks orders have re-taught (3 confirming months), with the setup value each replaced. */
+export function learnedText(s: DemandSeason): string {
+  if (!s.learned_blocks.length) return "";
+  const r = (x: number) => Math.round(x);
+  return `Learned from orders: ${s.learned_blocks
+    .map((b) => `${BLOCKS[b]} ${r(s.setup_month_pct[b])}% → ${r(s.month_pct[b])}%`).join(", ")}.`;
 }

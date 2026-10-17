@@ -4,7 +4,8 @@ import { Area, Bar, BarChart, ComposedChart, Line, ReferenceLine, ResponsiveCont
 
 import type { TabProps } from "@/app/page";
 import { kg, lineName, scopeName, shortDate } from "@/lib/format";
-import type { Season } from "@/lib/types";
+import { BLOCKS, learnedText, streakText } from "@/lib/season";
+import type { DemandSeason } from "@/lib/types";
 
 export default function DemandTab({ data }: TabProps) {
   const { demand, state } = data;
@@ -46,10 +47,10 @@ export default function DemandTab({ data }: TabProps) {
 
       <div className="card">
         <h2>Buyers: usual vs. now</h2>
-        <p className="small muted">The weekday shape is fixed; only the level moves. Three orders in a row on the same side move it fast.</p>
+        <p className="small muted">The weekday shape is fixed; only the level moves. It is checked each week on the week&apos;s total: three weeks in a row more than 10% above (or below) the forecast move it by their average. A one-off order never counts.</p>
         <div className="scroll">
           <table>
-            <thead><tr><th>Series</th><th>Line</th><th className="num">Usual / day</th><th className="num">Now / day</th></tr></thead>
+            <thead><tr><th>Series</th><th>Line</th><th className="num">Usual / day</th><th className="num">Now / day</th><th>This streak</th></tr></thead>
             <tbody>
               {demand.series.map((s) => {
                 const d = s.level_kg - s.usual_kg;
@@ -60,6 +61,7 @@ export default function DemandTab({ data }: TabProps) {
                     <td>{s.line}</td>
                     <td className="num">{kg(s.usual_kg)}</td>
                     <td className={`num ${moved && d < 0 ? "neg" : ""}`}>{kg(s.level_kg)} {moved ? (d < 0 ? "↓" : "↑") : ""}</td>
+                    <td className="small muted">{streakText(s.streak) || "–"}</td>
                   </tr>
                 );
               })}
@@ -87,7 +89,6 @@ export default function DemandTab({ data }: TabProps) {
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const BLOCKS = ["1–7", "8–14", "15–21", "22–end"];
 
 function Bars({ data, now }: { data: { label: string; x: number }[]; now: string }) {
   return (
@@ -108,8 +109,8 @@ function Bars({ data, now }: { data: { label: string; x: number }[]; now: string
   );
 }
 
-/** The setup's season: what the forecast multiplies today's level by, month block × month of the year. */
-function SeasonCard({ season, today }: { season: Season; today: string }) {
+/** The season (setup's, plus month blocks learned after 3 confirming months): what the forecast multiplies today's level by, month block × month of the year. */
+function SeasonCard({ season, today }: { season: DemandSeason; today: string }) {
   const d = new Date(`${today}T00:00:00Z`);
   const block = Math.min(Math.floor((d.getUTCDate() - 1) / 7), 3);
   const now = season.month_pct[block] / 25 * season.year_index[d.getUTCMonth()] / 100;
@@ -124,7 +125,9 @@ function SeasonCard({ season, today }: { season: Season; today: string }) {
         <div><p className="small muted">Through the year</p>
           <Bars data={season.year_index.map((x, i) => ({ label: MONTHS[i], x: x / 100 }))} now={MONTHS[d.getUTCMonth()]} /></div>
       </div>
-      <p className="small muted">Set in Setup. Orders are divided by this before the level learns, and forecasts multiply it back.</p>
+      {learnedText(season) && <p className="small"><strong>{learnedText(season)}</strong></p>}
+      <p className="small muted">Set in Setup. Orders are divided by this before the level learns, and forecasts multiply it back.
+        At each month end the within-month pattern is checked; a block 10% off for three full months in a row is re-learned.</p>
     </div>
   );
 }

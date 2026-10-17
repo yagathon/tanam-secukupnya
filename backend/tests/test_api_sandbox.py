@@ -223,7 +223,8 @@ def test_sow_view_follows_setup_sow_weekdays():            # UAT: setup Tue/Fri,
 
 def test_demand_view_carries_the_setup_season():
     client.put(f"{S}/setup", json=_setup(month_pct=[40, 20, 20, 20]))
-    assert client.get(f"{S}/demand").json()["season"] == {"month_pct": [40, 20, 20, 20], "year_index": [100] * 12}
+    assert client.get(f"{S}/demand").json()["season"] == {"month_pct": [40, 20, 20, 20], "year_index": [100] * 12,
+                                                         "setup_month_pct": [40, 20, 20, 20], "learned_blocks": []}
 
 
 def _today_line():

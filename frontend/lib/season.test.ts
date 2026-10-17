@@ -1,5 +1,5 @@
-import { expect, test } from "vitest";
-import { yearCurve } from "./season";
+import { describe, expect, it, test } from "vitest";
+import { learnedText, streakText, yearCurve } from "./season";
 import type { Setup } from "./types";
 
 // Expected values come from the engine: app.demand.season_factor × app.sandbox._week (Python).
@@ -24,4 +24,17 @@ test("a year of days from the start, the three patterns multiplied as the engine
 test("no season set = flat month and year", () => {
   const rows = yearCurve({ ...setup, month_pct: undefined, year_index: undefined });
   expect(rows[5].kg.regular).toBe(17.5);              // Sat 17 Oct: 70 × 25%
+});
+
+describe("demand confirmation text", () => {
+  it("says how far a series is into a 3-week streak, and nothing when there is none", () => {
+    expect(streakText({ side: "above", weeks: 2 })).toBe("2 of 3 weeks above");
+    expect(streakText({ side: "below", weeks: 1 })).toBe("1 of 3 weeks below");
+    expect(streakText({ side: "", weeks: 0 })).toBe("");
+  });
+  it("names the learned month blocks with the setup value they replaced", () => {
+    const s = { month_pct: [30, 25, 25, 20], setup_month_pct: [25, 25, 25, 25], learned_blocks: [0, 3], year_index: [] };
+    expect(learnedText(s)).toBe("Learned from orders: 1–7 25% → 30%, 22–end 25% → 20%.");
+    expect(learnedText({ ...s, learned_blocks: [] })).toBe("");
+  });
 });

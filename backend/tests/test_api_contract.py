@@ -67,7 +67,8 @@ def test_demand_shape():
     assert keys(d) == {"today", "market", "series", "signals", "lines", "season"}
     assert d["season"] is None                                   # the demo world has no setup season
     assert keys(d["market"]) == {"factor", "buyers", "text"}
-    assert keys(d["series"][0]) == {"key", "label", "line", "usual_kg", "level_kg", "shape"}
+    assert keys(d["series"][0]) == {"key", "label", "line", "usual_kg", "level_kg", "shape", "streak"}
+    assert keys(d["series"][0]["streak"]) == {"side", "weeks"}
     assert keys(d["lines"][0]["days"][0]) == {"day", "low", "expected", "high", "protected", "target"}
 
 

@@ -89,11 +89,15 @@ export interface DemandDay { day: string; low: number; expected: number; high: n
 export interface Demand {
   today: string;
   market: { factor: number; buyers: number; text: string };
-  series: { key: string; label: string; line: LineId; usual_kg: number; level_kg: number; shape: number[] }[];
+  series: { key: string; label: string; line: LineId; usual_kg: number; level_kg: number; shape: number[]; streak: Streak }[];
   signals: (Signal & { t?: string })[];
   lines: { line: LineId; days: DemandDay[] }[];
-  season?: Season | null;
+  season?: DemandSeason | null;
 }
+/** The current run of finished weeks on one side of the forecast (3 in a row move the level). */
+export interface Streak { side: "above" | "below" | ""; weeks: number }
+/** The season the forecast uses: setup's month pattern, with blocks learned after 3 confirming months. */
+export interface DemandSeason { month_pct: number[]; year_index: number[]; setup_month_pct: number[]; learned_blocks: number[] }
 
 export type Strategy = "cobweb" | "fixed" | "tanam";
 export interface SeasonMetrics { waste_pct: number; b2b_fill_pct: number; hh_fill_pct: number; sowing_cv: number }
