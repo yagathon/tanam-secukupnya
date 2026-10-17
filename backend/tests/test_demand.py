@@ -251,3 +251,11 @@ def test_a_level_confirmed_down_to_zero_comes_back_after_three_weeks_of_orders()
     assert demand.fit(h, mon, mon + timedelta(days=21), pri).fits["hh:regular"].level == 0
     back = demand.fit(h, mon, mon + timedelta(days=42), pri).fits["hh:regular"]
     assert back.level == pytest.approx(2.0)
+
+
+def test_a_month_with_no_orders_at_all_is_not_judged_and_does_not_crash():
+    """Final review 2026-10-17: a full month of 0 kg divided by a zero share sum."""
+    pri, start = {"hh:regular": [5.0] * 7}, date(2026, 11, 1)
+    h = {"hh:regular": {start + timedelta(days=i): 0.0 for i in range(30)}}
+    m = demand.fit(h, start, date(2026, 12, 1), pri, FLAT)
+    assert m.season["month_pct"] == [25, 25, 25, 25]

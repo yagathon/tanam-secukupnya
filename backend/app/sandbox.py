@@ -499,6 +499,10 @@ def _form_events(raw: dict, st, crop, buyers: dict[str, set[str]]) -> list[dict]
             raise ValueError(f"unknown buyer {raw.get('buyer')!r}")
         if line_of(raw["line"]) not in buyers[raw["buyer"]]:
             raise ValueError(f"this buyer is not set up for the {raw['line']} line; change the buyer in Setup first")
+        if raw.get("oneoff") and (key := (d.isoformat(), raw["buyer"], raw["line"])) in st.known_orders \
+                and key not in st.oneoff_orders:
+            raise ValueError("this buyer already has a regular order for that day; change it to the total, "
+                             "or tick One-off for the whole amount")
         ev = {"t": "order", "day": d.isoformat(), "buyer": raw["buyer"], "line": raw["line"],
               "kg": kg_of(raw["kg"], zero=True)}                     # 0 = "no order this time", a real zero
         return [ev | {"oneoff": True}] if raw.get("oneoff") else [ev]

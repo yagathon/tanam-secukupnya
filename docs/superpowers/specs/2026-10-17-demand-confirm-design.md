@@ -32,7 +32,11 @@ The founder's principles (2026-10-17):
     it stood that week.
   - Ratio `q = A / F`.
   - `q > 1.10` → the week is **above**; `q < 0.90` → **below**; otherwise **normal**.
-  - A week with `F = 0` gives no verdict and leaves the streak as it is.
+  - A week whose Monday is before the first history day gives no verdict (a Saturday start must not make
+    Sat–Sun a whole "week above"; found by the year-end replay).
+  - In practice the check compares implied week levels: (season- and market-divided actual sum) ÷
+    (weekday-shape sum) against the level. When season and market are constant over the week this is
+    `A/F`. A level at 0 judges any orders as "above", so a series confirmed down to 0 can come back.
 - The verdict is on the week's **total**. Daily ups and downs inside the week do not matter.
 - **3 consecutive weeks in the same direction** → `level ← level × mean(q of those 3 weeks)`. Then the
   streak resets.
@@ -78,6 +82,9 @@ The founder's principles (2026-10-17):
 - At day close, a one-off order writes **no** `actual` for that buyer. The day is unknown, not 0, so the
   level neither learns from it nor counts it in the weekly sum.
 - A one-off household order is left out of the households `actual` sum.
+- A one-off cannot be added on top of a regular order for the same buyer, line and day (the form refuses;
+  enter the total). A regular order entered over a one-off replaces it.
+- A full month with no orders at all is not judged for the month pattern.
 - Old logs are unchanged. Their stored `actual` events replay as before.
 
 ### D. Sowing target: expected ("pas")

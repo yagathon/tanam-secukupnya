@@ -14,7 +14,8 @@ type Form = Record<string, string>;
 /** One line under the form: what this kind of entry means. */
 const HINTS: Record<Kind, string> = {
   order: "A buyer's order for a coming day. 0 kg = they skip this time; no entry = not known yet. "
-    + "One-off: an extra or catch-up order; it is planned and served, but the forecast never learns from it.",
+    + "One-off: an extra or catch-up order; it is planned and served, but the forecast never learns from it. "
+    + "If the buyer also has a regular order that day, enter the total as one order instead.",
   harvest: "What you cut from one bed today. Weighing the 5 biggest and 5 smallest teaches the app how this bed grows. "
     + "Left in bed: how much of a full bed you still see standing after cutting (empty = 0%).",
   sow: "Seedlings started today for this line.",
@@ -151,7 +152,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
     const k = ev.t as Kind;
     const byBatch = inGround.find((b) => b.id === ev.batch)?.line ?? lines[0] ?? "";
     const f: Record<Kind, () => Form> = {
-      order: () => ({ buyer: s("buyer"), line: s("line"), kg: s("kg"), day: s("day"), oneoff: "" }),
+      order: () => ({ buyer: s("buyer"), line: s("line"), kg: s("kg"), day: s("day"), oneoff: s("oneoff") ? "1" : "" }),
       harvest: () => ({ batch: s("batch"), kg: s("kg"), big5_g: s("big5_g"), small5_g: s("small5_g") }),
       sow: () => ({ line: s("line"), seedlings: s("seedlings") }),
       loss: () => ({ line: byBatch, batch: s("batch"), pct: s("pct"), cause: s("cause") }),

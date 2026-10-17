@@ -123,6 +123,8 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
         if not season or not days or days[0] > first or any(x <= 0 for x in fc):
             return
         r = [x / y for x, y in zip(a, fc)]
+        if sum(r) <= 0:                                  # a month with no orders has no shape to judge
+            return
         obs = [100 * x / sum(r) for x in r]
         pct = season["month_pct"]
         for b in range(4):

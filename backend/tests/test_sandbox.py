@@ -314,3 +314,15 @@ def test_a_regular_order_replacing_a_one_off_is_learned_again():
 def test_describe_marks_a_one_off_order():
     ev = {"t": "order", "day": "2026-10-16", "buyer": "b1", "line": "regular", "kg": 12, "oneoff": True}
     assert sb.describe(ev, {"b1": "Restaurant A"}, {}).endswith(" · one-off")
+
+
+def test_a_one_off_cannot_be_added_on_top_of_a_regular_order_for_the_same_day():
+    """Final review 2026-10-17: the one-off replaced the regular order, so its kg was neither served nor learned."""
+    s = setup(start="2026-10-12",
+              buyers=[{"name": "Caterer B", "type": "business", "line": "regular", "usual_kg_per_week": 5, "weekdays": [1]}])
+    regular = sb.form_events({"kind": "order", "buyer": "b1", "line": "regular", "kg": 4, "day": "2026-10-13"},
+                             _state(s)[0], _state(s)[1], {}, {"b1": {"regular"}})
+    st, c, _ = _state(s, [{"seq": 1, "kind": "form", "events": regular}])
+    with pytest.raises(ValueError, match="already has a regular order"):
+        sb.form_events({"kind": "order", "buyer": "b1", "line": "regular", "kg": 3, "day": "2026-10-13", "oneoff": True},
+                       st, c, {}, {"b1": {"regular"}})
