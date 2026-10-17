@@ -1,0 +1,85 @@
+"""Impact: the sandbox as logged vs. the same days under the old habit (fixed seedlings once a week)."""
+import pytest
+from fastapi.testclient import TestClient
+
+from app import main
+from app import sandbox as sb
+
+client = TestClient(main.app)
+S = "/api/sandbox"
+
+
+def _setup(**kw):
+    return {**sb.default_setup(), "start": "2026-10-12",          # a Monday
+            "buyers": [{"name": "Restaurant A", "type": "business", "line": "regular", "usual_kg_per_week": 14,
+                        "weekdays": [1, 4]}],
+            "beds": [{"line": "regular", "sown_on": "2026-09-05", "seedlings": 900}], **kw}
+
+
+@pytest.fixture(autouse=True)
+def fresh():
+    main.store.for_user("local").reset(sb.SANDBOX)
+    yield
+    main.store.for_user("local").reset(sb.SANDBOX)
+
+
+def _form(f):
+    seq = client.get(f"{S}/today").json()["seq"]
+    r = client.post(f"{S}/events", json={"form": f, "seq": seq})
+    assert r.status_code == 200, r.text
+
+
+def _days(n):
+    while n > 0:
+        day = client.get(f"{S}/today").json()["today"]
+        step = min(n, 14)
+        assert client.post(f"{S}/day/next", json={"from_day": day, "days": step}).json()["appended"] == step
+        n -= step
+
+
+def test_impact_before_setup_is_409():
+    assert client.get(f"{S}/impact").status_code == 409
+
+
+def test_habit_sows_its_seedlings_once_a_week_on_the_first_sowing_day():
+    client.put(f"{S}/setup", json=_setup())
+    _days(14)                                                     # Mon 12 → Mon 26: three Mondays
+    r = client.get(f"{S}/impact").json()
+    assert r["habit"] == {"seedlings": 1000, "weekday": 0}
+    lines = len(sb.default_setup()["crop"]["lines"])                # the habit sows every line
+    assert r["rows"]["habit"]["beds"] == 3 * lines and r["rows"]["habit"]["seedlings"] == 3000 * lines
+    assert r["rows"]["tanam"]["beds"] == 0                        # nothing sown in the log
+    assert r["rows"]["before"]["beds"] == 1 and r["rows"]["before"]["seedlings"] == 900
+
+
+def test_habit_delivers_the_same_kg_or_counts_what_it_could_not():
+    client.put(f"{S}/setup", json=_setup())
+    _form({"kind": "sow", "line": "regular", "seedlings": 400})
+    _days(30)
+    d = client.get(f"{S}/impact").json()["delivery"]
+    assert d["logged_kg"] > 0
+    assert d["habit_kg"] + d["habit_short_kg"] == pytest.approx(d["logged_kg"], abs=0.05)
+
+
+def test_oversowing_habit_wastes_more_than_a_sowing_sized_to_demand():
+    client.put(f"{S}/setup", json=_setup())
+    _form({"kind": "sow", "line": "regular", "seedlings": 300})
+    _days(45)
+    r = client.get(f"{S}/impact").json()
+    assert r["rows"]["habit"]["waste_plants"] > r["rows"]["tanam"]["waste_plants"]
+    last = r["series"][-1]
+    assert set(last) == {"day", "tanam_waste", "habit_waste"}
+    assert last["habit_waste"] > last["tanam_waste"]
+    assert len(r["series"]) == 46                                 # start day + 45 closed days
+    assert all(a["habit_waste"] <= b["habit_waste"] for a, b in zip(r["series"], r["series"][1:]))
+
+
+def test_a_logged_loss_hits_the_habit_bed_of_the_same_age():
+    client.put(f"{S}/setup", json=_setup())
+    _form({"kind": "sow", "line": "regular", "seedlings": 500})
+    _days(20)
+    bed = next(b for b in client.get(f"{S}/beds").json()["lines"][0]["batches"] if b["sown_on"] == "2026-10-12")
+    _form({"kind": "loss", "batch": bed["id"], "pct": 50, "cause": "rain"})
+    rows = client.get(f"{S}/impact").json()["rows"]
+    assert rows["tanam"]["lost_plants"] > 0
+    assert rows["habit"]["lost_plants"] > 0

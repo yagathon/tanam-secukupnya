@@ -16,7 +16,7 @@ from datetime import date, datetime, timezone
 from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field, ValidationError
 
-from app import farm, gemini, notes, sandbox, trail
+from app import farm, gemini, impact, notes, sandbox, trail
 from app.auth import current_uid
 from app.store import Store, make_store
 
@@ -323,6 +323,16 @@ def reset_today(ws: Store = Depends(workspace)) -> dict:
 @sbx.get("/trail")
 def get_trail(ws: Store = Depends(workspace)) -> dict:
     return trail.build(_sandbox_ws(ws))
+
+
+@sbx.get("/impact")
+def get_impact(ws: Store = Depends(workspace)) -> dict:
+    """Waste as logged vs. the same days under the old habit (a fixed sowing once a week)."""
+    ws = _sandbox_ws(ws)
+    if not ws.saved:
+        raise HTTPException(409, "save the setup first; there is nothing to compare yet")
+    return impact.build({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(),
+                        farm.crop(ws), ws.list("events"))
 
 
 LOG_FORMAT = "tanam-sandbox-log"
