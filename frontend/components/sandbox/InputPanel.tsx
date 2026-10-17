@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import NoteCard from "@/components/NoteCard";
 import type { TabProps } from "@/app/page";
+import { bedLeftText } from "@/lib/bedLeft";
 import { friendly, lineName } from "@/lib/format";
 import { sowLineDefault, type Prefill } from "@/lib/today";
 import type { NoteDoc } from "@/lib/types";
@@ -13,7 +14,8 @@ type Form = Record<string, string>;
 /** One line under the form: what this kind of entry means. */
 const HINTS: Record<Kind, string> = {
   order: "A buyer's order for a coming day. 0 kg = they skip this time; no entry = not known yet.",
-  harvest: "What you cut from one bed today. Weighing the 5 biggest and 5 smallest teaches the app how this bed grows.",
+  harvest: "What you cut from one bed today. Weighing the 5 biggest and 5 smallest teaches the app how this bed grows. "
+    + "Left in bed: how much of a full bed you still see standing after cutting (empty = 0%).",
   sow: "Seedlings started today for this line.",
   loss: "Plants lost in the ground (pests, rain, …) as a % of what was there.",
   signal: "Something you know will change orders, e.g. Resto A halves orders for 2 weeks = −50%. The forecast follows it.",
@@ -51,7 +53,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
     const line = k === "sow" || k === "postpone" ? sowLine : lines.find((l) => inUse.has(l)) ?? lines[0] ?? "";
     switch (k) {
       case "order": return { buyer: people[0]?.id ?? "", line: people[0]?.line ?? line, kg: "", day: addDays(t, 1) };
-      case "harvest": return { batch: inGround[0]?.id ?? "", kg: "", big5_g: "", small5_g: "" };
+      case "harvest": return { batch: inGround[0]?.id ?? "", kg: "", big5_g: "", small5_g: "", left_pct: "", empty: "" };
       case "sow": return { line, seedlings: planned(line) };
       case "loss": return { line, batch: "", pct: "", cause: "" };
       case "signal": return { scope: "all", line: "", effect_pct: "", date_from: t, date_to: "", cause: "" };
@@ -61,6 +63,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
 
   const [kind, setKind] = useState<Kind>("order");
   const [form, setForm] = useState<Form>(() => blank("order"));
+  const picked = inGround.find((b) => b.id === form.batch);
   const [busy, setBusy] = useState<"form" | "note" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState("");
@@ -191,6 +194,9 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
           {field("kg", "kg harvested")}
           {field("big5_g", "5 biggest, g (optional)")}
           {field("small5_g", "5 smallest, g (optional)")}
+          {!form.empty && field("left_pct", "Left in bed, % of full (optional)", "number", { min: "0", max: "100" })}
+          <label className="row"><input type="checkbox" checked={!!form.empty}
+            onChange={(e) => set({ empty: e.target.checked ? "1" : "", left_pct: "" })} /> Bed empty (habis)</label>
         </>}
         {kind === "sow" && <>{lineSelect()}{field("seedlings", "Seedlings")}</>}
         {kind === "loss" && <>
@@ -221,6 +227,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
         </>}
         {kind === "postpone" && <>{lineSelect()}{field("reason", "Reason", "text")}</>}
       </div>
+      {kind === "harvest" && picked && <p className="small">{bedLeftText(picked, state.crop.survival)}</p>}
       <p className="small muted">{HINTS[kind]}</p>
       <div className="row wrap">
         <button className="primary" disabled={!!busy} onClick={submit}>{busy === "form" ? "Logging…" : "Log it"}</button>

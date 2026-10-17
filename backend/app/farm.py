@@ -25,6 +25,7 @@ from app.production import (
     bed_day,
     in_bed_plants,
     kg_per_plant,
+    plants0,
     project,
     spread,
     take_oldest,
@@ -333,6 +334,15 @@ def harvest_warnings(ws: Store, events: list[dict], labels: dict[str, str]) -> l
     st = load(ws).state
     c, out = current_crop(st, crop(ws)), []
     for ev in events:
+        if ev["t"] == "harvest" and ev.get("seen_pct") is not None:
+            after = copy.deepcopy(st)
+            apply(after, crop(ws), ev)
+            ca, ba = current_crop(after, crop(ws)), after.batches[ev["batch"]]
+            left, seen = in_bed_plants(ca, ba, st.today), ev["seen_pct"] / 100 * plants0(ca, ba)
+            if seen > left + 0.5:
+                out.append(f"{labels.get(ba.id, ba.id)}: you see ~{seen:.0f} plants left ({ev['seen_pct']:g}% of full), "
+                           f"more than the ~{left:.0f} the app counts. Logged as is; the app keeps its own count "
+                           "for now and learns from it later.")
         if ev["t"] != "harvest" or ev.get("big5_g"):
             continue
         b = st.batches[ev["batch"]]

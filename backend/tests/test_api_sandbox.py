@@ -435,3 +435,58 @@ def test_harvest_beyond_what_the_bed_holds_warns_and_asks_for_a_sample():
     sampled = client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": bed["id"], "kg": 400,
                                                         "big5_g": 120, "small5_g": 80}, "seq": 3})
     assert sampled.json()["warnings"] == []                 # a sample corrects the size; no need to ask
+
+
+# --- what the farmer sees left in a bed after a harvest ---
+
+def _bed1():
+    return client.get(f"{S}/beds").json()["lines"][0]["batches"][0]
+
+
+def _harvest(seq, **form):
+    return client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": _bed1()["id"], **form}, "seq": seq})
+
+
+def test_bed_seen_empty_closes_it_without_counting_waste():
+    client.put(f"{S}/setup", json=_setup())
+    r = _harvest(1, kg=5, left_pct=0)
+    assert r.status_code == 200, r.text
+    harvest, left = r.json()["events"]
+    assert left["t"] == "loss" and left["recount"] and left["left_pct"] == 0 and left["plants"] > 0
+    assert r.json()["lines"][1].startswith("LEFT · Bed 1 · empty · ")
+    assert _bed1()["plants_left"] == 0 and _bed1()["waste_plants"] == 0
+
+
+def test_empty_tick_is_the_same_as_zero_percent():
+    client.put(f"{S}/setup", json=_setup())
+    assert _harvest(1, kg=5, empty=True).json()["events"][1]["left_pct"] == 0
+
+
+def test_seen_percent_is_of_the_full_bed_at_sowing():
+    client.put(f"{S}/setup", json=_setup())
+    r = _harvest(1, kg=1, left_pct=40)
+    assert r.json()["lines"][1].startswith("LEFT · Bed 1 · 40% of full seen · ")
+    assert abs(_bed1()["plants_left"] - 0.40 * 900 * 0.9) <= 1      # seedlings × survival = the full bed
+
+
+def test_seeing_more_than_the_app_counts_keeps_the_count_and_says_so():
+    client.put(f"{S}/setup", json=_setup())
+    _harvest(1, kg=1, left_pct=10)                                     # app now holds ~81 plants
+    before = _bed1()["plants_left"]
+    r = _harvest(2, kg=0.5, left_pct=50)
+    assert [e["t"] for e in r.json()["events"]] == ["harvest"]         # nothing added to the bed
+    assert any("more" in w and "Bed 1" in w for w in r.json()["warnings"])
+    assert _bed1()["plants_left"] < before
+
+
+def test_left_percent_outside_0_to_100_is_refused():
+    client.put(f"{S}/setup", json=_setup())
+    assert _harvest(1, kg=1, left_pct=120).status_code == 422
+
+
+def test_a_recount_does_not_stop_the_bed_teaching_the_curve():
+    client.put(f"{S}/setup", json=_setup())
+    _harvest(1, kg=1, left_pct=60)
+    _harvest(2, kg=1, big5_g=120, small5_g=80)
+    live = client.get(f"{S}/trail").json()["rows"][0]
+    assert live["ref"], "the sample after a recount should still move the reference curve"

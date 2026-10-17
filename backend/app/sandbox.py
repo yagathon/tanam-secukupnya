@@ -7,6 +7,7 @@ Closing a day uses what was entered (orders, harvests) instead of a simulated wo
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import re
@@ -19,7 +20,8 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app import engine
 from app.allocator import BuyerOrder, HouseholdOrder, allocate_day
-from app.production import bed_day, in_bed_plants, take_oldest
+from app.production import bed_day, in_bed_plants, plants0, take_oldest
+from app.state import apply, current_crop
 from app.store import SANDBOX, Store
 
 MAX_DAYS, MAX_BUYERS, MAX_BEDS = 400, 50, 50
@@ -427,6 +429,9 @@ def describe(ev: dict, names: dict[str, str], labels: dict[str, str]) -> str:
         return f"SOW · {ev['line']} · {ev['seedlings']} seedlings · {_day(ev['day'])}"
     if t == "postpone":
         return f"POSTPONE · {ev['line']} · sowing of {_day(ev['day'])} · {ev.get('reason', '')}".rstrip(" ·")
+    if t == "loss" and ev.get("recount"):
+        seen = "empty" if not ev["left_pct"] else f"{ev['left_pct']:g}% of full seen"
+        return f"LEFT · {bed(ev['batch'])} · {seen} · {ev['plants']} plants fewer than the app counted"
     if t == "loss":
         return f"LOSS · {bed(ev['batch'])} · {ev['pct']:.0f}% · {ev.get('cause', '')}".rstrip(" ·")
     if t == "signal":
@@ -450,6 +455,21 @@ def form_events(raw: dict, st, crop, labels: dict[str, str], buyers: dict[str, s
         return _form_events(raw, st, crop, buyers)
     except (KeyError, TypeError) as e:
         raise ValueError(f"missing or malformed field {e}") from e
+
+
+def _seen_left(st, crop, harvest: dict, seen: float) -> list[dict]:
+    """The farmer's look at a bed after cutting: `seen` % of a full bed (seedlings × survival) still stands.
+    Fewer than the app counts → the rest is gone (sorted out, never there), a loss, not oversize waste. More
+    → kept as counted for now; harvest_warnings says so."""
+    after = copy.deepcopy(st)
+    apply(after, crop, harvest)
+    c, b = current_crop(after, crop), after.batches[harvest["batch"]]
+    left, target = in_bed_plants(c, b, st.today), seen / 100 * plants0(c, b)
+    if left - target <= 0.5:
+        return []
+    return [{"t": "loss", "batch": b.id, "day": st.today.isoformat(), "pct": round((left - target) / left * 100, 2),
+             "cause": "seen left after harvest", "recount": True, "left_pct": round(seen, 1),
+             "plants": round(left - target)}]
 
 
 def _form_events(raw: dict, st, crop, buyers: dict[str, set[str]]) -> list[dict]:
@@ -485,7 +505,14 @@ def _form_events(raw: dict, st, crop, buyers: dict[str, set[str]]) -> list[dict]
             if not big >= small > 0:
                 raise ValueError("sample: the 5 biggest must weigh at least the 5 smallest, both above 0")
             ev |= {"big5_g": big, "small5_g": small}
-        return [ev]
+        seen = 0.0 if raw.get("empty") else raw.get("left_pct")
+        if seen in (None, ""):
+            return [ev]
+        seen = float(seen)
+        if not 0 <= seen <= 100:
+            raise ValueError("left in the bed must be 0 … 100% of a full bed")
+        ev["seen_pct"] = round(seen, 1)                 # kept for learning yield later, even when nothing is cut
+        return [ev, *_seen_left(st, crop, ev, seen)]
     if k == "sow":
         n = int(raw.get("seedlings", 0))
         if not 0 < n <= crop.max_seedlings:

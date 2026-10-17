@@ -132,7 +132,8 @@ def apply(st: FarmState, crop: Crop, ev: dict) -> None:
         st.postponed[ev["line"], ev["day"]] = ev.get("reason", "")
     elif t == "loss":
         b = st.batches[ev["batch"]]
-        st.unhealthy.add(b.id)
+        if not ev.get("recount"):                 # a recount is a look, not a sick bed: its samples still teach
+            st.unhealthy.add(b.id)
         st.batches[b.id] = apply_loss(current_crop(st, crop), b, d, ev["pct"])
     elif t == "short":
         st.last_shorted[ev["household"]] = d
