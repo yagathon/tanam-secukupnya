@@ -181,8 +181,8 @@ def test_fit_divides_the_season_out_of_the_level():
     start = date(2026, 10, 1)
     pri = {"b2b:a:regular": [10.0] * 7}
     h = {"b2b:a:regular": {start + timedelta(days=i): 10.0 * demand.season_factor(SEASON, start + timedelta(days=i))
-                           for i in range(21)}}
-    today = start + timedelta(days=21)
+                           for i in range(28)}}            # Thu 1 Oct: its first week is partial, not judged
+    today = start + timedelta(days=28)
     m = demand.fit(h, start, today, pri, SEASON)
     assert m.fits["b2b:a:regular"].level == pytest.approx(10.0, abs=0.01)
     d = date(2026, 11, 2)
@@ -228,3 +228,26 @@ def test_no_season_learns_no_month_pattern():
     start = date(2026, 11, 1)
     m = demand.fit(_months(start, date(2027, 2, 1)), start, date(2027, 2, 1), pri, None)
     assert m.season is None and m.learned_blocks == []
+
+
+def _daily(start, days, kg, key="b2b:b1:regular"):
+    return {key: {start + timedelta(days=i): kg for i in range(days)}}
+
+
+def test_a_week_begun_before_the_first_day_is_not_one_of_the_three():
+    """Counterfactual 2026-10-17: a sandbox starting on a Saturday made Sat–Sun count as a whole 'week above'."""
+    sat, pri = date(2026, 10, 17), {"b2b:b1:regular": [5] * 7}
+    two_full = demand.fit(_daily(sat, 16, 10.0), sat, sat + timedelta(days=16), pri).fits["b2b:b1:regular"]
+    assert two_full.level == 5 and two_full.streak == ("above", 2)
+    three_full = demand.fit(_daily(sat, 23, 10.0), sat, sat + timedelta(days=23), pri).fits["b2b:b1:regular"]
+    assert three_full.level == pytest.approx(10.0)
+
+
+def test_a_level_confirmed_down_to_zero_comes_back_after_three_weeks_of_orders():
+    """Counterfactual 2026-10-17: households read 0 for 3 weeks, then orders came, but a 0 forecast never judged a week."""
+    mon, pri = date(2026, 10, 19), {"hh:regular": [1] * 7}
+    h = {"hh:regular": {**_daily(mon, 21, 0.0, "hh:regular")["hh:regular"],
+                        **_daily(mon + timedelta(days=21), 21, 2.0, "hh:regular")["hh:regular"]}}
+    assert demand.fit(h, mon, mon + timedelta(days=21), pri).fits["hh:regular"].level == 0
+    back = demand.fit(h, mon, mon + timedelta(days=42), pri).fits["hh:regular"]
+    assert back.level == pytest.approx(2.0)

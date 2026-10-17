@@ -140,27 +140,33 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
             tot = sum(pct)
             season["month_pct"] = [x * 100 / tot for x in pct]
 
-    week: dict[str, list] = {k: [None, 0.0, 0.0] for k in history}   # [Monday, actual sum, forecast sum]
-    qs: dict[str, list[float]] = {k: [] for k in history}             # the ratios of the current streak
+    week: dict[str, list] = {k: [None, 0.0, 0.0] for k in history}   # [Monday, actual sum, weekday-shape sum]
+    implied: dict[str, list[float]] = {k: [] for k in history}        # the week levels of the current streak
 
     def close_week(k: str, on: date) -> None:
-        """Judge series k's finished week on its total; on 3 in a row, move the level (`on` = the day after)."""
-        mon, a, fc = week[k]
+        """Judge series k's finished week on its total; on 3 in a row, move the level (`on` = the day after).
+        The week's own level (its actual ÷ its weekday shape) against the level: >10% off is a side. A week
+        begun before the first day of history is not judged, like a month not covered from day 1."""
+        mon, a, sh = week[k]
         week[k] = [None, 0.0, 0.0]
-        if mon is None or fc <= 0:
+        if mon is None or sh <= 0 or mon < days[0]:
             return
-        f, q = fits[k], a / fc
-        side = "above" if q > 1 + WEEK_BAND else "below" if q < 1 - WEEK_BAND else ""
+        f, lw = fits[k], a / sh
+        if f.level > 0:
+            q = lw / f.level
+            side = "above" if q > 1 + WEEK_BAND else "below" if q < 1 - WEEK_BAND else ""
+        else:                                          # a level confirmed down to 0 can still come back
+            side = "above" if lw > 0 else ""
         if not side:
-            f.streak, qs[k] = ("", 0), []
+            f.streak, implied[k] = ("", 0), []
             return
         if f.streak[0] != side:
-            qs[k] = []
-        qs[k].append(q)
-        f.streak = (side, len(qs[k]))
-        if len(qs[k]) >= CONFIRM:
-            f.level = max(0.0, f.level * statistics.fmean(qs[k]))
-            f.streak, qs[k] = ("", 0), []
+            implied[k] = []
+        implied[k].append(lw)
+        f.streak = (side, len(implied[k]))
+        if len(implied[k]) >= CONFIRM:
+            f.level = statistics.fmean(implied[k])      # = level × the mean of the weeks' ratios
+            f.streak, implied[k] = ("", 0), []
             levels_hist[k].append((on, f.level))
     m, nb = 1.0, 0
     for k, s in history.items():
@@ -204,7 +210,7 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
                 close_week(k, d)
             week[k][0] = mon
             week[k][1] += actual / m
-            week[k][2] += sh * f.level
+            week[k][2] += sh
             month[1][_block(d)] += s[d]
             month[2][_block(d)] += sh * f.level * m * (season["year_index"][d.month - 1] / 100 if season else 1.0)
             r = actual / (sh * m) - f.level
