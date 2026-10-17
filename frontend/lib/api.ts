@@ -1,6 +1,6 @@
 import { idToken } from "./firebase";
 import type {
-  Beds, Demand, NoteDoc, SandboxLog, Season, Setup, SetupDoc, Sow, State, Today, Tomorrow, TrailRow,
+  Beds, Demand, Impact, NoteDoc, SandboxLog, Season, Setup, SetupDoc, Sow, State, Today, Tomorrow, TrailRow,
 } from "./types";
 
 /** A non-2xx answer. `detail` is FastAPI's error text (plain English, written for people). */
@@ -56,6 +56,7 @@ export function makeApi(base: "" | "/sandbox") {
     exportLog: () => call<SandboxLog>("/sandbox/export"),
     importLog: (log: SandboxLog) => call<{ days: number; entries: number }>("/sandbox/import", log),
     trail: () => call<{ rows: TrailRow[] }>("/sandbox/trail"),
+    impact: () => call<Impact>("/sandbox/impact"),
     removeEntry: (id: string) => call<{ removed: number }>(`/sandbox/events/${encodeURIComponent(id)}`, undefined, "DELETE"),
     resetToday: () => call<{ removed: number }>("/sandbox/today/reset", {}),
   };

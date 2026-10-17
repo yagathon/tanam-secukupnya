@@ -9,6 +9,7 @@ import BedsTab from "@/components/BedsTab";
 import TomorrowTab from "@/components/TomorrowTab";
 import SowTab from "@/components/SowTab";
 import DemandTab from "@/components/DemandTab";
+import ImpactTab from "@/components/sandbox/ImpactTab";
 import InputPanel from "@/components/sandbox/InputPanel";
 import SetupTab from "@/components/sandbox/SetupTab";
 import TrailTab from "@/components/sandbox/TrailTab";
@@ -27,6 +28,7 @@ const VIEWS: Tab[] = [
   { id: "tomorrow", label: "Tomorrow", hint: "The most we can safely send, and who gets it", view: (p) => <TomorrowTab {...p} /> },
   { id: "sow", label: "Sow", hint: "How many seedlings on the next sowing day, and why", view: (p) => <SowTab {...p} /> },
   { id: "demand", label: "Demand", hint: "Forecast per day with an honest band, and what moved it", view: (p) => <DemandTab {...p} /> },
+  { id: "impact", label: "Impact", hint: "Plants wasted: sowing to demand vs sowing the same amount every week", view: (p) => <ImpactTab {...p} /> },
 ];
 const IDS = ["setup", ...VIEWS.map((v) => v.id), "trail"];
 

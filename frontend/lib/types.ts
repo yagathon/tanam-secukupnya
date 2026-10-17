@@ -132,3 +132,17 @@ export interface TrailLine {
 /** One entry of the open day (a form or an OK'd note) and the log lines it wrote. */
 export interface LoggedEntry { id: string; lines: string[] }
 export interface TrailRow { day: string; live: boolean; lines: Record<string, TrailLine>; inputs: string[]; ref: string[]; entries?: LoggedEntry[] }
+
+export interface ImpactRow {
+  beds: number; seedlings: number; harvested_plants: number; lost_plants: number; waste_plants: number;
+  in_field_plants: number; waste_pct: number; delivered_kg: number;
+}
+export interface ImpactDelivery { logged_kg: number; habit_kg: number; habit_short_kg: number }
+/** /sandbox/impact: the beds from setup, the beds Tanam sized, and the old habit replayed on the same days. */
+export interface Impact {
+  today: string;
+  habit: { seedlings: number; weekday: number };
+  rows: { before: ImpactRow; tanam: ImpactRow; habit: ImpactRow };
+  delivery: ImpactDelivery;
+  series: { day: string; tanam_waste: number; habit_waste: number }[];
+}
