@@ -111,3 +111,14 @@ def test_a_bed_cut_empty_before_it_outgrows_wastes_nothing():
     _days(40)
     [bed] = _beds("before")
     assert bed["waste"] == 0 and bed["growing"] == 0
+
+
+def test_a_recount_corrects_only_the_real_bed_not_the_habit():
+    client.put(f"{S}/setup", json=_setup())
+    _form({"kind": "sow", "line": "regular", "seedlings": 500})
+    _days(20)
+    bed = next(b for b in client.get(f"{S}/beds").json()["lines"][0]["batches"] if b["sown_on"] == "2026-10-12")
+    _form({"kind": "harvest", "batch": bed["id"], "kg": 1, "empty": True})   # "the bed is empty": a count fix, not a pest
+    rows = client.get(f"{S}/impact").json()["rows"]
+    assert rows["tanam"]["lost_plants"] > 0
+    assert rows["habit"]["lost_plants"] == 0

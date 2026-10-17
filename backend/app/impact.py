@@ -91,6 +91,8 @@ def build(ref: dict, meta: dict, crop: Crop, docs: list[dict], seedlings: int = 
                 for b, kg in taken:
                     hab_got[b.id] = hab_got.get(b.id, 0.0) + kg
                 short += ev["kg"] - sum(kg for _, kg in taken)
+            elif t == "loss" and ev.get("recount"):
+                continue                     # "seen left" fixes the real bed's count; the habit's beds keep theirs
             elif t == "loss":
                 sown = real.batches[ev["batch"]]
                 same = [b for b in hab.batches.values()
