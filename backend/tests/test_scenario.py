@@ -1,4 +1,4 @@
-"""scripts/scenario.py: the year scenario makes a sheet that reads back and plays into a sandbox."""
+"""scripts/scenario.py: the six-month scenario makes a sheet that reads back and plays into a sandbox."""
 
 import sys
 from datetime import date
@@ -13,18 +13,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 import scenario  # noqa: E402
 
 
-def test_year_sheet_reads_back_with_its_stories(tmp_path):
-    out = tmp_path / "year.xlsx"
+def test_scenario_sheet_reads_back_with_its_stories(tmp_path):
+    out = tmp_path / "s.xlsx"
     scenario.make(out)
     sc = scenario.load(out)
     rows = sc["rows"]
     assert sc["setup"]["start"] == "2026-10-17" and len(sc["setup"]["buyers"]) == 2
-    assert rows[0]["date"] == "2026-10-17" and rows[-1]["date"] < "2027-10-17"
+    assert rows[0]["date"] == "2026-10-17" and rows[-1]["date"] < "2027-04-17"
     kinds = {r["kind"] for r in rows}
-    assert kinds == {"order", "sow", "loss", "signal", "postpone"}
-    lebaran = [r for r in rows if r["kind"] == "order" and r["buyer"] == "Resto WKS"
-               and "2027-03-08" <= r["for_day"] <= "2027-03-14"]
-    assert lebaran and all(r["kg"] == 0 for r in lebaran)
+    assert kinds == {"order", "sow", "loss", "postpone"}                 # no holidays or closing days yet
+    assert all(r["kg"] > 0 for r in rows if r["kind"] == "order")
     assert all(date.fromisoformat(r["for_day"]).weekday() in (5, 6) for r in rows if r.get("buyer") == "Retails")
 
 

@@ -19,8 +19,10 @@ const HINTS: Record<Kind, string> = {
   signal: "Something you know will change orders, e.g. Resto A halves orders for 2 weeks = −50%. The forecast follows it.",
   postpone: "Today's sowing does not happen (rain, no seedlings). The next sowing grows to make up for it.",
 };
+// "signal" is closed for now (2026-10-17): not tested yet, and the level still learns from the dip a signal
+// announced. Its form stays below; add ["signal", "Signal"] back here to open it.
 const KINDS: [Kind, string][] = [
-  ["order", "Order"], ["harvest", "Harvest"], ["sow", "Sow"], ["loss", "Loss"], ["signal", "Signal"], ["postpone", "Postpone"],
+  ["order", "Order"], ["harvest", "Harvest"], ["sow", "Sow"], ["loss", "Loss"], ["postpone", "Postpone"],
 ];
 
 const addDays = (iso: string, n: number) => {

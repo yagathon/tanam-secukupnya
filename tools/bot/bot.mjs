@@ -1,4 +1,4 @@
-// The sandbox, filled in by a visible browser: each day's rows from data/scenario/year.json are typed into
+// The sandbox, filled in by a visible browser: each day's rows from data/scenario/scenario.json are typed into
 // the "Log the day" form, then "Next day →". Same rows as `scenario.py play`, which can take over after it.
 //
 // Runs on Windows (WSL has no browser libs):   cd tools\bot  &&  npm run setup   (once)
@@ -18,7 +18,7 @@ const UI = arg("ui", "http://localhost:3100");
 const API = `${arg("api", "http://localhost:8100")}/api/sandbox`;
 const DAYS = Number(arg("days", 14));
 const PAUSE = Number(arg("pause", 1200));
-const scenario = JSON.parse(readFileSync(new URL("../../data/scenario/year.json", import.meta.url), "utf8"));
+const scenario = JSON.parse(readFileSync(new URL("../../data/scenario/scenario.json", import.meta.url), "utf8"));
 
 async function call(method, path, body) {
   const r = await fetch(API + path, { method, headers: { "content-type": "application/json" }, body: body && JSON.stringify(body) });

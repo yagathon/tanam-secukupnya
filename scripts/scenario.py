@@ -1,14 +1,15 @@
-"""A year of farm days for the sandbox: make an editable Excel scenario, then play it into a running sandbox.
+"""Six months of farm days for the sandbox: make an editable Excel scenario, then play it into a running sandbox.
 
-    uv run --project backend python scripts/scenario.py make                 # → data/scenario/year.xlsx
-    uv run --project backend python scripts/scenario.py export               # xlsx → year.json (for the UI bot)
+    uv run --project backend python scripts/scenario.py make                 # → data/scenario/scenario.xlsx
+    uv run --project backend python scripts/scenario.py export               # xlsx → scenario.json (for the UI bot)
     uv run --project backend python scripts/scenario.py play --reset         # clear the sandbox, load the setup, play all
     uv run --project backend python scripts/scenario.py play --days 30       # continue from the sandbox's today
 
 The orders come from the example farm's own demand (the founder's procurement numbers: Resto WKS' week,
-the payday month, the year index), with day-to-day noise, a slowly growing retail pre-order list and a few
-dated stories: rain losses in the wet season, Ramadan and Lebaran (announced as signals), and one drop
-nobody announced. Sow rows say "plan" = sow what the app proposes that morning; type a number to override.
+the payday month, the year index), with day-to-day noise, a slowly growing retail pre-order list, rain
+losses in the wet season and one drop nobody announced. National holidays, restaurant closing days and
+long weekends are left out for now (add signal rows by hand if wanted). Sow rows say "plan" = sow what
+the app proposes that morning; type a number to override.
 Harvests are not in the sheet: a day without one counts the app's planned send as harvested.
 """
 
@@ -29,18 +30,15 @@ from app import sandbox as sb  # noqa: E402
 from app.demand import season_factor  # noqa: E402
 
 OUT = ROOT / "data" / "scenario"
-XLSX, JSON = OUT / "year.xlsx", OUT / "year.json"
+XLSX, JSON = OUT / "scenario.xlsx", OUT / "scenario.json"
 START = date(2026, 10, 17)           # the founder's real beds are aged from this day
-DAYS = 365
+DAYS = 182                           # two-plus pakcoy cycles (~45 days each): enough to settle
 COLS = ["date", "kind", "buyer", "line", "kg", "for_day", "seedlings", "pct", "who", "effect_pct",
         "from", "to", "cause", "note"]
 KINDS = {"order", "sow", "loss", "signal", "postpone"}
 
-# Dated stories, (from, to) inclusive. Ramadan 1448 ≈ 8 Feb – 9 Mar 2027, Idul Fitri ≈ 10 Mar 2027.
-RAMADAN = (date(2027, 2, 8), date(2027, 3, 9))
-LEBARAN_CLOSED = (date(2027, 3, 8), date(2027, 3, 14))
-LEBARAN_RETAIL = (date(2027, 3, 6), date(2027, 3, 7))
-SILENT_DROP = (date(2027, 5, 10), date(2027, 5, 23))      # Resto WKS orders −35%, nobody says why
+# Resto WKS orders −35% for two weeks, nobody says why: the forecast has to notice by itself.
+SILENT_DROP = (date(2027, 2, 15), date(2027, 2, 28))
 
 
 def _in(d: date, span: tuple[date, date]) -> bool:
@@ -51,14 +49,8 @@ def truth(b: dict, d: date, season: dict, year_frac: float) -> tuple[float, str]
     """The buyer's expected kg on day d before noise, and the story behind it (empty = an ordinary day)."""
     kg = sb._week(b)[d.weekday()] * season_factor(season, d)
     if b["name"] == "Retails":
-        kg *= 1 + 0.8 * year_frac                         # the pre-order list grows: 5 → 9 kg a week
-        if _in(d, LEBARAN_RETAIL):
-            return kg * 1.5, "Lebaran pre-orders +50%"
+        kg *= 1 + 0.8 * year_frac                         # the pre-order list grows: 5 → 9 kg a week over the run
         return kg, ""
-    if _in(d, LEBARAN_CLOSED):
-        return 0.0, "closed for Lebaran"
-    if _in(d, RAMADAN):
-        return kg * 0.8, "Ramadan −20%"
     if _in(d, SILENT_DROP):
         return kg * 0.65, "unannounced drop −35%"
     return kg, ""
@@ -100,8 +92,6 @@ def make(path: Path = XLSX, seed: int = 17, start: date = START, days: int = DAY
                 kg, story = truth(b, day, season, (day - start).days / days)
                 sigma = 0.3 if b["name"] == "Retails" else 0.15
                 ordered = 0.0 if kg == 0 else round(kg * math.exp(rng.gauss(0, sigma)) * 2) / 2
-                if b["name"] != "Retails" and kg and rng.random() < 0.02:
-                    ordered, story = 0.0, "skipped this day"
                 if kg or story:
                     add(d, "order", buyer=b["name"], kg=ordered, for_day=day, note=story)
                 truth_rows.append([day, day.strftime("%a"), b["name"], round(kg, 2), ordered, story])
@@ -115,16 +105,6 @@ def make(path: Path = XLSX, seed: int = 17, start: date = START, days: int = DAY
                 add(d, "sow", seedlings="plan")
         if d == date(2027, 6, 14):
             add(d, "loss", pct=15, cause="ulat", note="caterpillars")
-        # the stories people do tell: Ramadan and Lebaran are announced a week or so ahead
-        if d == RAMADAN[0] - timedelta(days=7):
-            add(d, "signal", line="", who="Resto WKS", effect_pct=-20, **{"from": RAMADAN[0], "to": LEBARAN_CLOSED[0] - timedelta(days=1)},
-                cause="Ramadan: lunch trade drops", note="announced")
-        if d == LEBARAN_CLOSED[0] - timedelta(days=10):
-            add(d, "signal", line="", who="Resto WKS", effect_pct=-100, **{"from": LEBARAN_CLOSED[0], "to": LEBARAN_CLOSED[1]},
-                cause="tutup Lebaran", note="announced")
-        if d == LEBARAN_RETAIL[0] - timedelta(days=7):
-            add(d, "signal", line="", who="Retails", effect_pct=50, **{"from": LEBARAN_RETAIL[0], "to": LEBARAN_RETAIL[1]},
-                cause="pre-order Lebaran", note="announced")
 
     wb = Workbook()
     ws = wb.active
