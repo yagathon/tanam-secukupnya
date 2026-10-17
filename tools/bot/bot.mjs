@@ -1,12 +1,17 @@
-// The sandbox, filled in by a visible browser: each day's rows from data/scenario/scenario.json are typed into
-// the "Log the day" form, then "Next day →". Same rows as `scenario.py play`, which can take over after it.
+// The sandbox, filled in by a visible browser: each day's rows from scenario.json are typed into the
+// "Log the day" form, then "Next day →". Same rows as `scenario.py play`, which can take over after it.
 //
-// Runs on Windows (WSL has no browser libs):   cd tools\bot  &&  npm run setup   (once)
+// Runs on Windows (WSL has no browser libs):   cd tools\bot  &&  npm install   (once)
 //   npm run bot -- --reset --days 14            clear the sandbox, load the scenario's setup, type 14 days
 //   npm run bot -- --days 7 --pause 2000        continue from the sandbox's today, 2 s on each new day
-// Options: --ui http://localhost:3100  --api http://localhost:8100  --slow 120 (ms per action)
-//          --channel chrome (the installed Chrome; pass --channel chromium for Playwright's own build)
-import { readFileSync } from "node:fs";
+//   npm run bot -- --ui https://tanam-secukupnya.web.app --reset --days 14     the same against prod
+// Options: --ui http://localhost:3100  --api <default: :8100 for localhost, else the --ui origin>
+//          --slow 120 (ms per action)  --channel chrome | msedge | chromium (Playwright's own build)
+//          --scenario <path>  (default: scenario.json next to this file, else data/scenario/scenario.json)
+// The browser profile is kept in ./profile, so the anonymous sign-in, and with it the sandbox, survives
+// between runs. It is the bot's own sandbox: it never touches anyone else's. Delete ./profile for a new one.
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const arg = (name, dflt) => {
@@ -15,32 +20,49 @@ const arg = (name, dflt) => {
   const v = process.argv[i + 1];
   return v === undefined || v.startsWith("--") ? true : v;
 };
-const UI = arg("ui", "http://localhost:3100");
-const API = `${arg("api", "http://localhost:8100")}/api/sandbox`;
+const UI = String(arg("ui", "http://localhost:3100")).replace(/\/+$/, "");
+const local = /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(UI);
+const API = `${arg("api", local ? "http://localhost:8100" : UI)}/api/sandbox`;
 const DAYS = Number(arg("days", 14));
 const PAUSE = Number(arg("pause", 1200));
-const scenario = JSON.parse(readFileSync(new URL("../../data/scenario/scenario.json", import.meta.url), "utf8"));
+const here = (f) => fileURLToPath(new URL(f, import.meta.url));
+const scenarioPath = arg("scenario", existsSync(here("scenario.json")) ? here("scenario.json") : here("../../data/scenario/scenario.json"));
+const scenario = JSON.parse(readFileSync(scenarioPath, "utf8"));
 
+// The page signs in anonymously and sends a Firebase ID token on every API call; the bot reuses the latest one.
+let token = "";
 async function call(method, path, body) {
-  const r = await fetch(API + path, { method, headers: { "content-type": "application/json" }, body: body && JSON.stringify(body) });
+  const headers = { "content-type": "application/json" };
+  if (token) headers.authorization = token;
+  const r = await fetch(API + path, { method, headers, body: body && JSON.stringify(body) });
   if (!r.ok) throw new Error(`${method} ${path}: ${r.status} ${await r.text()}`);
   return r.json();
 }
 
-if (arg("reset", false)) {
-  await call("POST", "/clear", { setup: true });
-  await call("PUT", "/setup", scenario.setup);
-}
 const byDay = {};
 for (const r of scenario.rows) (byDay[r.date] ??= []).push(r);
 
 const CHANNEL = arg("channel", "chrome");
-const browser = await chromium.launch({ channel: CHANNEL === "chromium" ? undefined : CHANNEL, headless: !!arg("headless", false), slowMo: Number(arg("slow", 120)), args: ["--start-maximized"] });
-const page = await browser.newPage({ viewport: null });
+const context = await chromium.launchPersistentContext(here("profile"), {
+  channel: CHANNEL === "chromium" ? undefined : CHANNEL, headless: !!arg("headless", false),
+  slowMo: Number(arg("slow", 120)), viewport: null, args: ["--start-maximized"],
+});
+const page = context.pages()[0] ?? (await context.newPage());
+page.on("request", (r) => {
+  const a = r.headers()["authorization"];
+  if (r.url().includes("/api/") && a?.startsWith("Bearer ")) token = a;
+});
 // the page reloads its views after a log or a new day (trail is fetched last); a failed log does not reload
 const reloaded = () => page.waitForResponse((r) => r.url().includes("/sandbox/trail"), { timeout: 60000 }).catch(() => null);
 await page.goto(`${UI}/sandbox#today`);
-await page.getByRole("heading", { name: "Log the day" }).waitFor();
+for (let i = 0; !token && i < 120; i++) await page.waitForTimeout(500);
+if (!token) throw new Error("the page made no signed-in API call within 60 s");
+if (arg("reset", false)) {
+  await call("POST", "/clear", { setup: true });
+  await call("PUT", "/setup", scenario.setup);
+  await page.reload();
+}
+await page.getByRole("heading", { name: "Log the day" }).waitFor({ timeout: 60000 });
 
 const card = page.locator(".card", { has: page.getByRole("heading", { name: "Log the day" }) });
 const grid = card.locator(".form-grid");
@@ -93,6 +115,6 @@ for (let n = 0; n < DAYS; n++) {
   await Promise.all([reloaded(), page.getByRole("button", { name: "Next day →" }).click()]);
   await page.waitForTimeout(PAUSE / 2);
 }
-console.log("done; continue fast with: uv run --project backend python scripts/scenario.py play");
+console.log(local ? "done; continue fast with: uv run --project backend python scripts/scenario.py play" : "done");
 await page.waitForTimeout(3000);
-await browser.close();
+await context.close();
