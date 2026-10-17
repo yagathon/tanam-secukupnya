@@ -286,3 +286,61 @@ def test_clear_keeps_the_setup():
     client.put(f"{S}/setup", json=_setup())
     client.post(f"{S}/clear")
     assert client.get(f"{S}/setup").json()["saved"] is True
+
+
+def _order(kg, seq, day="2026-10-13"):
+    return client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": kg,
+                                                    "day": day}, "seq": seq})
+
+
+def _live_entries():
+    return client.get(f"{S}/trail").json()["rows"][0]["entries"]
+
+
+def test_one_entry_of_today_can_be_deleted():
+    client.put(f"{S}/setup", json=_setup())
+    _order(3, 1)
+    _order(5, 2, "2026-10-14")
+    entries = _live_entries()
+    assert [e["lines"] for e in entries] == [["ORDER · Restaurant A · regular · 3.0 kg · Tue 13 Oct"],
+                                             ["ORDER · Restaurant A · regular · 5.0 kg · Wed 14 Oct"]]
+    assert client.delete(f"{S}/events/{entries[0]['id']}").status_code == 200
+    assert [e["lines"][0][-10:] for e in _live_entries()] == ["Wed 14 Oct"]
+    assert client.get(f"{S}/today").json()["seq"] == 3                       # the next entry still appends
+    assert _order(4, 3).status_code == 200
+
+
+def test_closed_days_entries_cannot_be_deleted():
+    client.put(f"{S}/setup", json=_setup())
+    _order(3, 1)
+    old = _live_entries()[0]["id"]
+    client.post(f"{S}/day/next", json={"from_day": "2026-10-12"})
+    assert client.delete(f"{S}/events/{old}").status_code == 409
+    assert client.delete(f"{S}/events/e99999999").status_code == 404
+
+
+def test_deleting_an_entry_later_entries_need_is_422():
+    client.put(f"{S}/setup", json=_setup())
+    client.post(f"{S}/events", json={"form": {"kind": "sow", "line": "regular", "seedlings": 100}, "seq": 1})
+    new_bed = "regular-2026-10-12"
+    client.post(f"{S}/events", json={"form": {"kind": "loss", "line": "regular", "batch": new_bed, "pct": 10},
+                                     "seq": 2})
+    sow_id = _live_entries()[0]["id"]
+    r = client.delete(f"{S}/events/{sow_id}")
+    assert r.status_code == 422
+    assert len(_live_entries()) == 2
+
+
+def test_reset_today_goes_back_to_yesterdays_close():
+    client.put(f"{S}/setup", json=_setup())
+    _order(3, 1)
+    client.post(f"{S}/day/next", json={"from_day": "2026-10-12"})
+    morning = client.get(f"{S}/today").json()
+    _order(6, morning["seq"], "2026-10-14")
+    client.post(f"{S}/events", json={"form": {"kind": "sow", "line": "regular", "seedlings": 100},
+                                     "seq": morning["seq"] + 1})
+    r = client.post(f"{S}/today/reset")
+    assert r.status_code == 200 and r.json()["removed"] == 2
+    assert _live_entries() == []
+    assert client.get(f"{S}/today").json() == morning
+    assert client.get(f"{S}/trail").json()["rows"][1]["inputs"] == ["ORDER · Restaurant A · regular · 3.0 kg · Tue 13 Oct"]

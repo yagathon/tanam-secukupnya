@@ -99,7 +99,7 @@ export interface Season {
 }
 
 /** Everything the tabs need, refetched after every change (Season is loaded by its own tab). */
-export interface Data { state: State; today: Today; beds: Beds; tomorrow: Tomorrow; sow: Sow; demand: Demand; logged?: string[] }
+export interface Data { state: State; today: Today; beds: Beds; tomorrow: Tomorrow; sow: Sow; demand: Demand; logged?: LoggedEntry[] }
 
 export interface SetupLine { id: string; min_g: number; max_g: number; stretch_g?: number | null }
 export interface SetupCrop {
@@ -123,4 +123,6 @@ export interface TrailLine {
   low: number; high: number; ready: number; ceiling: number; send: number;
   short: number | null; sow_day: string | null; sow_seedlings: number;
 }
-export interface TrailRow { day: string; live: boolean; lines: Record<string, TrailLine>; inputs: string[]; ref: string[] }
+/** One entry of the open day (a form or an OK'd note) and the log lines it wrote. */
+export interface LoggedEntry { id: string; lines: string[] }
+export interface TrailRow { day: string; live: boolean; lines: Record<string, TrailLine>; inputs: string[]; ref: string[]; entries?: LoggedEntry[] }

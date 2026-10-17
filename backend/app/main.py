@@ -284,6 +284,41 @@ def post_events(req: EventRequest, ws: Store = Depends(workspace)) -> dict:
     return {"events": events, "lines": [sandbox.describe(e, names, labels) for e in events]}
 
 
+def _todays_entries(ws: Store) -> tuple[list[dict], list[dict]]:
+    """(the whole log in seq order, the entries logged on the open day: after the last closed day)."""
+    docs = sorted(ws.list("events"), key=lambda d: d["seq"])
+    last_day = max((i for i, d in enumerate(docs) if d["kind"] == "day"), default=-1)
+    return docs, docs[last_day + 1:]
+
+
+@sbx.delete("/events/{id}")
+def delete_event(id: str, ws: Store = Depends(workspace)) -> dict:
+    """Take back one entry of today (a form or an OK'd note); closed days stay as they were."""
+    ws = _sandbox_ws(ws)
+    docs, todays = _todays_entries(ws)
+    if not any(d["id"] == id for d in docs):
+        raise HTTPException(404, "that entry is already gone; reload")
+    if not any(d["id"] == id for d in todays):
+        raise HTTPException(409, "only today's entries can be removed; that day is closed")
+    try:
+        farm.replay({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), farm.crop(ws),
+                    [d for d in docs if d["id"] != id])
+    except (KeyError, ValueError) as e:
+        raise HTTPException(422, f"a later entry of today needs this one ({e}); remove that one first") from e
+    ws.delete("events", id)
+    return {"removed": 1}
+
+
+@sbx.post("/today/reset")
+def reset_today(ws: Store = Depends(workspace)) -> dict:
+    """Take back every entry of today: the farm is back where yesterday closed."""
+    ws = _sandbox_ws(ws)
+    _, todays = _todays_entries(ws)
+    for d in reversed(todays):
+        ws.delete("events", d["id"])
+    return {"removed": len(todays)}
+
+
 @sbx.get("/trail")
 def get_trail(ws: Store = Depends(workspace)) -> dict:
     return trail.build(_sandbox_ws(ws))

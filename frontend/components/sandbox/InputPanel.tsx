@@ -66,6 +66,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
   const [text, setText] = useState("");
   const [sender, setSender] = useState("farmer");
   const [noteMsg, setNoteMsg] = useState<string | null>(null);
+  const [undoError, setUndoError] = useState<string | null>(null);
 
   const pick = (k: Kind, f?: Form) => { setKind(k); setForm(f ?? blank(k)); setError(null); };
   const top = useRef<HTMLDivElement>(null);
@@ -102,6 +103,24 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
       setBusy(null);
     }
   };
+
+  // Take back today's entries: one (✕) or all of them (the farm goes back to where yesterday closed).
+  const undo = async (ask: string, run: () => Promise<unknown>) => {
+    if (!window.confirm(ask)) return;
+    setBusy("form");
+    setUndoError(null);
+    try {
+      await run();
+      await reload();
+    } catch (e) {
+      setUndoError(friendly(e));
+    } finally {
+      setBusy(null);
+    }
+  };
+  const remove = (id: string) => undo("Remove this entry?", () => api.removeEntry(id));
+  const resetToday = () => undo("Remove everything logged today? The farm goes back to where yesterday closed.",
+    () => api.resetToday());
 
   const read = async () => {
     setBusy("note");
@@ -207,8 +226,15 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
       </div>
       {error && <p className="small bad">{error}</p>}
       {(data.logged?.length ?? 0) > 0 && <div className="card toast small">
-        <strong>Logged today</strong>
-        <ul>{data.logged!.map((l, i) => <li key={i}>{l}</li>)}</ul>
+        <div className="row wrap">
+          <strong>Logged today</strong>
+          <button disabled={!!busy} onClick={resetToday}>Reset today</button>
+        </div>
+        <ul>{data.logged!.map((e) => <li key={e.id}>
+          {e.lines.join(" · ")}{" "}
+          <button className="small" disabled={!!busy} title="Remove this entry" onClick={() => remove(e.id)}>✕</button>
+        </li>)}</ul>
+        {undoError && <p className="small bad">{undoError}</p>}
       </div>}
 
       <h3>Or write it as a note</h3>

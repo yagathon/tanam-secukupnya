@@ -54,6 +54,8 @@ export function makeApi(base: "" | "/sandbox") {
     event: (form: Record<string, unknown>, seq: number) =>
       call<{ events: unknown[]; lines: string[] }>("/sandbox/events", { form, seq }),
     trail: () => call<{ rows: TrailRow[] }>("/sandbox/trail"),
+    removeEntry: (id: string) => call<{ removed: number }>(`/sandbox/events/${encodeURIComponent(id)}`, undefined, "DELETE"),
+    resetToday: () => call<{ removed: number }>("/sandbox/today/reset", {}),
   };
 }
 

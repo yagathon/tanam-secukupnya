@@ -20,6 +20,7 @@ class _Cache:
     state: FarmState
     rows: list[dict] = field(default_factory=list)
     pending: list[str] = field(default_factory=list)
+    entries: list[dict] = field(default_factory=list)   # today's entries, one per log doc: {id, lines}
     ref_seen: int = 0
     morning: dict | None = None      # today's plan, taken before the day's first entry
 
@@ -56,10 +57,13 @@ def build(ws: Store) -> dict:
             hit.morning = _row(st, current_crop(st, c), buyers, [], [], False)
         if doc["kind"] == "day":
             row = {**hit.morning, "inputs": hit.pending, "ref": [_ref_line(e) for e in st.ref_log[hit.ref_seen:]]}
-            hit.ref_seen, hit.pending, hit.morning = len(st.ref_log), [], None
+            hit.ref_seen, hit.pending, hit.entries, hit.morning = len(st.ref_log), [], [], None
+        else:
+            hit.entries.append({"id": doc["id"], "lines": []})
         for ev in doc["events"]:
             if doc["kind"] != "day":
                 hit.pending.append(sandbox.describe(ev, names, labels))
+                hit.entries[-1]["lines"].append(hit.pending[-1])
             if doc["kind"] == "day" and ev["t"] == "served":
                 row["lines"][ev["line"]]["short"] = round(ev["b2b_ordered"] + ev["hh_ordered"]
                                                           - ev["b2b_served"] - ev["hh_served"], 2)
@@ -70,6 +74,7 @@ def build(ws: Store) -> dict:
     _cache[ws.uid] = hit
     live = _row(st, current_crop(st, c), buyers, list(hit.pending),
                 [_ref_line(e) for e in st.ref_log[hit.ref_seen:]], True)
+    live["entries"] = [{**e, "lines": list(e["lines"])} for e in hit.entries]
     return {"rows": [live] + hit.rows[::-1], "replayed_from": start}
 
 

@@ -331,6 +331,9 @@ class SandboxStore:
     def add(self, collection: str, doc: dict) -> bool:
         return self.base.add(f"sandbox_{collection}", doc)
 
+    def delete(self, collection: str, id: str) -> None:
+        self.base.delete(f"sandbox_{collection}", id)
+
     def meta(self) -> dict:
         return reference(self.setup)["meta"]
 

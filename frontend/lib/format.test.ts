@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { ApiError } from "./api";
 import { daySentence, friendly, int, kg, lineName, loggedToday, proposalLines, scopeName, shortDate, sowDays, tsp } from "./format";
-import type { Proposal, State, TodayLine, TrailRow } from "./types";
+import type { LoggedEntry, Proposal, State, TodayLine, TrailRow } from "./types";
 
 const state = {
   today: "2026-10-12",
@@ -146,10 +146,12 @@ describe("sowDays", () => {
 });
 
 describe("loggedToday", () => {
-  const row = (live: boolean, inputs: string[]) => ({ day: "2026-10-12", live, lines: {}, inputs, ref: [] }) as TrailRow;
-  it("is everything logged on the open day, in order, not only the last entry", () => {
-    expect(loggedToday([row(true, ["ORDER · A", "HARVEST · Bed 1"]), row(false, ["SOW · regular"])]))
-      .toEqual(["ORDER · A", "HARVEST · Bed 1"]);
+  const e = (id: string, lines: string[]) => ({ id, lines });
+  const row = (live: boolean, entries: LoggedEntry[]) =>
+    ({ day: "2026-10-12", live, lines: {}, inputs: entries.flatMap((x) => x.lines), ref: [], entries }) as TrailRow;
+  it("is every entry logged on the open day, in order, each with the id that removes it", () => {
+    expect(loggedToday([row(true, [e("e1", ["ORDER · A"]), e("e2", ["HARVEST · Bed 1"])]), row(false, [e("e0", ["SOW · regular"])])]))
+      .toEqual([e("e1", ["ORDER · A"]), e("e2", ["HARVEST · Bed 1"])]);
     expect(loggedToday([])).toEqual([]);
   });
 });

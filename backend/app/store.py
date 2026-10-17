@@ -37,6 +37,7 @@ class Store(Protocol):
     def get(self, collection: str, id: str) -> dict | None: ...
     def put(self, collection: str, doc: dict) -> dict: ...
     def add(self, collection: str, doc: dict) -> bool: ...
+    def delete(self, collection: str, id: str) -> None: ...
     def meta(self) -> dict: ...
     def reset(self, collections: tuple[str, ...] = DEMO_WORKSPACE) -> None: ...
     def for_user(self, uid: str) -> "Store": ...
@@ -94,6 +95,12 @@ class JsonStore:
                 return False
             self.put(collection, doc)
             return True
+
+    def delete(self, collection: str, id: str) -> None:
+        if collection not in WORKSPACE:
+            raise ValueError(f"{collection} is reference data (read-only)")
+        rows = self._rows(collection)
+        rows[:] = [d for d in rows if d.get("id") != id]
 
     def meta(self) -> dict:
         return dict(self._meta)
@@ -168,6 +175,11 @@ class FirestoreStore:
         except AlreadyExists:
             return False
         return True
+
+    def delete(self, collection: str, id: str) -> None:
+        if collection not in WORKSPACE:
+            raise ValueError(f"{collection} is reference data (read-only)")
+        self._col(collection).document(id).delete()
 
     def meta(self) -> dict:
         return dict(self._meta)
