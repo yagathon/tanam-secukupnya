@@ -1,0 +1,5252 @@
+{
+ "setup": {
+  "start": "2026-10-17",
+  "learn_reference": true,
+  "crop": {
+   "name": "Pakcoy",
+   "nursery_days": 15,
+   "growth_curve": [
+    [
+     0,
+     1
+    ],
+    [
+     7,
+     15
+    ],
+    [
+     14,
+     50
+    ],
+    [
+     18,
+     70
+    ],
+    [
+     21,
+     100
+    ],
+    [
+     24,
+     160
+    ],
+    [
+     28,
+     200
+    ],
+    [
+     35,
+     250
+    ]
+   ],
+   "spread_ratio": 0.45,
+   "germination": 0.85,
+   "survival": 0.9,
+   "seeds_per_gram": 400,
+   "grams_per_teaspoon": 3,
+   "max_bed_day": 30,
+   "max_seedlings_per_sowing": 3000,
+   "sow_weekdays": [
+    0,
+    3
+   ],
+   "lines": [
+    {
+     "id": "baby",
+     "min_g": 50,
+     "max_g": 70,
+     "stretch_g": 100
+    }
+   ]
+  },
+  "buyers": [
+   {
+    "name": "Resto WKS",
+    "type": "business",
+    "line": "baby",
+    "usual_kg_per_week": 35,
+    "week_pct": [
+     14.3,
+     12.3,
+     11.3,
+     10.3,
+     16.3,
+     18.3,
+     17.2
+    ],
+    "min_kg": 0
+   },
+   {
+    "name": "Retails",
+    "type": "business",
+    "line": "baby",
+    "usual_kg_per_week": 5,
+    "week_pct": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     40,
+     60
+    ],
+    "min_kg": 0
+   }
+  ],
+  "beds": [
+   {
+    "line": "baby",
+    "sown_on": "2026-09-17",
+    "seedlings": 1000
+   },
+   {
+    "line": "baby",
+    "sown_on": "2026-09-24",
+    "seedlings": 1000
+   },
+   {
+    "line": "baby",
+    "sown_on": "2026-10-01",
+    "seedlings": 1000
+   },
+   {
+    "line": "baby",
+    "sown_on": "2026-10-08",
+    "seedlings": 1000
+   },
+   {
+    "line": "baby",
+    "sown_on": "2026-10-15",
+    "seedlings": 1000
+   }
+  ],
+  "month_pct": [
+   30,
+   26,
+   24,
+   20
+  ],
+  "year_index": [
+   120,
+   100,
+   100,
+   100,
+   100,
+   100,
+   80,
+   70,
+   100,
+   100,
+   100,
+   120
+  ]
+ },
+ "rows": [
+  {
+   "date": "2026-10-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-10-18",
+   "row": 2
+  },
+  {
+   "date": "2026-10-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2026-10-19",
+   "row": 3
+  },
+  {
+   "date": "2026-10-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-10-20",
+   "row": 4
+  },
+  {
+   "date": "2026-10-19",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 5
+  },
+  {
+   "date": "2026-10-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-10-21",
+   "row": 6
+  },
+  {
+   "date": "2026-10-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-10-22",
+   "row": 7
+  },
+  {
+   "date": "2026-10-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-10-23",
+   "row": 8
+  },
+  {
+   "date": "2026-10-22",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1,
+   "for_day": "2026-10-24",
+   "row": 9
+  },
+  {
+   "date": "2026-10-22",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2026-10-25",
+   "row": 10
+  },
+  {
+   "date": "2026-10-22",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 11
+  },
+  {
+   "date": "2026-10-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2026-10-24",
+   "row": 12
+  },
+  {
+   "date": "2026-10-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2026-10-25",
+   "row": 13
+  },
+  {
+   "date": "2026-10-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-10-26",
+   "row": 14
+  },
+  {
+   "date": "2026-10-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-10-27",
+   "row": 15
+  },
+  {
+   "date": "2026-10-26",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 16
+  },
+  {
+   "date": "2026-10-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-10-28",
+   "row": 17
+  },
+  {
+   "date": "2026-10-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2026-10-29",
+   "row": 18
+  },
+  {
+   "date": "2026-10-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-10-30",
+   "row": 19
+  },
+  {
+   "date": "2026-10-29",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2026-10-31",
+   "row": 20
+  },
+  {
+   "date": "2026-10-29",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-11-01",
+   "row": 21
+  },
+  {
+   "date": "2026-10-29",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 22
+  },
+  {
+   "date": "2026-10-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2026-10-31",
+   "row": 23
+  },
+  {
+   "date": "2026-10-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8.5,
+   "for_day": "2026-11-01",
+   "row": 24
+  },
+  {
+   "date": "2026-11-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2026-11-02",
+   "note": "skipped this day",
+   "row": 25
+  },
+  {
+   "date": "2026-11-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2026-11-03",
+   "row": 26
+  },
+  {
+   "date": "2026-11-02",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 27
+  },
+  {
+   "date": "2026-11-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-11-04",
+   "row": 28
+  },
+  {
+   "date": "2026-11-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-11-05",
+   "row": 29
+  },
+  {
+   "date": "2026-11-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-11-06",
+   "row": 30
+  },
+  {
+   "date": "2026-11-05",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2026-11-07",
+   "row": 31
+  },
+  {
+   "date": "2026-11-05",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-11-08",
+   "row": 32
+  },
+  {
+   "date": "2026-11-05",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 33
+  },
+  {
+   "date": "2026-11-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2026-11-07",
+   "row": 34
+  },
+  {
+   "date": "2026-11-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2026-11-08",
+   "row": 35
+  },
+  {
+   "date": "2026-11-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2026-11-09",
+   "row": 36
+  },
+  {
+   "date": "2026-11-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-11-10",
+   "row": 37
+  },
+  {
+   "date": "2026-11-09",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 20,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 38
+  },
+  {
+   "date": "2026-11-09",
+   "kind": "postpone",
+   "line": "baby",
+   "cause": "hujan, bibit belum bisa pindah",
+   "note": "wet season",
+   "row": 39
+  },
+  {
+   "date": "2026-11-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2026-11-11",
+   "row": 40
+  },
+  {
+   "date": "2026-11-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-11-12",
+   "row": 41
+  },
+  {
+   "date": "2026-11-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-11-13",
+   "row": 42
+  },
+  {
+   "date": "2026-11-12",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2026-11-14",
+   "row": 43
+  },
+  {
+   "date": "2026-11-12",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-11-15",
+   "row": 44
+  },
+  {
+   "date": "2026-11-12",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 45
+  },
+  {
+   "date": "2026-11-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-11-14",
+   "row": 46
+  },
+  {
+   "date": "2026-11-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-11-15",
+   "row": 47
+  },
+  {
+   "date": "2026-11-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-11-16",
+   "row": 48
+  },
+  {
+   "date": "2026-11-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-11-17",
+   "row": 49
+  },
+  {
+   "date": "2026-11-16",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 50
+  },
+  {
+   "date": "2026-11-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-11-18",
+   "row": 51
+  },
+  {
+   "date": "2026-11-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-11-19",
+   "row": 52
+  },
+  {
+   "date": "2026-11-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-11-20",
+   "row": 53
+  },
+  {
+   "date": "2026-11-19",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2026-11-21",
+   "row": 54
+  },
+  {
+   "date": "2026-11-19",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-11-22",
+   "row": 55
+  },
+  {
+   "date": "2026-11-19",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 56
+  },
+  {
+   "date": "2026-11-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-11-21",
+   "row": 57
+  },
+  {
+   "date": "2026-11-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-11-22",
+   "row": 58
+  },
+  {
+   "date": "2026-11-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-11-23",
+   "row": 59
+  },
+  {
+   "date": "2026-11-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-11-24",
+   "row": 60
+  },
+  {
+   "date": "2026-11-23",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 61
+  },
+  {
+   "date": "2026-11-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-11-25",
+   "row": 62
+  },
+  {
+   "date": "2026-11-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2026-11-26",
+   "row": 63
+  },
+  {
+   "date": "2026-11-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-11-27",
+   "row": 64
+  },
+  {
+   "date": "2026-11-26",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2026-11-28",
+   "row": 65
+  },
+  {
+   "date": "2026-11-26",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2026-11-29",
+   "row": 66
+  },
+  {
+   "date": "2026-11-26",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 67
+  },
+  {
+   "date": "2026-11-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2026-11-28",
+   "row": 68
+  },
+  {
+   "date": "2026-11-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-11-29",
+   "row": 69
+  },
+  {
+   "date": "2026-11-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-11-30",
+   "row": 70
+  },
+  {
+   "date": "2026-11-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-12-01",
+   "row": 71
+  },
+  {
+   "date": "2026-11-30",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 72
+  },
+  {
+   "date": "2026-12-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2026-12-02",
+   "row": 73
+  },
+  {
+   "date": "2026-12-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-12-03",
+   "row": 74
+  },
+  {
+   "date": "2026-12-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9.5,
+   "for_day": "2026-12-04",
+   "row": 75
+  },
+  {
+   "date": "2026-12-03",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2026-12-05",
+   "row": 76
+  },
+  {
+   "date": "2026-12-03",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-12-06",
+   "row": 77
+  },
+  {
+   "date": "2026-12-03",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 78
+  },
+  {
+   "date": "2026-12-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2026-12-05",
+   "row": 79
+  },
+  {
+   "date": "2026-12-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9.5,
+   "for_day": "2026-12-06",
+   "row": 80
+  },
+  {
+   "date": "2026-12-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-12-07",
+   "row": 81
+  },
+  {
+   "date": "2026-12-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-12-08",
+   "row": 82
+  },
+  {
+   "date": "2026-12-07",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 83
+  },
+  {
+   "date": "2026-12-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2026-12-09",
+   "row": 84
+  },
+  {
+   "date": "2026-12-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2026-12-10",
+   "note": "skipped this day",
+   "row": 85
+  },
+  {
+   "date": "2026-12-09",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 10,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 86
+  },
+  {
+   "date": "2026-12-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2026-12-11",
+   "row": 87
+  },
+  {
+   "date": "2026-12-10",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-12-12",
+   "row": 88
+  },
+  {
+   "date": "2026-12-10",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-12-13",
+   "row": 89
+  },
+  {
+   "date": "2026-12-10",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 90
+  },
+  {
+   "date": "2026-12-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-12-12",
+   "row": 91
+  },
+  {
+   "date": "2026-12-11",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 15,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 92
+  },
+  {
+   "date": "2026-12-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2026-12-13",
+   "row": 93
+  },
+  {
+   "date": "2026-12-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2026-12-14",
+   "row": 94
+  },
+  {
+   "date": "2026-12-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2026-12-15",
+   "row": 95
+  },
+  {
+   "date": "2026-12-14",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 96
+  },
+  {
+   "date": "2026-12-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-12-16",
+   "row": 97
+  },
+  {
+   "date": "2026-12-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-12-17",
+   "row": 98
+  },
+  {
+   "date": "2026-12-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2026-12-18",
+   "row": 99
+  },
+  {
+   "date": "2026-12-17",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-12-19",
+   "row": 100
+  },
+  {
+   "date": "2026-12-17",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2026-12-20",
+   "row": 101
+  },
+  {
+   "date": "2026-12-17",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 102
+  },
+  {
+   "date": "2026-12-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2026-12-19",
+   "row": 103
+  },
+  {
+   "date": "2026-12-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-12-20",
+   "row": 104
+  },
+  {
+   "date": "2026-12-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-12-21",
+   "row": 105
+  },
+  {
+   "date": "2026-12-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-12-22",
+   "row": 106
+  },
+  {
+   "date": "2026-12-21",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 107
+  },
+  {
+   "date": "2026-12-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2026-12-23",
+   "row": 108
+  },
+  {
+   "date": "2026-12-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-12-24",
+   "row": 109
+  },
+  {
+   "date": "2026-12-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2026-12-25",
+   "row": 110
+  },
+  {
+   "date": "2026-12-24",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2026-12-26",
+   "row": 111
+  },
+  {
+   "date": "2026-12-24",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2026-12-27",
+   "row": 112
+  },
+  {
+   "date": "2026-12-24",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 113
+  },
+  {
+   "date": "2026-12-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2026-12-26",
+   "row": 114
+  },
+  {
+   "date": "2026-12-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2026-12-27",
+   "row": 115
+  },
+  {
+   "date": "2026-12-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2026-12-28",
+   "row": 116
+  },
+  {
+   "date": "2026-12-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2026-12-29",
+   "row": 117
+  },
+  {
+   "date": "2026-12-28",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 118
+  },
+  {
+   "date": "2026-12-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2026-12-30",
+   "row": 119
+  },
+  {
+   "date": "2026-12-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2026-12-31",
+   "row": 120
+  },
+  {
+   "date": "2026-12-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8.5,
+   "for_day": "2027-01-01",
+   "row": 121
+  },
+  {
+   "date": "2026-12-31",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-01-02",
+   "row": 122
+  },
+  {
+   "date": "2026-12-31",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-01-03",
+   "row": 123
+  },
+  {
+   "date": "2026-12-31",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 124
+  },
+  {
+   "date": "2027-01-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-01-02",
+   "row": 125
+  },
+  {
+   "date": "2027-01-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 10,
+   "for_day": "2027-01-03",
+   "row": 126
+  },
+  {
+   "date": "2027-01-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-01-04",
+   "row": 127
+  },
+  {
+   "date": "2027-01-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-01-05",
+   "row": 128
+  },
+  {
+   "date": "2027-01-04",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 129
+  },
+  {
+   "date": "2027-01-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-01-06",
+   "row": 130
+  },
+  {
+   "date": "2027-01-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-01-07",
+   "row": 131
+  },
+  {
+   "date": "2027-01-06",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 20,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 132
+  },
+  {
+   "date": "2027-01-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9.5,
+   "for_day": "2027-01-08",
+   "row": 133
+  },
+  {
+   "date": "2027-01-07",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-01-09",
+   "row": 134
+  },
+  {
+   "date": "2027-01-07",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-01-10",
+   "row": 135
+  },
+  {
+   "date": "2027-01-07",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 136
+  },
+  {
+   "date": "2027-01-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-01-09",
+   "row": 137
+  },
+  {
+   "date": "2027-01-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-01-10",
+   "row": 138
+  },
+  {
+   "date": "2027-01-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-01-11",
+   "row": 139
+  },
+  {
+   "date": "2027-01-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-01-12",
+   "row": 140
+  },
+  {
+   "date": "2027-01-11",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 141
+  },
+  {
+   "date": "2027-01-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-01-13",
+   "row": 142
+  },
+  {
+   "date": "2027-01-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-01-14",
+   "row": 143
+  },
+  {
+   "date": "2027-01-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-01-15",
+   "row": 144
+  },
+  {
+   "date": "2027-01-14",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-01-16",
+   "row": 145
+  },
+  {
+   "date": "2027-01-14",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-01-17",
+   "row": 146
+  },
+  {
+   "date": "2027-01-14",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 147
+  },
+  {
+   "date": "2027-01-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-01-16",
+   "row": 148
+  },
+  {
+   "date": "2027-01-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-01-17",
+   "row": 149
+  },
+  {
+   "date": "2027-01-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-01-18",
+   "row": 150
+  },
+  {
+   "date": "2027-01-17",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 20,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 151
+  },
+  {
+   "date": "2027-01-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-01-19",
+   "note": "skipped this day",
+   "row": 152
+  },
+  {
+   "date": "2027-01-18",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 153
+  },
+  {
+   "date": "2027-01-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-01-20",
+   "row": 154
+  },
+  {
+   "date": "2027-01-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-01-21",
+   "row": 155
+  },
+  {
+   "date": "2027-01-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-01-22",
+   "row": 156
+  },
+  {
+   "date": "2027-01-21",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-01-23",
+   "row": 157
+  },
+  {
+   "date": "2027-01-21",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-01-24",
+   "row": 158
+  },
+  {
+   "date": "2027-01-21",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 159
+  },
+  {
+   "date": "2027-01-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-01-23",
+   "row": 160
+  },
+  {
+   "date": "2027-01-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-01-24",
+   "row": 161
+  },
+  {
+   "date": "2027-01-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-01-25",
+   "row": 162
+  },
+  {
+   "date": "2027-01-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-01-26",
+   "row": 163
+  },
+  {
+   "date": "2027-01-25",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 164
+  },
+  {
+   "date": "2027-01-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-01-27",
+   "row": 165
+  },
+  {
+   "date": "2027-01-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-01-28",
+   "row": 166
+  },
+  {
+   "date": "2027-01-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-01-29",
+   "row": 167
+  },
+  {
+   "date": "2027-01-28",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-01-30",
+   "row": 168
+  },
+  {
+   "date": "2027-01-28",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-01-31",
+   "row": 169
+  },
+  {
+   "date": "2027-01-28",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 170
+  },
+  {
+   "date": "2027-01-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-01-30",
+   "row": 171
+  },
+  {
+   "date": "2027-01-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-01-31",
+   "row": 172
+  },
+  {
+   "date": "2027-01-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-02-01",
+   "row": 173
+  },
+  {
+   "date": "2027-02-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-02-02",
+   "row": 174
+  },
+  {
+   "date": "2027-02-01",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 175
+  },
+  {
+   "date": "2027-02-01",
+   "kind": "signal",
+   "who": "Resto WKS",
+   "effect_pct": -20,
+   "from": "2027-02-08",
+   "to": "2027-03-07",
+   "cause": "Ramadan: lunch trade drops",
+   "note": "announced",
+   "row": 176
+  },
+  {
+   "date": "2027-02-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-02-03",
+   "row": 177
+  },
+  {
+   "date": "2027-02-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-04",
+   "row": 178
+  },
+  {
+   "date": "2027-02-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-02-05",
+   "row": 179
+  },
+  {
+   "date": "2027-02-04",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-02-06",
+   "row": 180
+  },
+  {
+   "date": "2027-02-04",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-02-07",
+   "row": 181
+  },
+  {
+   "date": "2027-02-04",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 20,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 182
+  },
+  {
+   "date": "2027-02-04",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 183
+  },
+  {
+   "date": "2027-02-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-02-06",
+   "row": 184
+  },
+  {
+   "date": "2027-02-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-02-07",
+   "row": 185
+  },
+  {
+   "date": "2027-02-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-08",
+   "note": "Ramadan \u221220%",
+   "row": 186
+  },
+  {
+   "date": "2027-02-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-09",
+   "note": "Ramadan \u221220%",
+   "row": 187
+  },
+  {
+   "date": "2027-02-08",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 188
+  },
+  {
+   "date": "2027-02-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-10",
+   "note": "Ramadan \u221220%",
+   "row": 189
+  },
+  {
+   "date": "2027-02-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-11",
+   "note": "Ramadan \u221220%",
+   "row": 190
+  },
+  {
+   "date": "2027-02-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-02-12",
+   "note": "Ramadan \u221220%",
+   "row": 191
+  },
+  {
+   "date": "2027-02-11",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-02-13",
+   "row": 192
+  },
+  {
+   "date": "2027-02-11",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-02-14",
+   "row": 193
+  },
+  {
+   "date": "2027-02-11",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 194
+  },
+  {
+   "date": "2027-02-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-02-13",
+   "note": "Ramadan \u221220%",
+   "row": 195
+  },
+  {
+   "date": "2027-02-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-02-14",
+   "note": "Ramadan \u221220%",
+   "row": 196
+  },
+  {
+   "date": "2027-02-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-02-15",
+   "note": "Ramadan \u221220%",
+   "row": 197
+  },
+  {
+   "date": "2027-02-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-16",
+   "note": "Ramadan \u221220%",
+   "row": 198
+  },
+  {
+   "date": "2027-02-15",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 199
+  },
+  {
+   "date": "2027-02-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-17",
+   "note": "Ramadan \u221220%",
+   "row": 200
+  },
+  {
+   "date": "2027-02-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-02-18",
+   "note": "Ramadan \u221220%",
+   "row": 201
+  },
+  {
+   "date": "2027-02-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-02-19",
+   "note": "Ramadan \u221220%",
+   "row": 202
+  },
+  {
+   "date": "2027-02-18",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-20",
+   "row": 203
+  },
+  {
+   "date": "2027-02-18",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-21",
+   "row": 204
+  },
+  {
+   "date": "2027-02-18",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 205
+  },
+  {
+   "date": "2027-02-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-02-20",
+   "note": "Ramadan \u221220%",
+   "row": 206
+  },
+  {
+   "date": "2027-02-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-02-21",
+   "note": "Ramadan \u221220%",
+   "row": 207
+  },
+  {
+   "date": "2027-02-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-02-22",
+   "note": "Ramadan \u221220%",
+   "row": 208
+  },
+  {
+   "date": "2027-02-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-23",
+   "note": "Ramadan \u221220%",
+   "row": 209
+  },
+  {
+   "date": "2027-02-22",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 210
+  },
+  {
+   "date": "2027-02-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-02-24",
+   "note": "Ramadan \u221220%",
+   "row": 211
+  },
+  {
+   "date": "2027-02-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-25",
+   "note": "Ramadan \u221220%",
+   "row": 212
+  },
+  {
+   "date": "2027-02-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-02-26",
+   "note": "Ramadan \u221220%",
+   "row": 213
+  },
+  {
+   "date": "2027-02-25",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-27",
+   "row": 214
+  },
+  {
+   "date": "2027-02-25",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-02-28",
+   "row": 215
+  },
+  {
+   "date": "2027-02-25",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 216
+  },
+  {
+   "date": "2027-02-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-02-27",
+   "note": "Ramadan \u221220%",
+   "row": 217
+  },
+  {
+   "date": "2027-02-26",
+   "kind": "signal",
+   "who": "Resto WKS",
+   "effect_pct": -100,
+   "from": "2027-03-08",
+   "to": "2027-03-14",
+   "cause": "tutup Lebaran",
+   "note": "announced",
+   "row": 218
+  },
+  {
+   "date": "2027-02-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-02-28",
+   "note": "Ramadan \u221220%",
+   "row": 219
+  },
+  {
+   "date": "2027-02-27",
+   "kind": "signal",
+   "who": "Retails",
+   "effect_pct": 50,
+   "from": "2027-03-06",
+   "to": "2027-03-07",
+   "cause": "pre-order Lebaran",
+   "note": "announced",
+   "row": 220
+  },
+  {
+   "date": "2027-02-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-03-01",
+   "note": "Ramadan \u221220%",
+   "row": 221
+  },
+  {
+   "date": "2027-03-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-03-02",
+   "note": "Ramadan \u221220%",
+   "row": 222
+  },
+  {
+   "date": "2027-03-01",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 223
+  },
+  {
+   "date": "2027-03-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-03",
+   "note": "skipped this day",
+   "row": 224
+  },
+  {
+   "date": "2027-03-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-03-04",
+   "note": "Ramadan \u221220%",
+   "row": 225
+  },
+  {
+   "date": "2027-03-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-03-05",
+   "note": "Ramadan \u221220%",
+   "row": 226
+  },
+  {
+   "date": "2027-03-04",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-03-06",
+   "note": "Lebaran pre-orders +50%",
+   "row": 227
+  },
+  {
+   "date": "2027-03-04",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-03-07",
+   "note": "Lebaran pre-orders +50%",
+   "row": 228
+  },
+  {
+   "date": "2027-03-04",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 25,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 229
+  },
+  {
+   "date": "2027-03-04",
+   "kind": "postpone",
+   "line": "baby",
+   "cause": "hujan, bibit belum bisa pindah",
+   "note": "wet season",
+   "row": 230
+  },
+  {
+   "date": "2027-03-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-03-06",
+   "note": "Ramadan \u221220%",
+   "row": 231
+  },
+  {
+   "date": "2027-03-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-03-07",
+   "note": "Ramadan \u221220%",
+   "row": 232
+  },
+  {
+   "date": "2027-03-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-08",
+   "note": "closed for Lebaran",
+   "row": 233
+  },
+  {
+   "date": "2027-03-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-09",
+   "note": "closed for Lebaran",
+   "row": 234
+  },
+  {
+   "date": "2027-03-08",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 235
+  },
+  {
+   "date": "2027-03-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-10",
+   "note": "closed for Lebaran",
+   "row": 236
+  },
+  {
+   "date": "2027-03-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-11",
+   "note": "closed for Lebaran",
+   "row": 237
+  },
+  {
+   "date": "2027-03-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-12",
+   "note": "closed for Lebaran",
+   "row": 238
+  },
+  {
+   "date": "2027-03-11",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-03-13",
+   "row": 239
+  },
+  {
+   "date": "2027-03-11",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-03-14",
+   "row": 240
+  },
+  {
+   "date": "2027-03-11",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 241
+  },
+  {
+   "date": "2027-03-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-13",
+   "note": "closed for Lebaran",
+   "row": 242
+  },
+  {
+   "date": "2027-03-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-03-14",
+   "note": "closed for Lebaran",
+   "row": 243
+  },
+  {
+   "date": "2027-03-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-03-15",
+   "row": 244
+  },
+  {
+   "date": "2027-03-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-03-16",
+   "row": 245
+  },
+  {
+   "date": "2027-03-15",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 246
+  },
+  {
+   "date": "2027-03-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-03-17",
+   "row": 247
+  },
+  {
+   "date": "2027-03-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-03-18",
+   "row": 248
+  },
+  {
+   "date": "2027-03-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-03-19",
+   "row": 249
+  },
+  {
+   "date": "2027-03-18",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-03-20",
+   "row": 250
+  },
+  {
+   "date": "2027-03-18",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-03-21",
+   "row": 251
+  },
+  {
+   "date": "2027-03-18",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 252
+  },
+  {
+   "date": "2027-03-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-03-20",
+   "row": 253
+  },
+  {
+   "date": "2027-03-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-03-21",
+   "row": 254
+  },
+  {
+   "date": "2027-03-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-03-22",
+   "row": 255
+  },
+  {
+   "date": "2027-03-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-03-23",
+   "row": 256
+  },
+  {
+   "date": "2027-03-22",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 257
+  },
+  {
+   "date": "2027-03-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-03-24",
+   "row": 258
+  },
+  {
+   "date": "2027-03-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-03-25",
+   "row": 259
+  },
+  {
+   "date": "2027-03-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-03-26",
+   "row": 260
+  },
+  {
+   "date": "2027-03-25",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-03-27",
+   "row": 261
+  },
+  {
+   "date": "2027-03-25",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-03-28",
+   "row": 262
+  },
+  {
+   "date": "2027-03-25",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 263
+  },
+  {
+   "date": "2027-03-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-03-27",
+   "row": 264
+  },
+  {
+   "date": "2027-03-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-03-28",
+   "row": 265
+  },
+  {
+   "date": "2027-03-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-03-29",
+   "row": 266
+  },
+  {
+   "date": "2027-03-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-03-30",
+   "row": 267
+  },
+  {
+   "date": "2027-03-29",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 268
+  },
+  {
+   "date": "2027-03-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-03-31",
+   "row": 269
+  },
+  {
+   "date": "2027-03-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-04-01",
+   "row": 270
+  },
+  {
+   "date": "2027-03-31",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 20,
+   "cause": "hujan deras",
+   "note": "wet season",
+   "row": 271
+  },
+  {
+   "date": "2027-04-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-04-02",
+   "row": 272
+  },
+  {
+   "date": "2027-04-01",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-04-03",
+   "row": 273
+  },
+  {
+   "date": "2027-04-01",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-04-04",
+   "row": 274
+  },
+  {
+   "date": "2027-04-01",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 275
+  },
+  {
+   "date": "2027-04-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-04-03",
+   "row": 276
+  },
+  {
+   "date": "2027-04-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-04-04",
+   "row": 277
+  },
+  {
+   "date": "2027-04-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-04-05",
+   "row": 278
+  },
+  {
+   "date": "2027-04-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-04-06",
+   "row": 279
+  },
+  {
+   "date": "2027-04-05",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 280
+  },
+  {
+   "date": "2027-04-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-04-07",
+   "row": 281
+  },
+  {
+   "date": "2027-04-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-04-08",
+   "row": 282
+  },
+  {
+   "date": "2027-04-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-04-09",
+   "row": 283
+  },
+  {
+   "date": "2027-04-08",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-04-10",
+   "row": 284
+  },
+  {
+   "date": "2027-04-08",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-04-11",
+   "row": 285
+  },
+  {
+   "date": "2027-04-08",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 286
+  },
+  {
+   "date": "2027-04-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-04-10",
+   "row": 287
+  },
+  {
+   "date": "2027-04-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-04-11",
+   "row": 288
+  },
+  {
+   "date": "2027-04-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-04-12",
+   "row": 289
+  },
+  {
+   "date": "2027-04-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-04-13",
+   "row": 290
+  },
+  {
+   "date": "2027-04-12",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 291
+  },
+  {
+   "date": "2027-04-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-04-14",
+   "row": 292
+  },
+  {
+   "date": "2027-04-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-04-15",
+   "row": 293
+  },
+  {
+   "date": "2027-04-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-04-16",
+   "row": 294
+  },
+  {
+   "date": "2027-04-15",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-04-17",
+   "row": 295
+  },
+  {
+   "date": "2027-04-15",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-04-18",
+   "row": 296
+  },
+  {
+   "date": "2027-04-15",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 297
+  },
+  {
+   "date": "2027-04-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-04-17",
+   "row": 298
+  },
+  {
+   "date": "2027-04-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-04-18",
+   "row": 299
+  },
+  {
+   "date": "2027-04-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-04-19",
+   "row": 300
+  },
+  {
+   "date": "2027-04-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-04-20",
+   "row": 301
+  },
+  {
+   "date": "2027-04-19",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 302
+  },
+  {
+   "date": "2027-04-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-04-21",
+   "row": 303
+  },
+  {
+   "date": "2027-04-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-04-22",
+   "row": 304
+  },
+  {
+   "date": "2027-04-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-04-23",
+   "row": 305
+  },
+  {
+   "date": "2027-04-22",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-04-24",
+   "row": 306
+  },
+  {
+   "date": "2027-04-22",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-04-25",
+   "row": 307
+  },
+  {
+   "date": "2027-04-22",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 308
+  },
+  {
+   "date": "2027-04-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-04-24",
+   "row": 309
+  },
+  {
+   "date": "2027-04-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-04-25",
+   "row": 310
+  },
+  {
+   "date": "2027-04-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-04-26",
+   "row": 311
+  },
+  {
+   "date": "2027-04-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-04-27",
+   "row": 312
+  },
+  {
+   "date": "2027-04-26",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 313
+  },
+  {
+   "date": "2027-04-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-04-28",
+   "note": "skipped this day",
+   "row": 314
+  },
+  {
+   "date": "2027-04-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-04-29",
+   "row": 315
+  },
+  {
+   "date": "2027-04-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-04-30",
+   "note": "skipped this day",
+   "row": 316
+  },
+  {
+   "date": "2027-04-29",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-01",
+   "row": 317
+  },
+  {
+   "date": "2027-04-29",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-05-02",
+   "row": 318
+  },
+  {
+   "date": "2027-04-29",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 319
+  },
+  {
+   "date": "2027-04-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-05-01",
+   "row": 320
+  },
+  {
+   "date": "2027-05-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-05-02",
+   "row": 321
+  },
+  {
+   "date": "2027-05-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-05-03",
+   "row": 322
+  },
+  {
+   "date": "2027-05-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-05-04",
+   "row": 323
+  },
+  {
+   "date": "2027-05-03",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 324
+  },
+  {
+   "date": "2027-05-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-05-05",
+   "row": 325
+  },
+  {
+   "date": "2027-05-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-05-06",
+   "row": 326
+  },
+  {
+   "date": "2027-05-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-05-07",
+   "row": 327
+  },
+  {
+   "date": "2027-05-06",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-05-08",
+   "row": 328
+  },
+  {
+   "date": "2027-05-06",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-05-09",
+   "row": 329
+  },
+  {
+   "date": "2027-05-06",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 330
+  },
+  {
+   "date": "2027-05-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-05-08",
+   "row": 331
+  },
+  {
+   "date": "2027-05-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-05-09",
+   "row": 332
+  },
+  {
+   "date": "2027-05-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-10",
+   "note": "unannounced drop \u221235%",
+   "row": 333
+  },
+  {
+   "date": "2027-05-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-05-11",
+   "note": "unannounced drop \u221235%",
+   "row": 334
+  },
+  {
+   "date": "2027-05-10",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 335
+  },
+  {
+   "date": "2027-05-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-05-12",
+   "note": "unannounced drop \u221235%",
+   "row": 336
+  },
+  {
+   "date": "2027-05-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-05-13",
+   "note": "unannounced drop \u221235%",
+   "row": 337
+  },
+  {
+   "date": "2027-05-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-05-14",
+   "note": "unannounced drop \u221235%",
+   "row": 338
+  },
+  {
+   "date": "2027-05-13",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-05-15",
+   "row": 339
+  },
+  {
+   "date": "2027-05-13",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-16",
+   "row": 340
+  },
+  {
+   "date": "2027-05-13",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 341
+  },
+  {
+   "date": "2027-05-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-05-15",
+   "note": "unannounced drop \u221235%",
+   "row": 342
+  },
+  {
+   "date": "2027-05-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-05-16",
+   "note": "unannounced drop \u221235%",
+   "row": 343
+  },
+  {
+   "date": "2027-05-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-05-17",
+   "note": "unannounced drop \u221235%",
+   "row": 344
+  },
+  {
+   "date": "2027-05-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-18",
+   "note": "unannounced drop \u221235%",
+   "row": 345
+  },
+  {
+   "date": "2027-05-17",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 346
+  },
+  {
+   "date": "2027-05-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-05-19",
+   "note": "unannounced drop \u221235%",
+   "row": 347
+  },
+  {
+   "date": "2027-05-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-05-20",
+   "note": "unannounced drop \u221235%",
+   "row": 348
+  },
+  {
+   "date": "2027-05-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-05-21",
+   "note": "unannounced drop \u221235%",
+   "row": 349
+  },
+  {
+   "date": "2027-05-20",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-05-22",
+   "row": 350
+  },
+  {
+   "date": "2027-05-20",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-05-23",
+   "row": 351
+  },
+  {
+   "date": "2027-05-20",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 352
+  },
+  {
+   "date": "2027-05-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-22",
+   "note": "unannounced drop \u221235%",
+   "row": 353
+  },
+  {
+   "date": "2027-05-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-05-23",
+   "note": "unannounced drop \u221235%",
+   "row": 354
+  },
+  {
+   "date": "2027-05-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-05-24",
+   "row": 355
+  },
+  {
+   "date": "2027-05-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-25",
+   "row": 356
+  },
+  {
+   "date": "2027-05-24",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 357
+  },
+  {
+   "date": "2027-05-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-26",
+   "row": 358
+  },
+  {
+   "date": "2027-05-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-05-27",
+   "row": 359
+  },
+  {
+   "date": "2027-05-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-05-28",
+   "row": 360
+  },
+  {
+   "date": "2027-05-27",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-05-29",
+   "row": 361
+  },
+  {
+   "date": "2027-05-27",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-30",
+   "row": 362
+  },
+  {
+   "date": "2027-05-27",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 363
+  },
+  {
+   "date": "2027-05-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-05-29",
+   "row": 364
+  },
+  {
+   "date": "2027-05-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-05-30",
+   "row": 365
+  },
+  {
+   "date": "2027-05-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-05-31",
+   "row": 366
+  },
+  {
+   "date": "2027-05-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-06-01",
+   "note": "skipped this day",
+   "row": 367
+  },
+  {
+   "date": "2027-05-31",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 368
+  },
+  {
+   "date": "2027-06-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-06-02",
+   "row": 369
+  },
+  {
+   "date": "2027-06-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-06-03",
+   "row": 370
+  },
+  {
+   "date": "2027-06-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-06-04",
+   "row": 371
+  },
+  {
+   "date": "2027-06-03",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-06-05",
+   "row": 372
+  },
+  {
+   "date": "2027-06-03",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-06-06",
+   "row": 373
+  },
+  {
+   "date": "2027-06-03",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 374
+  },
+  {
+   "date": "2027-06-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-06-05",
+   "note": "skipped this day",
+   "row": 375
+  },
+  {
+   "date": "2027-06-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-06-06",
+   "row": 376
+  },
+  {
+   "date": "2027-06-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-06-07",
+   "row": 377
+  },
+  {
+   "date": "2027-06-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-06-08",
+   "row": 378
+  },
+  {
+   "date": "2027-06-07",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 379
+  },
+  {
+   "date": "2027-06-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-09",
+   "row": 380
+  },
+  {
+   "date": "2027-06-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-06-10",
+   "row": 381
+  },
+  {
+   "date": "2027-06-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-06-11",
+   "row": 382
+  },
+  {
+   "date": "2027-06-10",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-06-12",
+   "row": 383
+  },
+  {
+   "date": "2027-06-10",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-13",
+   "row": 384
+  },
+  {
+   "date": "2027-06-10",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 385
+  },
+  {
+   "date": "2027-06-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-06-12",
+   "row": 386
+  },
+  {
+   "date": "2027-06-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8.5,
+   "for_day": "2027-06-13",
+   "row": 387
+  },
+  {
+   "date": "2027-06-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-06-14",
+   "row": 388
+  },
+  {
+   "date": "2027-06-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-06-15",
+   "row": 389
+  },
+  {
+   "date": "2027-06-14",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 390
+  },
+  {
+   "date": "2027-06-14",
+   "kind": "loss",
+   "line": "baby",
+   "pct": 15,
+   "cause": "ulat",
+   "note": "caterpillars",
+   "row": 391
+  },
+  {
+   "date": "2027-06-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-06-16",
+   "row": 392
+  },
+  {
+   "date": "2027-06-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-06-17",
+   "row": 393
+  },
+  {
+   "date": "2027-06-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-06-18",
+   "row": 394
+  },
+  {
+   "date": "2027-06-17",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-19",
+   "row": 395
+  },
+  {
+   "date": "2027-06-17",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-06-20",
+   "row": 396
+  },
+  {
+   "date": "2027-06-17",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 397
+  },
+  {
+   "date": "2027-06-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-06-19",
+   "row": 398
+  },
+  {
+   "date": "2027-06-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-20",
+   "row": 399
+  },
+  {
+   "date": "2027-06-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-06-21",
+   "row": 400
+  },
+  {
+   "date": "2027-06-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-06-22",
+   "row": 401
+  },
+  {
+   "date": "2027-06-21",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 402
+  },
+  {
+   "date": "2027-06-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-23",
+   "row": 403
+  },
+  {
+   "date": "2027-06-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-06-24",
+   "row": 404
+  },
+  {
+   "date": "2027-06-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-06-25",
+   "row": 405
+  },
+  {
+   "date": "2027-06-24",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-06-26",
+   "row": 406
+  },
+  {
+   "date": "2027-06-24",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-06-27",
+   "row": 407
+  },
+  {
+   "date": "2027-06-24",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 408
+  },
+  {
+   "date": "2027-06-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-26",
+   "row": 409
+  },
+  {
+   "date": "2027-06-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-06-27",
+   "row": 410
+  },
+  {
+   "date": "2027-06-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-06-28",
+   "row": 411
+  },
+  {
+   "date": "2027-06-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-06-29",
+   "row": 412
+  },
+  {
+   "date": "2027-06-28",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 413
+  },
+  {
+   "date": "2027-06-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-06-30",
+   "row": 414
+  },
+  {
+   "date": "2027-06-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-01",
+   "row": 415
+  },
+  {
+   "date": "2027-07-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-07-02",
+   "row": 416
+  },
+  {
+   "date": "2027-07-01",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-07-03",
+   "row": 417
+  },
+  {
+   "date": "2027-07-01",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-07-04",
+   "row": 418
+  },
+  {
+   "date": "2027-07-01",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 419
+  },
+  {
+   "date": "2027-07-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-07-03",
+   "row": 420
+  },
+  {
+   "date": "2027-07-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-07-04",
+   "row": 421
+  },
+  {
+   "date": "2027-07-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-05",
+   "row": 422
+  },
+  {
+   "date": "2027-07-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-06",
+   "row": 423
+  },
+  {
+   "date": "2027-07-05",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 424
+  },
+  {
+   "date": "2027-07-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-07-07",
+   "row": 425
+  },
+  {
+   "date": "2027-07-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-08",
+   "row": 426
+  },
+  {
+   "date": "2027-07-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-07-09",
+   "row": 427
+  },
+  {
+   "date": "2027-07-08",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-07-10",
+   "row": 428
+  },
+  {
+   "date": "2027-07-08",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-07-11",
+   "row": 429
+  },
+  {
+   "date": "2027-07-08",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 430
+  },
+  {
+   "date": "2027-07-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-07-10",
+   "row": 431
+  },
+  {
+   "date": "2027-07-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-07-11",
+   "row": 432
+  },
+  {
+   "date": "2027-07-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-07-12",
+   "row": 433
+  },
+  {
+   "date": "2027-07-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-07-13",
+   "row": 434
+  },
+  {
+   "date": "2027-07-12",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 435
+  },
+  {
+   "date": "2027-07-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-14",
+   "row": 436
+  },
+  {
+   "date": "2027-07-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-15",
+   "row": 437
+  },
+  {
+   "date": "2027-07-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-07-16",
+   "row": 438
+  },
+  {
+   "date": "2027-07-15",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-07-17",
+   "row": 439
+  },
+  {
+   "date": "2027-07-15",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-18",
+   "row": 440
+  },
+  {
+   "date": "2027-07-15",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 441
+  },
+  {
+   "date": "2027-07-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-07-17",
+   "row": 442
+  },
+  {
+   "date": "2027-07-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-07-18",
+   "row": 443
+  },
+  {
+   "date": "2027-07-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-19",
+   "row": 444
+  },
+  {
+   "date": "2027-07-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-20",
+   "row": 445
+  },
+  {
+   "date": "2027-07-19",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 446
+  },
+  {
+   "date": "2027-07-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-21",
+   "row": 447
+  },
+  {
+   "date": "2027-07-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-07-22",
+   "row": 448
+  },
+  {
+   "date": "2027-07-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-07-23",
+   "row": 449
+  },
+  {
+   "date": "2027-07-22",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-07-24",
+   "row": 450
+  },
+  {
+   "date": "2027-07-22",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-25",
+   "row": 451
+  },
+  {
+   "date": "2027-07-22",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 452
+  },
+  {
+   "date": "2027-07-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-24",
+   "row": 453
+  },
+  {
+   "date": "2027-07-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-25",
+   "row": 454
+  },
+  {
+   "date": "2027-07-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-26",
+   "row": 455
+  },
+  {
+   "date": "2027-07-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-07-27",
+   "row": 456
+  },
+  {
+   "date": "2027-07-26",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 457
+  },
+  {
+   "date": "2027-07-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-28",
+   "row": 458
+  },
+  {
+   "date": "2027-07-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-07-29",
+   "row": 459
+  },
+  {
+   "date": "2027-07-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-07-30",
+   "row": 460
+  },
+  {
+   "date": "2027-07-29",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-07-31",
+   "row": 461
+  },
+  {
+   "date": "2027-07-29",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-08-01",
+   "row": 462
+  },
+  {
+   "date": "2027-07-29",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 463
+  },
+  {
+   "date": "2027-07-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-07-31",
+   "row": 464
+  },
+  {
+   "date": "2027-07-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-08-01",
+   "row": 465
+  },
+  {
+   "date": "2027-08-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-08-02",
+   "row": 466
+  },
+  {
+   "date": "2027-08-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-03",
+   "row": 467
+  },
+  {
+   "date": "2027-08-02",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 468
+  },
+  {
+   "date": "2027-08-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-04",
+   "row": 469
+  },
+  {
+   "date": "2027-08-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-05",
+   "row": 470
+  },
+  {
+   "date": "2027-08-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-08-06",
+   "row": 471
+  },
+  {
+   "date": "2027-08-05",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-07",
+   "row": 472
+  },
+  {
+   "date": "2027-08-05",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-08-08",
+   "row": 473
+  },
+  {
+   "date": "2027-08-05",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 474
+  },
+  {
+   "date": "2027-08-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-08-07",
+   "row": 475
+  },
+  {
+   "date": "2027-08-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-08-08",
+   "row": 476
+  },
+  {
+   "date": "2027-08-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-08-09",
+   "row": 477
+  },
+  {
+   "date": "2027-08-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-10",
+   "row": 478
+  },
+  {
+   "date": "2027-08-09",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 479
+  },
+  {
+   "date": "2027-08-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-08-11",
+   "row": 480
+  },
+  {
+   "date": "2027-08-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-08-12",
+   "row": 481
+  },
+  {
+   "date": "2027-08-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-13",
+   "row": 482
+  },
+  {
+   "date": "2027-08-12",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-08-14",
+   "row": 483
+  },
+  {
+   "date": "2027-08-12",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-15",
+   "row": 484
+  },
+  {
+   "date": "2027-08-12",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 485
+  },
+  {
+   "date": "2027-08-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-08-14",
+   "row": 486
+  },
+  {
+   "date": "2027-08-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-08-15",
+   "row": 487
+  },
+  {
+   "date": "2027-08-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-16",
+   "row": 488
+  },
+  {
+   "date": "2027-08-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-17",
+   "row": 489
+  },
+  {
+   "date": "2027-08-16",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 490
+  },
+  {
+   "date": "2027-08-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-08-18",
+   "row": 491
+  },
+  {
+   "date": "2027-08-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-19",
+   "row": 492
+  },
+  {
+   "date": "2027-08-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-08-20",
+   "row": 493
+  },
+  {
+   "date": "2027-08-19",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-21",
+   "row": 494
+  },
+  {
+   "date": "2027-08-19",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-08-22",
+   "row": 495
+  },
+  {
+   "date": "2027-08-19",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 496
+  },
+  {
+   "date": "2027-08-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-21",
+   "row": 497
+  },
+  {
+   "date": "2027-08-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-22",
+   "row": 498
+  },
+  {
+   "date": "2027-08-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-08-23",
+   "row": 499
+  },
+  {
+   "date": "2027-08-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-08-24",
+   "row": 500
+  },
+  {
+   "date": "2027-08-23",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 501
+  },
+  {
+   "date": "2027-08-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-08-25",
+   "row": 502
+  },
+  {
+   "date": "2027-08-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-08-26",
+   "row": 503
+  },
+  {
+   "date": "2027-08-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-27",
+   "row": 504
+  },
+  {
+   "date": "2027-08-26",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-08-28",
+   "row": 505
+  },
+  {
+   "date": "2027-08-26",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 1.5,
+   "for_day": "2027-08-29",
+   "row": 506
+  },
+  {
+   "date": "2027-08-26",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 507
+  },
+  {
+   "date": "2027-08-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-08-28",
+   "row": 508
+  },
+  {
+   "date": "2027-08-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-08-29",
+   "row": 509
+  },
+  {
+   "date": "2027-08-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-08-30",
+   "row": 510
+  },
+  {
+   "date": "2027-08-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-08-31",
+   "row": 511
+  },
+  {
+   "date": "2027-08-30",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 512
+  },
+  {
+   "date": "2027-08-31",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-09-01",
+   "row": 513
+  },
+  {
+   "date": "2027-09-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-09-02",
+   "row": 514
+  },
+  {
+   "date": "2027-09-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-09-03",
+   "row": 515
+  },
+  {
+   "date": "2027-09-02",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-09-04",
+   "row": 516
+  },
+  {
+   "date": "2027-09-02",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-09-05",
+   "row": 517
+  },
+  {
+   "date": "2027-09-02",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 518
+  },
+  {
+   "date": "2027-09-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-09-04",
+   "row": 519
+  },
+  {
+   "date": "2027-09-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 9,
+   "for_day": "2027-09-05",
+   "row": 520
+  },
+  {
+   "date": "2027-09-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-09-06",
+   "row": 521
+  },
+  {
+   "date": "2027-09-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-09-07",
+   "row": 522
+  },
+  {
+   "date": "2027-09-06",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 523
+  },
+  {
+   "date": "2027-09-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-09-08",
+   "row": 524
+  },
+  {
+   "date": "2027-09-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-09-09",
+   "row": 525
+  },
+  {
+   "date": "2027-09-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-09-10",
+   "row": 526
+  },
+  {
+   "date": "2027-09-09",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-09-11",
+   "row": 527
+  },
+  {
+   "date": "2027-09-09",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-09-12",
+   "row": 528
+  },
+  {
+   "date": "2027-09-09",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 529
+  },
+  {
+   "date": "2027-09-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8.5,
+   "for_day": "2027-09-11",
+   "row": 530
+  },
+  {
+   "date": "2027-09-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-09-12",
+   "row": 531
+  },
+  {
+   "date": "2027-09-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-09-13",
+   "row": 532
+  },
+  {
+   "date": "2027-09-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-09-14",
+   "row": 533
+  },
+  {
+   "date": "2027-09-13",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 534
+  },
+  {
+   "date": "2027-09-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-09-15",
+   "row": 535
+  },
+  {
+   "date": "2027-09-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-09-16",
+   "row": 536
+  },
+  {
+   "date": "2027-09-16",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-09-17",
+   "row": 537
+  },
+  {
+   "date": "2027-09-16",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-09-18",
+   "row": 538
+  },
+  {
+   "date": "2027-09-16",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-09-19",
+   "row": 539
+  },
+  {
+   "date": "2027-09-16",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 540
+  },
+  {
+   "date": "2027-09-17",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-09-18",
+   "row": 541
+  },
+  {
+   "date": "2027-09-18",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6.5,
+   "for_day": "2027-09-19",
+   "row": 542
+  },
+  {
+   "date": "2027-09-19",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-09-20",
+   "row": 543
+  },
+  {
+   "date": "2027-09-20",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-09-21",
+   "row": 544
+  },
+  {
+   "date": "2027-09-20",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 545
+  },
+  {
+   "date": "2027-09-21",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-09-22",
+   "row": 546
+  },
+  {
+   "date": "2027-09-22",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-09-23",
+   "row": 547
+  },
+  {
+   "date": "2027-09-23",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4,
+   "for_day": "2027-09-24",
+   "row": 548
+  },
+  {
+   "date": "2027-09-23",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2,
+   "for_day": "2027-09-25",
+   "row": 549
+  },
+  {
+   "date": "2027-09-23",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-09-26",
+   "row": 550
+  },
+  {
+   "date": "2027-09-23",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 551
+  },
+  {
+   "date": "2027-09-24",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-09-25",
+   "row": 552
+  },
+  {
+   "date": "2027-09-25",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 4.5,
+   "for_day": "2027-09-26",
+   "row": 553
+  },
+  {
+   "date": "2027-09-26",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-09-27",
+   "row": 554
+  },
+  {
+   "date": "2027-09-27",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-09-28",
+   "row": 555
+  },
+  {
+   "date": "2027-09-27",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 556
+  },
+  {
+   "date": "2027-09-28",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-09-29",
+   "row": 557
+  },
+  {
+   "date": "2027-09-29",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3,
+   "for_day": "2027-09-30",
+   "row": 558
+  },
+  {
+   "date": "2027-09-30",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-10-01",
+   "row": 559
+  },
+  {
+   "date": "2027-09-30",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-10-02",
+   "row": 560
+  },
+  {
+   "date": "2027-09-30",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 8.5,
+   "for_day": "2027-10-03",
+   "row": 561
+  },
+  {
+   "date": "2027-09-30",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 562
+  },
+  {
+   "date": "2027-10-01",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8,
+   "for_day": "2027-10-02",
+   "row": 563
+  },
+  {
+   "date": "2027-10-02",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 8.5,
+   "for_day": "2027-10-03",
+   "row": 564
+  },
+  {
+   "date": "2027-10-03",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-10-04",
+   "row": 565
+  },
+  {
+   "date": "2027-10-04",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-10-05",
+   "row": 566
+  },
+  {
+   "date": "2027-10-04",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 567
+  },
+  {
+   "date": "2027-10-05",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-10-06",
+   "row": 568
+  },
+  {
+   "date": "2027-10-06",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-10-07",
+   "row": 569
+  },
+  {
+   "date": "2027-10-07",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-10-08",
+   "row": 570
+  },
+  {
+   "date": "2027-10-07",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-10-09",
+   "row": 571
+  },
+  {
+   "date": "2027-10-07",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 7,
+   "for_day": "2027-10-10",
+   "row": 572
+  },
+  {
+   "date": "2027-10-07",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 573
+  },
+  {
+   "date": "2027-10-08",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-10-09",
+   "row": 574
+  },
+  {
+   "date": "2027-10-09",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 0,
+   "for_day": "2027-10-10",
+   "note": "skipped this day",
+   "row": 575
+  },
+  {
+   "date": "2027-10-10",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 6,
+   "for_day": "2027-10-11",
+   "row": 576
+  },
+  {
+   "date": "2027-10-11",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5,
+   "for_day": "2027-10-12",
+   "row": 577
+  },
+  {
+   "date": "2027-10-11",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 578
+  },
+  {
+   "date": "2027-10-12",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-10-13",
+   "row": 579
+  },
+  {
+   "date": "2027-10-13",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 3.5,
+   "for_day": "2027-10-14",
+   "row": 580
+  },
+  {
+   "date": "2027-10-14",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 5.5,
+   "for_day": "2027-10-15",
+   "row": 581
+  },
+  {
+   "date": "2027-10-14",
+   "kind": "order",
+   "buyer": "Retails",
+   "line": "baby",
+   "kg": 2.5,
+   "for_day": "2027-10-16",
+   "row": 582
+  },
+  {
+   "date": "2027-10-14",
+   "kind": "sow",
+   "line": "baby",
+   "seedlings": "plan",
+   "row": 583
+  },
+  {
+   "date": "2027-10-15",
+   "kind": "order",
+   "buyer": "Resto WKS",
+   "line": "baby",
+   "kg": 7.5,
+   "for_day": "2027-10-16",
+   "row": 584
+  }
+ ]
+}

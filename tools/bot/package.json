@@ -1,0 +1,13 @@
+{
+  "name": "tanam-sandbox-bot",
+  "private": true,
+  "type": "module",
+  "description": "Plays data/scenario/year.json into the sandbox through the real UI, in a visible browser (for the demo video)",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "bot": "node bot.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.48.2"
+  }
+}
