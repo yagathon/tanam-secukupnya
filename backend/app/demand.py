@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import math
 import statistics
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 ALPHA = 0.2                      # only widens the band with the horizon now; levels move by weeks
@@ -80,12 +80,17 @@ def season_factor(season: dict | None, d: date) -> float:
     return season["month_pct"][block] / 25 * season["year_index"][d.month - 1] / 100
 
 
+def _block(d: date) -> int:
+    return min((d.day - 1) // 7, 3)
+
+
 @dataclass
 class DemandModel:
     fits: dict[str, Fit]
     market: float
     market_buyers: int
-    season: dict | None = None
+    season: dict | None = None             # the effective season: setup's, with any confirmed month blocks
+    learned_blocks: list[int] = field(default_factory=list)   # month blocks moved away from the setup
 
 
 def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
@@ -95,8 +100,11 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
     before it and then stay fixed, so a market move shows up as m instead of seeping into levels.
     `priors`: series → setup estimate (kg Mon..Sun); such a series starts from the estimate instead of
     from history, with a wide σ until it has its own residuals. `season`: see season_factor; it is
-    divided out of every actual, so a December peak the setup predicted doesn't lift the level."""
+    divided out of every actual, so a December peak the setup predicted doesn't lift the level. Its month
+    blocks are checked at each month's end, farm-wide, on their share of the month (months covered from
+    day 1 only): a block 3 months in a row more than 10% off moves to the mean share it showed."""
     priors = priors or {}
+    season = {"month_pct": list(season["month_pct"]), "year_index": list(season["year_index"])} if season else None
     history = {k: history.get(k, {}) for k in list(history) + [k for k in priors if k not in history]}
     days = sorted({d for s in history.values() for d in s if d < today})
     shapes = {k: shape_of({d: v for d, v in s.items() if d < shape_until}) for k, s in history.items()}
@@ -104,6 +112,34 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
     resid: dict[str, list[float]] = {k: [] for k in history}
     levels_hist: dict[str, list[tuple[date, float]]] = {k: [] for k in history}
     ratio_log: list[tuple[date, str, float]] = []  # (day, buyer, actual ÷ (shape × level))
+    month: list = [None, [0.0] * 4, [0.0] * 4]   # [first of month, actual kg per block, forecast without the month pattern]
+    mstreak: list[list] = [[] for _ in range(4)]  # per block: ("above" | "below", observed share) of the current streak
+    learned: set[int] = set()
+
+    def close_month(first: date) -> None:
+        """Judge a finished month's block shares farm-wide; a block 3 months in a row on one side moves."""
+        _, a, fc = month
+        month[:] = [None, [0.0] * 4, [0.0] * 4]
+        if not season or not days or days[0] > first or any(x <= 0 for x in fc):
+            return
+        r = [x / y for x, y in zip(a, fc)]
+        obs = [100 * x / sum(r) for x in r]
+        pct = season["month_pct"]
+        for b in range(4):
+            side = "above" if obs[b] > pct[b] * (1 + WEEK_BAND) else "below" if obs[b] < pct[b] * (1 - WEEK_BAND) else ""
+            if not side or (mstreak[b] and mstreak[b][-1][0] != side):
+                mstreak[b] = []
+            if side:
+                mstreak[b].append((side, obs[b]))
+        moved = [b for b in range(4) if len(mstreak[b]) >= CONFIRM]
+        for b in moved:
+            pct[b] = statistics.fmean(o for _, o in mstreak[b])
+            mstreak[b] = []
+            learned.add(b)
+        if moved:
+            tot = sum(pct)
+            season["month_pct"] = [x * 100 / tot for x in pct]
+
     week: dict[str, list] = {k: [None, 0.0, 0.0] for k in history}   # [Monday, actual sum, forecast sum]
     qs: dict[str, list[float]] = {k: [] for k in history}             # the ratios of the current streak
 
@@ -139,6 +175,10 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
         fits[k] = Fit(k, sh, lv, 0.0, lv, statistics.fmean(base) if base else lv)
         levels_hist[k].append((date.min, lv))
     for d in days:
+        first = d.replace(day=1)
+        if month[0] is not None and month[0] != first:
+            close_month(month[0])
+        month[0] = first
         window = {}
         for (dd, buyer, q) in ratio_log:
             if d - timedelta(days=MARKET_WINDOW) <= dd < d:
@@ -165,18 +205,22 @@ def fit(history: dict[str, dict[date, float]], shape_until: date, today: date,
             week[k][0] = mon
             week[k][1] += actual / m
             week[k][2] += sh * f.level
+            month[1][_block(d)] += s[d]
+            month[2][_block(d)] += sh * f.level * m * (season["year_index"][d.month - 1] / 100 if season else 1.0)
             r = actual / (sh * m) - f.level
             rs = resid[k]
             rs.append(r)
             wide = PRIOR_SIGMA if k in priors else 0.15
             f.sigma = _sd(rs[-28:]) if len(rs) >= 5 else abs(f.level) * wide
+    if month[0] is not None and (month[0] + timedelta(days=32)).replace(day=1) <= today:
+        close_month(month[0])                           # the last month counts once it has fully passed
     for k in history:                                   # the last week counts once it has fully passed
         if week[k][0] is not None and week[k][0] + timedelta(days=7) <= today:
             close_week(k, week[k][0] + timedelta(days=7))
     for k, f in fits.items():
         old = [lv for d, lv in levels_hist[k] if d <= today - timedelta(days=14)]
         f.usual = old[-1] if old else f.level
-    return DemandModel(fits, m, nb, season)
+    return DemandModel(fits, m, nb, season, sorted(learned))
 
 
 def expected(model: DemandModel, key: str, d: date, factor: float = 1.0) -> float:

@@ -189,3 +189,42 @@ def test_fit_divides_the_season_out_of_the_level():
     assert demand.expected(m, "b2b:a:regular", d) == pytest.approx(10.0 * 1.6, abs=0.05)
     blind = demand.fit(h, start, today, pri)
     assert abs(blind.fits["b2b:a:regular"].level - 10.0) > 1
+
+
+FLAT = {"month_pct": [25, 25, 25, 25], "year_index": [100] * 12}
+REAL = [30, 25, 25, 20]          # what the orders actually do: busier early in the month, quieter at the end
+
+
+def _months(start: date, end: date) -> dict:
+    """Daily orders of 10 kg × the REAL month block (no year effect), start ≤ day < end."""
+    out, d = {}, start
+    while d < end:
+        out[d] = 10.0 * REAL[min((d.day - 1) // 7, 3)] / 25
+        d += timedelta(days=1)
+    return {"b2b:a:regular": out}
+
+
+def test_the_month_pattern_moves_only_after_three_confirming_months():
+    pri = {"b2b:a:regular": [10.0] * 7}
+    start = date(2026, 11, 1)
+    two = demand.fit(_months(start, date(2027, 1, 1)), start, date(2027, 1, 1), pri, FLAT)
+    assert two.season["month_pct"] == [25, 25, 25, 25] and two.learned_blocks == []
+    three = demand.fit(_months(start, date(2027, 2, 1)), start, date(2027, 2, 1), pri, FLAT)
+    assert three.season["month_pct"] == pytest.approx(REAL, abs=0.5)
+    assert sum(three.season["month_pct"]) == pytest.approx(100)
+    assert three.learned_blocks == [0, 3]
+    assert FLAT["month_pct"] == [25, 25, 25, 25]                         # the setup itself is untouched
+
+
+def test_a_month_not_covered_from_day_one_is_ignored():
+    pri = {"b2b:a:regular": [10.0] * 7}
+    start = date(2026, 10, 15)                                          # October is partial: Nov, Dec only
+    m = demand.fit(_months(start, date(2027, 1, 1)), start, date(2027, 1, 1), pri, FLAT)
+    assert m.season["month_pct"] == [25, 25, 25, 25]
+
+
+def test_no_season_learns_no_month_pattern():
+    pri = {"b2b:a:regular": [10.0] * 7}
+    start = date(2026, 11, 1)
+    m = demand.fit(_months(start, date(2027, 2, 1)), start, date(2027, 2, 1), pri, None)
+    assert m.season is None and m.learned_blocks == []
