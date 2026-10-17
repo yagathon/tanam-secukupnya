@@ -4,17 +4,30 @@ import type { TodayLine } from "./types";
 
 const sow = { day: "2026-10-12", weekday: "Mon", seedlings: 900, seeds_g: 2.6, teaspoons: 0.9, shortfall_ahead_kg: 0 };
 const base: TodayLine = { line: "regular", need_kg: 10, ceiling_kg: 10, send_kg: 10, short_kg: 0, rotated: [], sow,
-  done: { sown: false, harvested: false }, cover_pct: 100, sellable_from: null,
+  done: { sown: false, harvested: false }, cover_pct: 100, sellable_from: null, extra_kg: 0,
+  demand: [{ alias: "Resto WKS", kg: 8, known: true }, { alias: "Retails", kg: 2, known: false }],
   harvest_plan: [{ batch: "regular-2026-09-01-1", label: "Bed 1", kg: 6, avg_g: 128, sampled: true },
     { batch: "regular-2026-09-05-2", label: "Bed 2", kg: 4, avg_g: 104, sampled: false }] };
 
-test("harvest action names each bed, its predicted size and basis, and prefills the form", () => {
-  const h = todayActions(base, "2026-10-12").find((a) => a.kind === "harvest")!;
-  expect(h.title).toBe("Harvest 10.0 kg for tomorrow");
-  expect(h.lines).toEqual(["Bed 1: 6.00 kg · ~128 g a plant (your sample)", "Bed 2: 4.00 kg · ~104 g a plant (growth curve)"]);
-  expect(h.prefill).toEqual([{ label: "Bed 1", kind: "harvest", form: { batch: "regular-2026-09-01-1", kg: "6" } },
+test("demand action lists tomorrow's buyers, ordered vs forecast, and keeps per-bed harvest logging", () => {
+  const acts = todayActions(base, "2026-10-12");
+  expect(acts.find((a) => (a.kind as string) === "harvest")).toBeUndefined();
+  const d = acts.find((a) => a.kind === "demand")!;
+  expect(d.title).toBe("Demand tomorrow 10.0 kg");
+  expect(d.lines).toEqual(["Resto WKS: 8.00 kg (ordered)", "Retails: 2.00 kg (forecast)"]);
+  expect(d.prefill).toEqual([{ label: "Bed 1", kind: "harvest", form: { batch: "regular-2026-09-01-1", kg: "6" } },
     { label: "Bed 2", kind: "harvest", form: { batch: "regular-2026-09-05-2", kg: "4" } }]);
-  expect(h.done).toBe(false);
+  expect(d.done).toBe(false);
+});
+
+test("extra to sell appears from 0.5 kg, even when nothing is ordered", () => {
+  expect(todayActions({ ...base, extra_kg: 0.4 }, "2026-10-12").find((a) => a.kind === "extra")).toBeUndefined();
+  const e = todayActions({ ...base, extra_kg: 61.34 }, "2026-10-12").find((a) => a.kind === "extra")!;
+  expect(e.title).toBe("Extra to sell: up to 61.3 kg");
+  expect(e.lines).toEqual(["Not needed for any forecast order before the next bed is ready — sell it or it will outgrow its size."]);
+  const idle = todayActions({ ...base, need_kg: 0, send_kg: 0, cover_pct: null, harvest_plan: [], demand: [], extra_kg: 5 },
+    "2026-10-12");
+  expect(idle.map((x) => x.kind)).toEqual(["idle", "extra", "sow"]);
 });
 
 test("sow on a sowing day prefills seedlings; otherwise it says when", () => {
@@ -34,11 +47,11 @@ test("a shortage says how much of the orders it covers, or when anything is sell
   expect(short.find((a) => a.kind === "short")!.lines).toEqual(["Bu Sari rotates"]);
   const none = todayActions({ ...base, send_kg: 0, short_kg: 10, cover_pct: 0, harvest_plan: [],
     sellable_from: "2026-10-20" }, "2026-10-12");
-  expect(none.find((a) => a.kind === "harvest")).toBeUndefined();
+  expect(none.find((a) => a.kind === "demand")!.prefill).toEqual([]);
   expect(none.find((a) => a.kind === "short")!.lines).toContain("Nothing sellable until Tue 20 Oct");
 });
 
-test("nothing ordered: no harvest, no shortage", () => {
+test("nothing ordered: no demand, no shortage", () => {
   const a = todayActions({ ...base, need_kg: 0, send_kg: 0, cover_pct: null, harvest_plan: [] }, "2026-10-12");
   expect(a.map((x) => x.kind)).toEqual(["idle", "sow"]);
 });

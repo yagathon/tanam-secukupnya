@@ -48,6 +48,7 @@ export interface TodayLine {
   sow: SowSummary;
   done?: { sown: boolean; harvested: boolean }; harvest_plan?: HarvestPick[];
   cover_pct?: number | null; sellable_from?: string | null;
+  demand?: { alias: string; kg: number; known: boolean }[]; extra_kg?: number;
 }
 export interface Today { today: string; weekday: string; lines: TodayLine[]; pending: NoteDoc[]; seq: number }
 

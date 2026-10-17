@@ -33,7 +33,7 @@ def test_today_shape():
     assert t["seq"] == 1                                    # the seq the next logged event takes
     ln = t["lines"][0]
     assert keys(ln) == {"line", "need_kg", "ceiling_kg", "send_kg", "short_kg", "rotated", "sow",
-                        "done", "harvest_plan", "cover_pct", "sellable_from"}
+                        "done", "demand", "extra_kg", "harvest_plan", "cover_pct", "sellable_from"}
     assert keys(ln["done"]) == {"sown", "harvested"}
     assert keys(ln["sow"]) == {"day", "weekday", "seedlings", "seeds_g", "teaspoons", "shortfall_ahead_kg"}
 

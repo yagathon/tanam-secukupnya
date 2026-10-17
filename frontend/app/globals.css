@@ -171,6 +171,7 @@ input.bad { border-color: var(--bad); }
 /* Today, as things to do (sandbox) */
 .act { border-left: 4px solid var(--leaf); padding: 8px 12px; margin: 10px 0; }
 .act.short { border-color: var(--bad); }
+.act.extra { border-color: var(--warn); }
 .act.idle, .act.info { border-color: var(--line); }
 .act.done { opacity: 0.6; }
 .act-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; }

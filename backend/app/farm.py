@@ -288,6 +288,10 @@ def today(ws: Store) -> dict:
                             "shortfall_ahead_kg": round(sum(r["kg"] for r in s.shortfall_ahead), 2)},
                     "done": {"sown": st.last_sown.get(lp.line) == st.today or (lp.line, iso) in st.postponed,
                              "harvested": st.harvested.get((iso, lp.line), 0.0) > 0},
+                    "demand": [{"alias": r["alias"], "kg": r["ordered_kg"], "known": r["id"] in lp.needs.known}
+                               for r in tl["buyers"] + tl["households"] if r["ordered_kg"] > 0.005],
+                    # sellable beyond tomorrow's demand without hurting forecast demand before the next bed is ready
+                    "extra_kg": round(max(0.0, lp.ceiling - lp.needs.tomorrow), 2),
                     "harvest_plan": _harvest_plan(c, st, lp.line, lp.send),
                     "cover_pct": round(100 * min(1.0, lp.send / tl["need_kg"])) if tl["need_kg"] > 0.005 else None,
                     "sellable_from": _sellable_from(c, st, lp.line) if lp.available_tomorrow < 0.01 else None})

@@ -248,6 +248,24 @@ def test_today_card_harvest_plan_and_done_flags():
     assert _today_line()["done"]["sown"] is True
 
 
+def test_today_card_shows_tomorrows_demand_and_the_extra_that_is_safe_to_sell():
+    """Harvest follows orders, so the card states the demand and what is sellable beyond it (ceiling − need)."""
+    client.put(f"{S}/setup", json=_setup())
+    client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": 3,
+                                             "day": "2026-10-13"}, "seq": 1})
+    ln = _today_line()
+    assert ln["demand"] == [{"alias": "Restaurant A", "kg": 3.0, "known": True}]
+    assert ln["ceiling_kg"] > ln["need_kg"] + 1
+    assert ln["extra_kg"] == pytest.approx(ln["ceiling_kg"] - ln["need_kg"], abs=0.01)
+
+
+def test_today_card_extra_is_zero_when_short():
+    client.put(f"{S}/setup", json=_setup(beds=[{"line": "regular", "sown_on": "2026-10-01", "seedlings": 900}]))
+    client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": 3,
+                                             "day": "2026-10-13"}, "seq": 1})
+    assert _today_line()["extra_kg"] == 0
+
+
 def test_today_card_says_when_something_is_sellable_again():
     client.put(f"{S}/setup", json=_setup(beds=[{"line": "regular", "sown_on": "2026-10-01", "seedlings": 900}]))
     client.post(f"{S}/events", json={"form": {"kind": "order", "buyer": "b1", "line": "regular", "kg": 3,

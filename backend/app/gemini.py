@@ -119,7 +119,8 @@ def read_note(text: str, sender: str, received_on: str, ctx: dict) -> dict:
 G5_SYSTEM = """You explain a small farm's daily plan to a busy farmer. You get the engine's own numbers as JSON.
 Narrate them in 3-5 short plain-English sentences: what to send tomorrow and why that is the safe maximum,
 who is short if anyone, and why the next sowing is that size. If ready plants are held back, say they are
-kept for later days, not wasted. Use only numbers that appear in the JSON; never compute new ones; never give
+kept for later days, not wasted. If a line's extra_kg is above zero, say that much can be sold on top of
+tomorrow's demand without hurting any forecast order before the next bed is ready. Use only numbers that appear in the JSON; never compute new ones; never give
 advice the JSON does not support, and never guess a cause the JSON does not state.
 When a line is short, suggest telling the affected buyers early, and buying at the market only for orders
 that have actually arrived, once they arrive, never for forecast demand (a forecast order may never come).
