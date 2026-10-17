@@ -267,3 +267,50 @@ def test_sowing_days_before_the_sandbox_start_are_not_missed():
     assert reg()["missed"] == []
     farm.next_day(ws, farm.load(ws).state.today, 1)                     # Mon 12 Oct passes unsown
     assert reg()["missed"] == ["2026-10-12"]
+
+
+def _close_with(s, form, buyers):
+    st, c, ref = _state(s)
+    evs = []
+    for f in form:
+        evs += sb.form_events(f, st, c, {}, buyers)
+    st, c, ref = _state(s, [{"seq": 1, "kind": "form", "events": evs}])
+    from app import sim
+    return evs, sb.close_day(st, c, ref["buyers"], ref["households"], sim.plan(st, c, ref["buyers"]))
+
+
+def test_a_one_off_order_is_served_but_not_learned_from():
+    s = setup(start="2026-10-12", beds=[{"line": "regular", "sown_on": "2026-09-01", "seedlings": 1000}],
+              buyers=[{"name": "Caterer B", "type": "business", "line": "regular", "usual_kg_per_week": 5, "weekdays": [1]}])
+    form = [{"kind": "order", "buyer": "b1", "line": "regular", "kg": 9, "day": "2026-10-13", "oneoff": True}]
+    evs, out = _close_with(s, form, {"b1": {"regular"}})
+    assert evs[0]["oneoff"] is True
+    assert not [e for e in out if e["t"] == "actual"]             # unknown day, not 9 kg and not 0 kg
+    served = next(e for e in out if e["t"] == "served")
+    assert served["b2b_ordered"] == 9.0                           # still planned and served
+
+
+def test_a_one_off_household_order_is_left_out_of_the_households_sum():
+    s = setup(start="2026-10-12", beds=[{"line": "regular", "sown_on": "2026-09-01", "seedlings": 1000}],
+              buyers=[{"name": "H1", "type": "household", "line": "regular", "usual_kg_per_week": 7},
+                      {"name": "H2", "type": "household", "line": "regular", "usual_kg_per_week": 7}])
+    form = [{"kind": "order", "buyer": "b1", "line": "regular", "kg": 1, "day": "2026-10-13"},
+            {"kind": "order", "buyer": "b2", "line": "regular", "kg": 5, "day": "2026-10-13", "oneoff": True}]
+    evs, out = _close_with(s, form, {"b1": {"regular"}, "b2": {"regular"}})
+    assert {e["series"]: e["kg"] for e in out if e["t"] == "actual"} == {"hh:regular": 1.0}
+    assert next(e for e in out if e["t"] == "served")["hh_ordered"] == 6.0
+
+
+def test_a_regular_order_replacing_a_one_off_is_learned_again():
+    s = setup(start="2026-10-12",
+              buyers=[{"name": "Caterer B", "type": "business", "line": "regular", "usual_kg_per_week": 5, "weekdays": [1]}])
+    form = [{"kind": "order", "buyer": "b1", "line": "regular", "kg": 9, "day": "2026-10-13", "oneoff": True},
+            {"kind": "order", "buyer": "b1", "line": "regular", "kg": 4, "day": "2026-10-13"}]
+    evs, out = _close_with(s, form, {"b1": {"regular"}})
+    assert "oneoff" not in evs[1]
+    assert {e["series"]: e["kg"] for e in out if e["t"] == "actual"} == {"b2b:b1:regular": 4.0}
+
+
+def test_describe_marks_a_one_off_order():
+    ev = {"t": "order", "day": "2026-10-16", "buyer": "b1", "line": "regular", "kg": 12, "oneoff": True}
+    assert sb.describe(ev, {"b1": "Restaurant A"}, {}).endswith(" · one-off")

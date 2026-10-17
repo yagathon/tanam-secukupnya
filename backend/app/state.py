@@ -41,6 +41,7 @@ class FarmState:
     shape_until: date | None = None
     household_ids: frozenset[str] = frozenset()
     ref_log: list[dict] = field(default_factory=list)
+    oneoff_orders: set[tuple[str, str, str]] = field(default_factory=set)   # served, never learned from
 
     def alive(self, crop: Crop, line: str | None = None) -> list[Batch]:
         """Batches not yet past max_bed_day + 1 (older ones can't serve anything)."""
@@ -101,7 +102,9 @@ def apply(st: FarmState, crop: Crop, ev: dict) -> None:
     elif t == "actual":
         st.history.setdefault(ev["series"], {})[d] = ev["kg"]
     elif t == "order":
-        st.known_orders[ev["day"], ev["buyer"], ev["line"]] = ev["kg"]
+        key = ev["day"], ev["buyer"], ev["line"]
+        st.known_orders[key] = ev["kg"]
+        (st.oneoff_orders.add if ev.get("oneoff") else st.oneoff_orders.discard)(key)
     elif t == "harvest":
         b = st.batches[ev["batch"]]
         if not ev.get("assumed"):                 # sandbox: a planned send harvested for the farmer is not a logged harvest

@@ -361,7 +361,8 @@ def setup_doc(setup: dict) -> dict:
 def close_day(st, crop, buyers: list[dict], households: list[dict], plans) -> list[dict]:
     """Today (t) → tomorrow (t+1) from what was entered: tomorrow's orders are served from the harvest
     logged for it (or, if none, the engine's planned send, harvested oldest-first). A buyer's actual is
-    their order (0 kg included); no order logged is unknown, not 0, so the level doesn't learn from it."""
+    their order (0 kg included); no order logged is unknown, not 0, so the level doesn't learn from it.
+    A one-off order is served but never learned from: no actual for that buyer, left out of the households sum."""
     t = st.today
     d = t + timedelta(days=1)
     iso = d.isoformat()
@@ -392,11 +393,12 @@ def close_day(st, crop, buyers: list[dict], households: list[dict], plans) -> li
             if line not in b["lines"]:
                 continue
             kg = dict(orders).get(b["id"])
-            if kg is not None:
+            if kg is not None and (iso, b["id"], line) not in st.oneoff_orders:
                 evs.append({"t": "actual", "series": engine.b2b_key(b["id"], line), "day": iso, "kg": kg})
         if any(h["line"] == line for h in households):
             evs.append({"t": "actual", "series": engine.hh_key(line), "day": iso,
-                        "kg": round(sum(kg for w, kg in orders if w in hh_ids), 2)})
+                        "kg": round(sum(kg for w, kg in orders
+                                        if w in hh_ids and (iso, w, line) not in st.oneoff_orders), 2)})
     evs.append({"t": "clock", "day": iso})
     return evs
 
@@ -420,7 +422,8 @@ def describe(ev: dict, names: dict[str, str], labels: dict[str, str]) -> str:
     t = ev["t"]
     if t == "order":
         amount = f"{ev['kg']:.1f} kg" if ev["kg"] else "no order"
-        return f"ORDER · {who(ev['buyer'])} · {ev['line']} · {amount} · {_day(ev['day'])}"
+        once = " · one-off" if ev.get("oneoff") else ""
+        return f"ORDER · {who(ev['buyer'])} · {ev['line']} · {amount} · {_day(ev['day'])}{once}"
     if t == "harvest":
         s = f" · sample {ev['big5_g']:.0f} g / {ev['small5_g']:.0f} g" if ev.get("big5_g") else ""
         a = " · assumed (planned send)" if ev.get("assumed") else ""
@@ -496,8 +499,9 @@ def _form_events(raw: dict, st, crop, buyers: dict[str, set[str]]) -> list[dict]
             raise ValueError(f"unknown buyer {raw.get('buyer')!r}")
         if line_of(raw["line"]) not in buyers[raw["buyer"]]:
             raise ValueError(f"this buyer is not set up for the {raw['line']} line; change the buyer in Setup first")
-        return [{"t": "order", "day": d.isoformat(), "buyer": raw["buyer"], "line": raw["line"],
-                 "kg": kg_of(raw["kg"], zero=True)}]                 # 0 = "no order this time", a real zero
+        ev = {"t": "order", "day": d.isoformat(), "buyer": raw["buyer"], "line": raw["line"],
+              "kg": kg_of(raw["kg"], zero=True)}                     # 0 = "no order this time", a real zero
+        return [ev | {"oneoff": True}] if raw.get("oneoff") else [ev]
     if k == "harvest":
         ev = {"t": "harvest", "batch": bed_of(raw.get("batch")), "day": t.isoformat(), "kg": kg_of(raw["kg"], 5000)}
         if raw.get("big5_g") or raw.get("small5_g"):
