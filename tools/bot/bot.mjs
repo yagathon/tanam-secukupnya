@@ -5,6 +5,7 @@
 //   npm run bot -- --reset --days 14            clear the sandbox, load the scenario's setup, type 14 days
 //   npm run bot -- --days 7 --pause 2000        continue from the sandbox's today, 2 s on each new day
 // Options: --ui http://localhost:3100  --api http://localhost:8100  --slow 120 (ms per action)
+//          --channel chrome (the installed Chrome; pass --channel chromium for Playwright's own build)
 import { readFileSync } from "node:fs";
 import { chromium } from "playwright";
 
@@ -33,7 +34,8 @@ if (arg("reset", false)) {
 const byDay = {};
 for (const r of scenario.rows) (byDay[r.date] ??= []).push(r);
 
-const browser = await chromium.launch({ headless: !!arg("headless", false), slowMo: Number(arg("slow", 120)), args: ["--start-maximized"] });
+const CHANNEL = arg("channel", "chrome");
+const browser = await chromium.launch({ channel: CHANNEL === "chromium" ? undefined : CHANNEL, headless: !!arg("headless", false), slowMo: Number(arg("slow", 120)), args: ["--start-maximized"] });
 const page = await browser.newPage({ viewport: null });
 // the page reloads its views after a log or a new day (trail is fetched last); a failed log does not reload
 const reloaded = () => page.waitForResponse((r) => r.url().includes("/sandbox/trail"), { timeout: 60000 }).catch(() => null);
