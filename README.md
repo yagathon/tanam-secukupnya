@@ -69,3 +69,24 @@ the matching form, prefilled.
 sample updates that bed's percentage. Healthy sampled beds also move the reference curve slowly,
 one age node at a time. This is a calibration loop, not reinforcement learning (RL in simulation
 is on the roadmap).
+
+### Demo bot (`tools/bot`)
+
+A visible browser types a six-month scenario into the sandbox through the real UI, one day at a
+time, for demo videos. The rows come from `data/scenario/scenario.json`, made by
+`scripts/scenario.py` (edit `scenario.xlsx`, then `scenario.py export`). It runs on Windows (WSL
+has no browser libraries) and needs Node.js plus Chrome or Edge.
+
+| Command (in `tools\bot`) | What it does |
+|---|---|
+| `demo-prod.cmd` | Against prod: clear the bot's sandbox, load the scenario setup, play 14 days, 2 s per day |
+| `demo-prod.cmd --days 7 --pause 3000` | Against prod: continue from where the last run stopped |
+| `demo.cmd` | Same against the local dev servers; starts the API (:8100) and UI (:3100) in WSL if they are down |
+| Options for `node bot.mjs` | `--ui` · `--api` · `--days` · `--pause` (ms per day) · `--slow` (ms per action) · `--channel chrome\|msedge\|chromium` · `--scenario <path>` · `--reset` · `--headless` |
+
+- Against prod the bot reuses the page's anonymous sign-in token. Its browser profile lives in
+  `tools/bot/profile`, so the bot keeps **its own** sandbox between runs and never touches anyone
+  else's. Delete `profile` for a brand-new visitor.
+- On a laptop without the repo, copy `bot.mjs`, `package.json`, `package-lock.json`,
+  `demo-prod.cmd` and `data/scenario/scenario.json` into one folder (the bot reads a
+  `scenario.json` next to itself first), then run `demo-prod.cmd`. The first run installs Playwright.
