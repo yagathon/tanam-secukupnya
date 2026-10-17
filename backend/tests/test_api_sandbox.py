@@ -362,3 +362,76 @@ def test_reset_today_goes_back_to_yesterdays_close():
     assert _live_entries() == []
     assert client.get(f"{S}/today").json() == morning
     assert client.get(f"{S}/trail").json()["rows"][1]["inputs"] == ["ORDER · Restaurant A · regular · 3.0 kg · Tue 13 Oct"]
+
+
+# --- export / import: the visitor keeps their own log ---
+
+def _two_days():
+    client.put(f"{S}/setup", json=_setup())
+    _order(3, 1)
+    client.post(f"{S}/day/next", json={"from_day": "2026-10-12", "days": 1})
+    client.post(f"{S}/events", json={"form": {"kind": "sow", "line": "regular", "seedlings": 300}, "seq": 3})
+
+
+def test_export_holds_the_setup_and_the_log_in_order():
+    _two_days()
+    ex = client.get(f"{S}/export").json()
+    assert ex["format"] == "tanam-sandbox-log" and ex["version"] == 1
+    assert ex["setup"] == client.get(f"{S}/setup").json()["setup"]
+    assert [d["kind"] for d in ex["log"]] == ["form", "day", "form"]
+    assert ex["log"][0]["events"][0]["t"] == "order" and "id" not in ex["log"][0] and "seq" not in ex["log"][0]
+
+
+def test_export_before_setup_is_409():
+    assert client.get(f"{S}/export").status_code == 409
+
+
+def test_import_replaces_the_sandbox_and_rebuilds_the_same_trail():
+    _two_days()
+    ex, trail = client.get(f"{S}/export").json(), client.get(f"{S}/trail").json()["rows"]
+    client.post(f"{S}/clear", json={"setup": True})
+    r = client.post(f"{S}/import", json=ex)
+    assert r.status_code == 200 and r.json() == {"days": 1, "entries": 3}
+    assert client.get(f"{S}/trail").json()["rows"] == trail
+    assert client.get(f"{S}/today").json()["seq"] == 4
+
+
+def test_import_that_does_not_replay_is_422_and_keeps_the_sandbox():
+    _two_days()
+    ex = client.get(f"{S}/export").json()
+    ex["log"].append({"kind": "form", "events": [{"t": "harvest", "batch": "nope", "day": "2026-10-13", "kg": 1}]})
+    before = client.get(f"{S}/trail").json()["rows"]
+    assert client.post(f"{S}/import", json=ex).status_code == 422
+    assert client.get(f"{S}/trail").json()["rows"] == before
+
+
+def test_import_rejects_another_file_format():
+    assert client.post(f"{S}/import", json={"format": "something", "setup": {}, "log": []}).status_code == 422
+
+
+# --- waste of beds no longer shown ---
+
+def test_beds_sums_up_the_beds_that_left_the_table():
+    client.put(f"{S}/setup", json=_setup(beds=[{"line": "regular", "sown_on": "2026-08-01", "seedlings": 500},
+                                               {"line": "regular", "sown_on": "2026-09-05", "seedlings": 900}]))
+    ln = client.get(f"{S}/beds").json()["lines"][0]
+    assert [b["sown_on"] for b in ln["batches"]] == ["2026-09-05"]
+    past = ln["past"]
+    assert past["beds"] == 1 and past["harvested_plants"] == 0 and past["lost_plants"] == 0
+    assert past["waste_plants"] > 300                       # nothing harvested: all its plants outgrew
+
+
+# --- a harvest bigger than the bed holds ---
+
+def test_harvest_beyond_what_the_bed_holds_warns_and_asks_for_a_sample():
+    client.put(f"{S}/setup", json=_setup())
+    bed = client.get(f"{S}/beds").json()["lines"][0]["batches"][0]
+    ok = client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": bed["id"], "kg": 1}, "seq": 1})
+    assert ok.json()["warnings"] == []
+    r = client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": bed["id"], "kg": 400}, "seq": 2})
+    assert r.status_code == 200
+    (w,) = r.json()["warnings"]
+    assert w.startswith("Bed 1: 400.0 kg is about") and "weigh" in w
+    sampled = client.post(f"{S}/events", json={"form": {"kind": "harvest", "batch": bed["id"], "kg": 400,
+                                                        "big5_g": 120, "small5_g": 80}, "seq": 3})
+    assert sampled.json()["warnings"] == []                 # a sample corrects the size; no need to ask

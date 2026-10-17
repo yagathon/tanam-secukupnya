@@ -11,7 +11,7 @@ import hashlib
 import json
 import os
 import threading
-from datetime import date
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field, ValidationError
@@ -278,10 +278,11 @@ def post_events(req: EventRequest, ws: Store = Depends(workspace)) -> dict:
         farm.check_events(ws, events)
     except (KeyError, ValueError, TypeError) as e:
         raise HTTPException(422, str(e)) from e
+    warnings = farm.harvest_warnings(ws, events, labels)
     if req.seq != v.log_key[1] + 1 or not farm.append(ws, req.seq, {"kind": "form", "events": events}):
         raise HTTPException(409, "the sandbox changed meanwhile; reload and try again")
     names = _names(ws)
-    return {"events": events, "lines": [sandbox.describe(e, names, labels) for e in events]}
+    return {"events": events, "lines": [sandbox.describe(e, names, labels) for e in events], "warnings": warnings}
 
 
 def _todays_entries(ws: Store) -> tuple[list[dict], list[dict]]:
@@ -322,6 +323,47 @@ def reset_today(ws: Store = Depends(workspace)) -> dict:
 @sbx.get("/trail")
 def get_trail(ws: Store = Depends(workspace)) -> dict:
     return trail.build(_sandbox_ws(ws))
+
+
+LOG_FORMAT = "tanam-sandbox-log"
+
+
+@sbx.get("/export")
+def export_log(ws: Store = Depends(workspace)) -> dict:
+    """The setup and every logged entry, in order: a file the visitor keeps and can load back."""
+    ws = _sandbox_ws(ws)
+    if not ws.saved:
+        raise HTTPException(409, "save the setup first; there is nothing to download yet")
+    docs = sorted(ws.list("events"), key=lambda d: d["seq"])
+    return {"format": LOG_FORMAT, "version": 1, "exported_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "setup": ws.setup, "log": [{k: v for k, v in d.items() if k not in ("id", "seq")} for d in docs]}
+
+
+@sbx.post("/import")
+def import_log(body: dict = Body(...), ws: Store = Depends(workspace)) -> dict:
+    """Replace the sandbox with a downloaded log, only if the whole log replays on its setup."""
+    ws = _sandbox_ws(ws)
+    log = body.get("log")
+    if body.get("format") != LOG_FORMAT or body.get("version") != 1 or not isinstance(log, list) or not all(
+            isinstance(d, dict) and d.get("kind") in ("form", "note", "day") and isinstance(d.get("events"), list)
+            for d in log):
+        raise HTTPException(422, "this is not a sandbox log; use a file from Download my log")
+    try:
+        new = sandbox.SetupIn.model_validate(body.get("setup")).model_dump(mode="json")
+    except ValidationError as e:
+        raise HTTPException(422, "; ".join(err["msg"] for err in e.errors())) from e
+    docs = [{**{k: v for k, v in d.items() if k not in ("id", "seq")}, "id": f"e{i:08d}", "seq": i}
+            for i, d in enumerate(log, 1)]
+    nws = sandbox.SandboxStore(ws.base, new)
+    try:
+        farm.replay({"batches": nws.list("batches"), "history": nws.list("history")}, nws.meta(), farm.crop(nws), docs)
+    except (KeyError, ValueError, TypeError) as e:
+        raise HTTPException(422, f"the log does not replay on its setup ({e}); nothing was changed") from e
+    ws.reset(sandbox.SANDBOX)
+    ws.base.put("sandbox_setup", sandbox.setup_doc(new))
+    for d in docs:
+        ws.add("events", d)
+    return {"days": sum(d["kind"] == "day" for d in docs), "entries": len(docs)}
 
 
 @sbx.get("/example")

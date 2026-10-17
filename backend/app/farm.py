@@ -24,6 +24,7 @@ from app.production import (
     avg_g,
     bed_day,
     in_bed_plants,
+    kg_per_plant,
     project,
     spread,
     take_oldest,
@@ -214,10 +215,16 @@ def beds(ws: Store) -> dict:
                 "available_tomorrow_kg": round(available_kg(c, b, tom), 2),
                 "waste_plants": round(waste_plants(c, b, st.today)),
             })
+        shown = {b.id for b in st.alive(c, lp.line)}
+        gone = [b for b in st.batches.values() if b.line == lp.line and b.id not in shown]
+        # beds past their window leave the table; their totals stay visible here
+        past = {"beds": len(gone), "harvested_plants": round(sum(b.harvested_plants for b in gone)),
+                "lost_plants": round(sum(b.lost_plants for b in gone)),
+                "waste_plants": round(sum(waste_plants(c, b, st.today) for b in gone))}
         proj = project(c, lp.line, st.alive(c, lp.line), lp.needs.protected, tom, tom + timedelta(days=CHART_DAYS - 1))
         chart = [{"day": p.day.isoformat(), "available_kg": round(p.available_kg, 2), "need_kg": round(p.need_kg, 2),
                   "short_kg": round(p.short_kg, 2)} for p in proj]
-        lines.append({"line": lp.line, "min_g": ln.min_g, "max_g": ln.max_g, "stretch_g": ln.stretch_g, "batches": rows, "chart": chart})
+        lines.append({"line": lp.line, "min_g": ln.min_g, "max_g": ln.max_g, "stretch_g": ln.stretch_g, "batches": rows, "past": past, "chart": chart})
     return {"today": st.today.isoformat(), "lines": lines}
 
 
@@ -318,6 +325,24 @@ def note_inputs(ws: Store) -> dict:
             "next_sow": {ln: engine.next_sow_day(st.today, st.last_sown.get(ln) == st.today
                                                  or (ln, st.today.isoformat()) in st.postponed, c.sow_weekdays) for ln in lines},
             "seq": v.log_key[1] + 1}
+
+
+def harvest_warnings(ws: Store, events: list[dict], labels: dict[str, str]) -> list[str]:
+    """A harvest of more plants than the model thinks a bed still holds: its size estimate is off (plants
+    heavier than the curve). Logged anyway; the farmer is asked for a sample so the size gets corrected."""
+    st = load(ws).state
+    c, out = current_crop(st, crop(ws)), []
+    for ev in events:
+        if ev["t"] != "harvest" or ev.get("big5_g"):
+            continue
+        b = st.batches[ev["batch"]]
+        kpp, left = kg_per_plant(c, b, st.today), in_bed_plants(c, b, st.today)
+        plants = ev["kg"] / kpp
+        if plants > left + 0.5:
+            out.append(f"{labels.get(b.id, b.id)}: {ev['kg']:.1f} kg is about {plants:.0f} plants at ~{kpp * 1000:.0f} g "
+                       f"a plant, but only ~{left:.0f} are left by the model. Next harvest, weigh the 5 biggest and "
+                       "5 smallest plants so this bed's size is corrected.")
+    return out
 
 
 def check_events(ws: Store, events: list[dict]) -> None:

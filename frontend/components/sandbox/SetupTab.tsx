@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import CurveChart from "@/components/sandbox/CurveChart";
 import PatternEditor, { MiniBars } from "@/components/sandbox/PatternEditor";
@@ -8,6 +8,7 @@ import YearChart from "@/components/sandbox/YearChart";
 import SheetBox from "@/components/sandbox/SheetBox";
 import type { Api } from "@/lib/api";
 import { friendly } from "@/lib/format";
+import { logFileName, readLogFile } from "@/lib/log";
 import { evenWeek } from "@/lib/pattern";
 import { checkSetup, fromPct, toPct } from "@/lib/setup";
 import { bedsFromSheet, buyersFromSheet, curveFromSheet, toSheet, WEEKDAYS } from "@/lib/sheet";
@@ -51,6 +52,7 @@ export default function SetupTab({ doc, data, api, reload }: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [weekOpen, setWeekOpen] = useState<number | null>(null);
+  const logInput = useRef<HTMLInputElement>(null);
   useEffect(() => setS(doc.setup), [doc.setup]);
 
   const crop = (patch: Partial<SetupCrop>) => setS({ ...s, crop: { ...s.crop, ...patch } });
@@ -101,6 +103,41 @@ export default function SetupTab({ doc, data, api, reload }: {
     setBusy(true);
     try {
       await api.event({ kind: "reference_reset" }, data.today.seq);
+      await reload();
+    } catch (e) {
+      setError(friendly(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const downloadLog = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const log = await api.exportLog();
+      const url = URL.createObjectURL(new Blob([JSON.stringify(log, null, 1)], { type: "application/json" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = logFileName(doc.setup.start, data?.today.today ?? doc.setup.start);
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(friendly(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const loadLog = async (file: File | undefined) => {
+    if (!file) return;
+    setError(null);
+    const log = readLogFile(await file.text());
+    if ("error" in log) return setError(log.error);
+    if (!window.confirm("Load this log? It replaces your sandbox: its setup and every logged day.")) return;
+    setBusy(true);
+    try {
+      await api.importLog(log);
       await reload();
     } catch (e) {
       setError(friendly(e));
@@ -310,6 +347,14 @@ export default function SetupTab({ doc, data, api, reload }: {
           {doc.saved && <button className="ghost" disabled={busy} onClick={resetSetup}>Reset setup</button>}
           <span className="small muted">Example farm: 3 businesses, 3 households and a bed per past sowing day, ready to save.
             Reset setup: back to a blank sandbox.</span>
+        </div>
+        <div className="row wrap">
+          {doc.saved && <button className="ghost" disabled={busy} onClick={downloadLog}>Download my log</button>}
+          <button className="ghost" disabled={busy} onClick={() => logInput.current?.click()}>Load my log</button>
+          <input ref={logInput} type="file" accept="application/json,.json" hidden
+            onChange={(e) => { void loadLog(e.target.files?.[0]); e.target.value = ""; }} />
+          <span className="small muted">Your setup and every logged day in one file: keep it, and load it back after a reset
+            or on another device.</span>
         </div>
       </div>
     </div>

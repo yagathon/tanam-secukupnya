@@ -58,7 +58,12 @@ export interface BatchRow {
   ready_from: string; until: string; available_tomorrow_kg: number; waste_plants: number;
 }
 export interface ChartDay { day: string; available_kg: number; need_kg: number; short_kg: number }
-export interface BedsLine { line: LineId; min_g: number; max_g: number; stretch_g?: number | null; batches: BatchRow[]; chart: ChartDay[] }
+export interface PastBeds { beds: number; harvested_plants: number; lost_plants: number; waste_plants: number }
+export interface BedsLine {
+  line: LineId; min_g: number; max_g: number; stretch_g?: number | null; batches: BatchRow[]; past?: PastBeds; chart: ChartDay[];
+}
+/** What Download my log saves and Load my log takes back. */
+export interface SandboxLog { format: "tanam-sandbox-log"; version: number; exported_at?: string; setup: unknown; log: unknown[] }
 export interface Beds { today: string; lines: BedsLine[] }
 
 export interface DayKg { day: string; kg: number }

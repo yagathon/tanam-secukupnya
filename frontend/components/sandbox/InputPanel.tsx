@@ -67,6 +67,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
   const [sender, setSender] = useState("farmer");
   const [noteMsg, setNoteMsg] = useState<string | null>(null);
   const [undoError, setUndoError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
 
   const pick = (k: Kind, f?: Form) => { setKind(k); setForm(f ?? blank(k)); setError(null); };
   const top = useRef<HTMLDivElement>(null);
@@ -93,8 +94,9 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
   const submit = async () => {
     setBusy("form");
     setError(null);
+    setWarnings([]);
     try {
-      await api.event({ kind, ...form }, today.seq);
+      setWarnings((await api.event({ kind, ...form }, today.seq)).warnings ?? []);
       setForm(blank(kind));
       await reload();
     } catch (e) {
@@ -225,6 +227,7 @@ export default function InputPanel({ data, reload, api, prefill }: TabProps & { 
         {kind === "harvest" && <span className="small muted">Not logged by day&apos;s end? The planned send is assumed harvested.</span>}
       </div>
       {error && <p className="small bad">{error}</p>}
+      {warnings.map((w) => <p key={w} className="small warn">{w}</p>)}
       {(data.logged?.length ?? 0) > 0 && <div className="card toast small">
         <div className="row wrap">
           <strong>Logged today</strong>
