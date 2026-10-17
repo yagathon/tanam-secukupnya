@@ -144,5 +144,10 @@ export interface Impact {
   habit: { seedlings: number; weekday: number };
   rows: { before: ImpactRow; tanam: ImpactRow; habit: ImpactRow };
   delivery: ImpactDelivery;
-  series: { day: string; tanam_waste: number; habit_waste: number }[];
+  beds: ImpactBed[];
+}
+/** One bed as one bar, in plants: closed beds hold waste (sent to the middleman), open ones are still growing. */
+export interface ImpactBed {
+  id: string; label: string; line: string; sown_on: string; group: "before" | "tanam" | "habit"; seedlings: number;
+  harvested: number; lost: number; waste: number; growing: number; closed_on: string | null;
 }

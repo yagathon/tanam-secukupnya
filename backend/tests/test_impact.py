@@ -67,12 +67,7 @@ def test_oversowing_habit_wastes_more_than_a_sowing_sized_to_demand():
     _days(45)
     r = client.get(f"{S}/impact").json()
     assert r["rows"]["habit"]["waste_plants"] > r["rows"]["tanam"]["waste_plants"]
-    last = r["series"][-1]
-    assert set(last) == {"day", "tanam_waste", "habit_waste"}
-    assert last["habit_waste"] > last["tanam_waste"]
-    assert len(r["series"]) == 46                                 # start day + 45 closed days
-    assert all(a["habit_waste"] <= b["habit_waste"] for a, b in zip(r["series"], r["series"][1:]))
-
+    assert sum(b["waste"] for b in r["beds"] if b["group"] == "habit") == r["rows"]["habit"]["waste_plants"]
 
 def test_a_logged_loss_hits_the_habit_bed_of_the_same_age():
     client.put(f"{S}/setup", json=_setup())
@@ -83,3 +78,36 @@ def test_a_logged_loss_hits_the_habit_bed_of_the_same_age():
     rows = client.get(f"{S}/impact").json()["rows"]
     assert rows["tanam"]["lost_plants"] > 0
     assert rows["habit"]["lost_plants"] > 0
+
+
+def _beds(group):
+    return [b for b in client.get(f"{S}/impact").json()["beds"] if b["group"] == group]
+
+
+def test_every_bed_is_one_bar_of_harvested_lost_wasted_and_still_growing():
+    client.put(f"{S}/setup", json=_setup())
+    _form({"kind": "sow", "line": "regular", "seedlings": 300})
+    _days(3)
+    [bed] = _beds("tanam")
+    assert set(bed) == {"id", "label", "line", "sown_on", "group", "seedlings", "harvested", "lost", "waste",
+                        "growing", "closed_on"}
+    assert bed["waste"] == 0 and bed["closed_on"] is None and bed["growing"] == 270     # 300 × survival 0.9
+    assert {b["group"] for b in client.get(f"{S}/impact").json()["beds"]} == {"before", "tanam", "habit"}
+
+
+def test_a_bed_past_selling_size_sends_all_it_still_holds_to_waste():
+    client.put(f"{S}/setup", json=_setup())
+    _days(40)
+    [bed] = _beds("before")
+    assert bed["closed_on"] is not None and bed["growing"] == 0
+    assert bed["waste"] > 0
+    assert bed["waste"] == pytest.approx(900 * 0.9 - bed["harvested"] - bed["lost"], abs=1)
+
+
+def test_a_bed_cut_empty_before_it_outgrows_wastes_nothing():
+    client.put(f"{S}/setup", json=_setup())
+    bed = client.get(f"{S}/beds").json()["lines"][0]["batches"][0]
+    _form({"kind": "harvest", "batch": bed["id"], "kg": 5, "empty": True})
+    _days(40)
+    [bed] = _beds("before")
+    assert bed["waste"] == 0 and bed["growing"] == 0
