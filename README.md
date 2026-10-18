@@ -50,6 +50,11 @@ A blank farm on the same engine: you set the crop and the buyers, then enter eac
 and watch the decisions move. Nothing is hidden: you are the world. **Clear** wipes the logged days
 and keeps the setup. The **Trail** tab shows each day's numbers, with what changed highlighted.
 
+To skip the typing, load a prefilled farm: download
+[`sandbox-logs/example-farm-2026-10-18_to_2026-11-25.json`](sandbox-logs/example-farm-2026-10-18_to_2026-11-25.json)
+(a baby-pakcoy farm with a restaurant and retail buyers, 18 Oct – 25 Nov) and press **Load my log**
+in the sandbox's Setup tab.
+
 Setup tables accept a paste from Google Sheets (tab-separated) or CSV (`,` or `;`). A header
 row is optional, and `12,5` and `12.5` both read as 12.5:
 
