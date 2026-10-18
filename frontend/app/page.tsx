@@ -30,8 +30,8 @@ interface Tab {
   view: (p: TabProps) => ReactNode;
 }
 
-/** The demo's trail, refetched whenever a day closes or a note is accepted. */
-function DemoTrail({ data, api }: TabProps) {
+/** The demo's trail rows, refetched whenever a day closes. */
+function useTrail({ data, api }: TabProps) {
   const [rows, setRows] = useState<TrailRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const key = `${data.today.today}/${data.today.seq}`;
@@ -40,14 +40,38 @@ function DemoTrail({ data, api }: TabProps) {
     api.trail().then((t) => live && setRows(t.rows)).catch((e) => live && setError(friendly(e)));
     return () => { live = false; };
   }, [api, key]);
+  return { rows, error };
+}
+
+function DemoTrail(p: TabProps) {
+  const { rows, error } = useTrail(p);
   if (error) return <div className="card error">{error}</div>;
   if (!rows) return <div className="card muted">Replaying the days…</div>;
   return <TrailTab rows={rows} emptyHint />;
 }
 
+/** The demo is read-only: instead of an input box, Today shows what the simulated farm logged on the last day. */
+function DemoLog(p: TabProps) {
+  const { rows, error } = useTrail(p);
+  const last = rows?.find((r) => !r.live);
+  return (
+    <div className="card">
+      <h2>{last ? `Logged on ${shortDate(last.day)}` : "Logged"}</h2>
+      {error && <p className="small bad">{error}</p>}
+      {!error && !rows && <p className="muted small">Replaying the days…</p>}
+      {rows && !last && <p className="empty">Nothing logged yet: press <strong>Next day →</strong> and the farm logs its orders, harvests and sowing.</p>}
+      {last && (last.inputs.length
+        ? <ul className="small">{last.inputs.map((x, i) => <li key={i}>{x}</li>)}</ul>
+        : <p className="empty">Nothing was logged that day.</p>)}
+      {last && <p className="small muted">The demo farm logs itself; it is read-only. <strong>Trail</strong> keeps every earlier day,
+        and the <strong>sandbox</strong> is where you log your own.</p>}
+    </div>
+  );
+}
+
 const VIEW: Record<(typeof TAB_ORDER)[number], { hint: string; view: (p: TabProps) => ReactNode }> = {
   setup: { hint: "The demo farm as it started: crop, buyers, households and beds (read-only)", view: (p) => <DemoSetupTab api={p.api} /> },
-  today: { hint: "The day in one line, and notes from the field", view: (p) => <TodayTab {...p} /> },
+  today: { hint: "The day in one line, and what the farm logged", view: (p) => <TodayTab {...p} input={<DemoLog {...p} />} /> },
   beds: { hint: SHARED_HINT.beds, view: (p) => <BedsTab {...p} /> },
   tomorrow: { hint: SHARED_HINT.tomorrow, view: (p) => <TomorrowTab {...p} /> },
   sow: { hint: SHARED_HINT.sow, view: (p) => <SowTab {...p} /> },

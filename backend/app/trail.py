@@ -26,6 +26,7 @@ class _Cache:
 
 
 _cache: dict[str, _Cache] = {}
+_LOGGED = ("order", "harvest", "sow", "postpone", "loss")   # demo day-doc events a farmer would have entered
 
 
 def _row(st, crop, buyers, inputs, ref, live) -> dict:
@@ -44,6 +45,7 @@ def build(ws: Store) -> dict:
     c = farm.crop(ws)
     buyers = ws.list("buyers")
     names = {b["id"]: b["alias"] for b in buyers} | {h["id"]: h["alias"] for h in ws.list("households")}
+    demo = not meta.get("sandbox")       # the demo farm logs only by its simulated day docs
     hit = _cache.get(ws.uid)
     prints = [farm.doc_print(d) for d in docs]
     if hit is None or hit.rev != meta.get("rev") or prints[:len(hit.prints)] != hit.prints:
@@ -56,7 +58,7 @@ def build(ws: Store) -> dict:
         if hit.morning is None:
             hit.morning = _row(st, current_crop(st, c), buyers, [], [], False)
         if doc["kind"] == "day":
-            row = {**hit.morning, "inputs": hit.pending, "ref": [_ref_line(e) for e in st.ref_log[hit.ref_seen:]]}
+            row = {**hit.morning, "inputs": list(hit.pending), "ref": [_ref_line(e) for e in st.ref_log[hit.ref_seen:]]}
             hit.ref_seen, hit.pending, hit.entries, hit.morning = len(st.ref_log), [], [], None
         else:
             hit.entries.append({"id": doc["id"], "lines": []})
@@ -64,6 +66,8 @@ def build(ws: Store) -> dict:
             if doc["kind"] != "day":
                 hit.pending.append(sandbox.describe(ev, names, labels))
                 hit.entries[-1]["lines"].append(hit.pending[-1])
+            elif demo and ev["t"] in _LOGGED:
+                row["inputs"].append(sandbox.describe(ev, names, labels))
             if doc["kind"] == "day" and ev["t"] == "served":
                 row["lines"][ev["line"]]["short"] = round(ev["b2b_ordered"] + ev["hh_ordered"]
                                                           - ev["b2b_served"] - ev["hh_served"], 2)

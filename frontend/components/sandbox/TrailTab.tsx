@@ -31,7 +31,7 @@ export default function TrailTab({ rows, emptyHint }: { rows: TrailRow[]; emptyH
   return (
     <div className="card">
       <p className="small muted">
-        Each closed day keeps what the engine said that morning, before the dayEach closed day freezes what the engine said that day. Highlightedapos;s entries; today shows the plan as it stands now. Highlighted cells moved since the day before. kg throughout.
+        Each closed day keeps what the engine said that morning, before the day&apos;s entries; today shows the plan as it stands now. Highlighted cells moved since the day before. kg throughout.
       </p>
       <SheetBox copy={() => toSheet([["day", ...header], ...table.map(({ r, c }) => [r.day, ...c.map((x) => x.replace(/\n/g, " | "))])])} />
       <div className="scroll">

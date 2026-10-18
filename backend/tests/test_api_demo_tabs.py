@@ -61,3 +61,12 @@ def test_trail_has_one_row_per_closed_day_newest_first():
     rows = client.get("/api/trail").json()["rows"]
     assert len(rows) == 4 and rows[0]["live"] is True
     assert [r["day"] for r in rows[1:]] == ["2026-10-14", "2026-10-13", DAY0]
+
+
+def test_trail_inputs_show_what_the_demo_farm_logged_each_day():
+    _days(3)                                                          # Mon 12, Tue 13, Wed 14
+    closed = client.get("/api/trail").json()["rows"][1:]
+    assert all(any(x.startswith("HARVEST ·") for x in r["inputs"]) for r in closed)
+    assert all(any(x.startswith("ORDER ·") for x in r["inputs"]) for r in closed)
+    monday = closed[-1]
+    assert any(x.startswith("SOW ·") for x in monday["inputs"])
