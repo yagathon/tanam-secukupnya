@@ -1,0 +1,3407 @@
+{
+ "format": "tanam-sandbox-log",
+ "version": 1,
+ "exported_at": "2026-10-17T07:06:08+00:00",
+ "setup": {
+  "beds": [
+   {
+    "id": "baby-2026-10-01-3",
+    "line": "baby",
+    "seedlings": 1000,
+    "sown_on": "2026-10-01"
+   },
+   {
+    "id": "baby-2026-09-24-2",
+    "line": "baby",
+    "seedlings": 1000,
+    "sown_on": "2026-09-24"
+   },
+   {
+    "id": "baby-2026-09-17-1",
+    "line": "baby",
+    "seedlings": 1000,
+    "sown_on": "2026-09-17"
+   },
+   {
+    "id": "baby-2026-10-15-4",
+    "line": "baby",
+    "seedlings": 1000,
+    "sown_on": "2026-10-08"
+   },
+   {
+    "id": "baby-2026-10-15-5",
+    "line": "baby",
+    "seedlings": 1000,
+    "sown_on": "2026-10-15"
+   }
+  ],
+  "buyers": [
+   {
+    "id": "b1",
+    "line": "baby",
+    "min_kg": 0,
+    "name": "Resto WKS",
+    "type": "business",
+    "usual_kg_per_week": 35,
+    "week_pct": [
+     14.3,
+     12.3,
+     11.3,
+     10.3,
+     16.3,
+     18.3,
+     17.2
+    ],
+    "weekdays": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   },
+   {
+    "id": "b2",
+    "line": "baby",
+    "min_kg": 0,
+    "name": "Retails",
+    "type": "household",
+    "usual_kg_per_week": 5,
+    "week_pct": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     40,
+     60
+    ],
+    "weekdays": [
+     5,
+     6
+    ]
+   }
+  ],
+  "crop": {
+   "germination": 0.85,
+   "grams_per_teaspoon": 3,
+   "growth_curve": [
+    [
+     0,
+     1
+    ],
+    [
+     7,
+     15
+    ],
+    [
+     14,
+     50
+    ],
+    [
+     18,
+     70
+    ],
+    [
+     21,
+     100
+    ],
+    [
+     24,
+     160
+    ],
+    [
+     28,
+     200
+    ],
+    [
+     35,
+     250
+    ]
+   ],
+   "lines": [
+    {
+     "id": "baby",
+     "max_g": 70,
+     "min_g": 50,
+     "stretch_g": 100
+    }
+   ],
+   "max_bed_day": 30,
+   "max_seedlings_per_sowing": 3000,
+   "name": "Pakcoy",
+   "nursery_days": 15,
+   "seeds_per_gram": 400,
+   "sow_weekdays": [
+    0,
+    3
+   ],
+   "spread_ratio": 0.45,
+   "survival": 0.9
+  },
+  "learn_reference": true,
+  "month_pct": [
+   30,
+   26,
+   24,
+   20
+  ],
+  "start": "2026-10-17",
+  "year_index": [
+   120,
+   100,
+   100,
+   100,
+   100,
+   100,
+   80,
+   70,
+   100,
+   100,
+   100,
+   120
+  ]
+ },
+ "log": [
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-18",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-17",
+     "kg": 7.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-18",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-18",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-18",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-18"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-19",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-18",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-19",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-19",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-19",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-19"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-19",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-20",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-19",
+     "kg": 1
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-10-19",
+     "seedlings": 200
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-20",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-20",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-20",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-20"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-21",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-20",
+     "kg": 4.2
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-21",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-21",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-21",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-21"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-22",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-21",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-22",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-22",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-22",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-22"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-23",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-22",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-10-22",
+     "seedlings": 150
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-23",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-23",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-23",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-23"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-24",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-23",
+     "kg": 6.6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-24",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-24",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-24",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-24"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-25",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-17-1",
+     "day": "2026-10-24",
+     "kg": 7.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-25",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-25",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-25",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-25"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-26",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-25",
+     "kg": 6.6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-26",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-26",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-26",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-26"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-27",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-26",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-10-26",
+     "seedlings": 250
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-27",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-27",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-27",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-27"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-28",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-27",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-28",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-28",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-28",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-28"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-29",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-28",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "loss",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-28",
+     "pct": 10,
+     "cause": "hujan lebat"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "loss",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-10-28",
+     "pct": 10,
+     "cause": "hujan lebat"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "loss",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-10-28",
+     "pct": 10,
+     "cause": "hujan lebat"
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-29",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-29",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-29",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-29"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-30",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-29",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-10-29",
+     "seedlings": 400
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-30",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-30",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-30",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-30"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-10-31",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-30",
+     "kg": 6.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-10-31",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-10-31",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-10-31",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-10-31"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-01",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-09-24-2",
+     "day": "2026-10-31",
+     "kg": 8
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-01",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-01",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-01",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-01"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-02",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-01",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-02",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-02",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-02",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-02"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-02",
+     "seedlings": 350
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-03",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-02",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-03",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-03",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-03",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-03"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-04",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-03",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-04",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-04",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-04",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-04"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-05",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-04",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-05",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-05",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-05",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-05"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-05",
+     "seedlings": 300
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-06",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-05",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-06",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-06",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-06",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-06"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-07",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-07",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 1
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-06",
+     "kg": 8.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-07",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 1,
+     "hh_served": 1,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-07",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-07",
+     "kg": 1
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-07"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-08",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-08",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-01-3",
+     "day": "2026-11-07",
+     "kg": 11
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-08",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 4,
+     "hh_served": 4,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-08",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-08",
+     "kg": 4
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-08"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-08",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-09",
+     "line": "baby",
+     "b2b_ordered": 0,
+     "b2b_served": 0,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-09",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-09"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-09",
+     "seedlings": 350
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-09",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-10",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-10",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-10",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-10",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-10"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-11",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-10",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-11",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-11",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-11",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-11"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-12",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-11",
+     "kg": 4.6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-12",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-12",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-12",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-12"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-13",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-12",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "postpone",
+     "line": "baby",
+     "day": "2026-11-12",
+     "reason": "ada acara seharian besok baru semai"
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-13",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-13",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-13",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-13"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-14",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-13",
+     "kg": 8
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-13",
+     "seedlings": 350
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-14",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-14",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-14",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-14"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-15",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-15",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 3
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-4",
+     "day": "2026-11-14",
+     "kg": 11
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-15",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 3,
+     "hh_served": 3,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-15",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-15",
+     "kg": 3
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-16",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-15",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-16",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-16",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-16",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-16"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-17",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-16",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-16",
+     "seedlings": 300
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-17",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-17",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-17",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-17"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-18",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-17",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-18",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-18",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-18",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-18"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-18",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-19",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-19",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-19",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-19",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-19"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-19",
+     "seedlings": 350
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-20",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-19",
+     "kg": 6.7
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-20",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-20",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-20",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-20"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-21",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-21",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 2
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-20",
+     "kg": 10
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-21",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 2,
+     "hh_served": 2,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-21",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-21",
+     "kg": 2
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-21"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-22",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-15-5",
+     "day": "2026-11-21",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-22",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-22",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-22",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-22"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-23",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-19",
+     "day": "2026-11-22",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-23",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-23",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-23",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-23",
+     "seedlings": 200
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-24",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-19",
+     "day": "2026-11-23",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-24",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-24",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-24",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-24"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-25",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-19",
+     "day": "2026-11-24",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-25",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-25",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-25",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-25"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-26",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-19",
+     "day": "2026-11-25",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-26",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-26",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-26",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-26"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-27",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-22",
+     "day": "2026-11-26",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-26",
+     "seedlings": 850
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-27",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-27",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-27",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-27"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-28",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-22",
+     "day": "2026-11-27",
+     "kg": 6.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-28",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-28",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-28",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-28"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-29",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-29",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 2
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-26",
+     "day": "2026-11-28",
+     "kg": 8.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-29",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 2,
+     "hh_served": 2,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-29",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-29",
+     "kg": 2
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-29"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-11-30",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-26",
+     "day": "2026-11-29",
+     "kg": 5.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-11-30",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-11-30",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-11-30",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-11-30"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-01",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 4
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-26",
+     "day": "2026-11-30",
+     "kg": 4.5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-11-30",
+     "seedlings": 450
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-01",
+     "line": "baby",
+     "b2b_ordered": 4,
+     "b2b_served": 4,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-01",
+     "kg": 4
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-01",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-01"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-02",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-29",
+     "day": "2026-12-01",
+     "kg": 6.7
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-02",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-02",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-02",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-02"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-03",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-29",
+     "day": "2026-12-02",
+     "kg": 6.1
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-03",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-03",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-03",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-03"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-12-03",
+     "seedlings": 250
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-04",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-29",
+     "day": "2026-12-03",
+     "kg": 7.5
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-04",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-04",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-04",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-04"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-05",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 7
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-05",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-10-29",
+     "day": "2026-12-04",
+     "kg": 10
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-02",
+     "day": "2026-12-04",
+     "kg": 2
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-05",
+     "line": "baby",
+     "b2b_ordered": 7,
+     "b2b_served": 7,
+     "hh_ordered": 5,
+     "hh_served": 5,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-05",
+     "kg": 7
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-05",
+     "kg": 5
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-05"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-06",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-06",
+     "buyer": "b2",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-02",
+     "day": "2026-12-05",
+     "kg": 12
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-06",
+     "line": "baby",
+     "b2b_ordered": 6,
+     "b2b_served": 6,
+     "hh_ordered": 5,
+     "hh_served": 5,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-06",
+     "kg": 6
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-06",
+     "kg": 5
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-06"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-07",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-02",
+     "day": "2026-12-06",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-07",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-07",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-07",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-07"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-08",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "sow",
+     "line": "baby",
+     "day": "2026-12-07",
+     "seedlings": 300
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-02",
+     "day": "2026-12-07",
+     "kg": 3,
+     "seen_pct": 0
+    },
+    {
+     "t": "loss",
+     "batch": "baby-2026-11-02",
+     "day": "2026-12-07",
+     "pct": 100,
+     "cause": "seen left after harvest",
+     "recount": true,
+     "left_pct": 0,
+     "plants": 2
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-05",
+     "day": "2026-12-07",
+     "kg": 3
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-08",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-08",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-08",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-08"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-09",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-05",
+     "day": "2026-12-08",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-09",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-09",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-09",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-09"
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "order",
+     "day": "2026-12-10",
+     "buyer": "b1",
+     "line": "baby",
+     "kg": 5
+    }
+   ]
+  },
+  {
+   "kind": "form",
+   "events": [
+    {
+     "t": "harvest",
+     "batch": "baby-2026-11-05",
+     "day": "2026-12-09",
+     "kg": 6
+    }
+   ]
+  },
+  {
+   "kind": "day",
+   "events": [
+    {
+     "t": "served",
+     "day": "2026-12-10",
+     "line": "baby",
+     "b2b_ordered": 5,
+     "b2b_served": 5,
+     "hh_ordered": 0,
+     "hh_served": 0,
+     "waste_kg": 0
+    },
+    {
+     "t": "actual",
+     "series": "b2b:b1:baby",
+     "day": "2026-12-10",
+     "kg": 5
+    },
+    {
+     "t": "actual",
+     "series": "hh:baby",
+     "day": "2026-12-10",
+     "kg": 0
+    },
+    {
+     "t": "clock",
+     "day": "2026-12-10"
+    }
+   ]
+  }
+ ]
+}
