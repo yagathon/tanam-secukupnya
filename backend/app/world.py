@@ -36,6 +36,20 @@ BUYERS = [
     {"id": "warung_e", "alias": "Warung E", "segment": "warung", "weekdays": [0, 2, 4],
      "lines": {"regular": {"kg": 4.0, "min_kg": 0.0}}, "peak": {}, "trend_per_week": 0.0},
 ]
+# Simulation-report scenarios: the normal world with one thing changed. Demand before DAY0 is never touched,
+# so every strategy starts from the same warm-up farm.
+SCENARIOS = {
+    "normal": {"name": "Normal", "blurb": "The base world: steady buyers, two rainy sowing days, one caterpillar attack."},
+    "wet": {"name": "Wet season", "blurb": "Rain stops six more sowings and pests take 15-30% of a bed five more times (Nov-Feb)."},
+    "growth": {"name": "Demand grows", "blurb": "Restaurant B grows +4% a week for ten weeks (+40%), then stays there."},
+    "volatile": {"name": "Volatile orders", "blurb": "Orders swing twice as much, and about one in twelve is a 2.5x party order."},
+}
+WET_RAIN = (24, 38, 52, 87, 108, 129)                      # days after DAY0; extra rain on sowing days (Mon/Thu)
+WET_PESTS = ((31, "regular", 20.0, "aphids"), (45, "baby", 15.0, "leaf rot after rain"), (66, "regular", 30.0, "caterpillars"),
+             (94, "regular", 25.0, "leaf rot after rain"), (115, "baby", 20.0, "aphids"))
+GROWTH_BUYER, GROWTH_PER_WEEK, GROWTH_CAP = "resto_b", 0.04, 1.4
+VOLATILE_SIGMA, PARTY_P, PARTY_X = 0.2, 1 / 12, 2.5
+
 HH_PAIRS = ([0, 3], [1, 4], [2, 5])  # each household orders on two fixed weekdays
 
 
@@ -55,6 +69,9 @@ class World:
     households: tuple[dict, ...]
     b2b: dict      # (iso day, buyer, line) → kg ordered
     hh: dict       # iso day → [(household, line, kg)]
+    scenario: str = "normal"
+    rain_days: tuple[date, ...] = RAIN_DAYS
+    pests: tuple[tuple[date, str, float, str], ...] = (PEST,)   # day, line, % of the oldest bed, cause
 
     def series_actual(self, key: str, d: date) -> float | None:
         kind, *rest = key.split(":")
@@ -73,8 +90,11 @@ def market(d: date) -> float:
 
 
 @lru_cache(maxsize=8)
-def build(seed: int = SEED) -> World:
+def build(seed: int = SEED, scenario: str = "normal") -> World:
+    if scenario not in SCENARIOS:
+        raise ValueError(f"unknown scenario {scenario!r}")
     rng = random.Random(seed)
+    party = random.Random(f"{seed}:party")     # a separate stream, so the normal draws stay the same
     b2b, hh = {}, {}
     hhs = households()
     for i in range(WARMUP_DAYS + FUTURE_DAYS + 3):
@@ -85,10 +105,21 @@ def build(seed: int = SEED) -> World:
                 continue
             for line, spec in b["lines"].items():
                 mean = spec["kg"] * b["peak"].get(d.weekday(), 1.0) * (1 + b["trend_per_week"]) ** weeks * market(d)
-                b2b[d.isoformat(), b["id"], line] = round(max(0.0, mean * rng.gauss(1, 0.1)), 1)
+                noise = rng.gauss(1, 0.1)
+                if d > DAY0 and scenario == "growth" and b["id"] == GROWTH_BUYER:
+                    mean *= min(GROWTH_CAP, 1 + GROWTH_PER_WEEK * weeks)
+                if d > DAY0 and scenario == "volatile":
+                    noise = 1 + (noise - 1) * VOLATILE_SIGMA / 0.1
+                    if party.random() < PARTY_P:
+                        noise *= PARTY_X
+                b2b[d.isoformat(), b["id"], line] = round(max(0.0, mean * noise), 1)
         rows = []
         for h in hhs:
             if d.weekday() in h["weekdays"] and rng.random() > 0.1:
                 rows.append((h["id"], h["line"], round(h["kg"] * market(d) * rng.uniform(0.8, 1.2), 2)))
         hh[d.isoformat()] = rows
-    return World(seed, tuple(BUYERS), tuple(hhs), b2b, hh)
+    rain, pests = RAIN_DAYS, (PEST,)
+    if scenario == "wet":
+        rain = tuple(sorted(RAIN_DAYS + tuple(DAY0 + timedelta(days=n) for n in WET_RAIN)))
+        pests = tuple(sorted(pests + tuple((DAY0 + timedelta(days=n), ln, pct, why) for n, ln, pct, why in WET_PESTS)))
+    return World(seed, tuple(BUYERS), tuple(hhs), b2b, hh, scenario, rain, pests)

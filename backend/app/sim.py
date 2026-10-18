@@ -138,15 +138,16 @@ def day_events(st: FarmState, crop: Crop, w: W.World, strategy: str, fixed: dict
         for ln in crop.lines:
             if st.last_sown.get(ln.id) == t or (ln.id, t.isoformat()) in st.postponed:
                 continue
-            if t in W.RAIN_DAYS:
+            if t in w.rain_days:
                 evs.append({"t": "postpone", "line": ln.id, "day": t.isoformat(), "reason": "rain"})
                 continue
             n = (plans[ln.id].sow.seedlings if strategy == "tanam" else
                  fixed[ln.id] if strategy == "fixed" else _cobweb(st, crop, w, ln.id, fixed[ln.id]))
             if n > 0:
                 evs.append({"t": "sow", "line": ln.id, "day": t.isoformat(), "seedlings": n})
-    pday, pline, pct, cause = W.PEST
-    if t == pday:
+    for pday, pline, pct, cause in w.pests:
+        if t != pday:
+            continue
         beds = [b for b in st.alive(crop, pline) if bed_day(crop, b, t) >= 0 and in_bed_plants(crop, b, t) > 0]
         if beds:
             oldest = min(beds, key=lambda b: (b.sown_on, b.id))

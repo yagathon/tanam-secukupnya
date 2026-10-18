@@ -48,3 +48,19 @@ def test_short_season_tanam_wastes_less_than_cobweb_and_fixed(pakcoy, start):
     # cobweb looks lean early and only starves buyers later, so compare tanam against each, not them to each other
     assert r["tanam"]["waste_pct"] < min(r["fixed"]["waste_pct"], r["cobweb"]["waste_pct"])
     assert r["tanam"]["b2b_fill_pct"] >= 95
+
+
+def test_the_wet_world_brings_its_own_rain_and_pests(pakcoy, start):
+    st, fixed = copy.deepcopy(start[0]), start[1]
+    w = W.build(W.SEED, "wet")
+    rain = w.rain_days[1]                                # the first wet-season rain, not in the normal world
+    pest_day = w.pests[1][0]
+    seen = set()
+    while st.today <= max(rain, pest_day):
+        evs = sim.step(st, pakcoy, w, "fixed", fixed)
+        if st.today - timedelta(days=1) == rain:
+            seen |= {e["t"] for e in evs if e["t"] in ("postpone", "sow")}
+        if st.today - timedelta(days=1) == pest_day:
+            seen |= {f"loss:{e['cause']}" for e in evs if e["t"] == "loss"}
+    assert "postpone" in seen and "sow" not in seen
+    assert f"loss:{w.pests[1][3]}" in seen
