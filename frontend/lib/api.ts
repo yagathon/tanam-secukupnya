@@ -10,10 +10,22 @@ export class ApiError extends Error {
   }
 }
 
+/** fetch, retrying a GET once when the connection drops (a phone waking up, a slow answer cut off).
+ *  Writes are never retried: the first request may already have landed. */
+async function send(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, init);
+  } catch (e) {
+    if (init.method !== "GET" || !(e instanceof TypeError)) throw e;
+    await new Promise((r) => setTimeout(r, 1000));
+    return fetch(url, init);
+  }
+}
+
 async function call<T>(path: string, body?: unknown, method?: string): Promise<T> {
   const headers: Record<string, string> = { authorization: `Bearer ${await idToken()}` };
   if (body !== undefined) headers["content-type"] = "application/json";
-  const res = await fetch(`/api${path}`, {
+  const res = await send(`/api${path}`, {
     method: method ?? (body === undefined ? "GET" : "POST"),
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),

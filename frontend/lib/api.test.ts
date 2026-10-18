@@ -32,3 +32,32 @@ test("sandbox reset can take the setup too, and the example farm is a GET", asyn
   expect(f.mock.calls[1][0]).toBe("/api/sandbox/example");
   expect((f.mock.calls[1][1] as RequestInit | undefined)?.method ?? "GET").toBe("GET");
 });
+
+test("a GET that loses the connection is retried once", async () => {
+  vi.useFakeTimers();
+  const f = vi.spyOn(globalThis, "fetch")
+    .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+    .mockResolvedValueOnce(new Response('{"rows":[]}', { status: 200 }));
+  const got = makeApi("").trail();
+  await vi.runAllTimersAsync();
+  expect(await got).toEqual({ rows: [] });
+  expect(f).toHaveBeenCalledTimes(2);
+  vi.useRealTimers();
+});
+
+test("a GET that fails twice reports the lost connection", async () => {
+  vi.useFakeTimers();
+  const f = vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("Failed to fetch"));
+  const got = makeApi("").trail();
+  const caught = got.catch((e) => e);
+  await vi.runAllTimersAsync();
+  expect(await caught).toBeInstanceOf(TypeError);
+  expect(f).toHaveBeenCalledTimes(2);
+  vi.useRealTimers();
+});
+
+test("a POST is never retried: the request may already have landed", async () => {
+  const f = vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("Failed to fetch"));
+  await expect(makeApi("/sandbox").readNote("panen 12 kg", "me")).rejects.toBeInstanceOf(TypeError);
+  expect(f).toHaveBeenCalledTimes(1);
+});

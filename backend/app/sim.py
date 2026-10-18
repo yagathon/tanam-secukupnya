@@ -60,7 +60,7 @@ def plan(st: FarmState, crop: Crop, buyers: list[dict], model: demand.DemandMode
                                   st.known_orders, st.signals, st.household_ids)
         safe = engine.ceiling(crop, ln.id, batches, needs.protected, st.today, end)
         ceil, debt, limit = engine.borrow_cap(crop, ln.id, batches, needs.protected, needs.target, st.today, end,
-                                              needs.tomorrow)                  # borrow up to one day, then market
+                                              needs.tomorrow, ceil=safe)       # borrow up to one day, then market
         avail = round(sum(available_kg(crop, b, tom) for b in batches), 2)
         send = min(needs.tomorrow, ceil)
         borrow = engine.borrowing(crop, ln.id, batches, needs.protected, st.today, end, send, safe) \

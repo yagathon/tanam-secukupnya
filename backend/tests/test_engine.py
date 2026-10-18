@@ -229,3 +229,60 @@ def test_the_sowing_target_is_expected_demand_with_no_buffer():
     n = engine.line_needs(m, buyers, "regular", today, today + timedelta(days=14), {}, [])
     assert all(r["high"] > r["expected"] for r in n.rows)            # there is a band to ignore
     assert all(r["target"] == pytest.approx(r["expected"], abs=0.01) for r in n.rows)
+
+
+def _ceiling_full_search(crop, line, batches, need, today, end):
+    """The ceiling as first written: always 30 bisection steps. The reference the faster search must match."""
+    tom = today + timedelta(days=1)
+    avail = sum(available_kg(crop, b, tom) for b in batches if b.line == line)
+    base = engine._future_short(crop, line, batches, need, tom, end, 0.0)
+    if engine._future_short(crop, line, batches, need, tom, end, avail) <= base + engine.EPS_KG:
+        return engine._floor2(avail)
+    lo, hi = 0.0, avail
+    for _ in range(30):
+        mid = (lo + hi) / 2
+        if engine._future_short(crop, line, batches, need, tom, end, mid) <= base + engine.EPS_KG:
+            lo = mid
+        else:
+            hi = mid
+    return engine._floor2(lo)
+
+
+def _ceiling_cases(pakcoy):
+    for seedlings in (500, 800, 1100):
+        for skip in ((), (TODAY - timedelta(days=14),), (TODAY - timedelta(days=21), TODAY - timedelta(days=25))):
+            beds = farm(seedlings, skip)
+            end = engine.horizon_end(pakcoy, "regular", TODAY, False)
+            for kg in (5, 20, 33.3, 45, 60, 90):
+                yield pakcoy, "regular", beds, flat(kg), TODAY, end
+    for seedlings, later_kg in ((1200, None), (900, None), (900, 7.0), (600, 12.0)):
+        c, mon, beds, need, end = _uat_bed(seedlings, 10.0, later_kg)
+        yield c, "baby", beds, need, mon, end
+
+
+def test_ceiling_matches_the_full_search_exactly(pakcoy):
+    """Stopping the bisection early must never change the 10 g answer."""
+    held_back = 0
+    for case in _ceiling_cases(pakcoy):
+        c = engine.ceiling(*case)
+        assert c == _ceiling_full_search(*case)
+        tom = case[4] + timedelta(days=1)
+        held_back += c < engine._floor2(sum(available_kg(case[0], b, tom) for b in case[2] if b.line == case[1]))
+    assert held_back >= 10                      # the cases exercise the search, not just the "all of it" shortcut
+
+
+def test_ceiling_stops_searching_once_the_10g_answer_is_settled(pakcoy, monkeypatch):
+    calls = []
+    real = engine._future_short
+    monkeypatch.setattr(engine, "_future_short", lambda *a: calls.append(1) or real(*a))
+    beds = farm()
+    engine.ceiling(pakcoy, "regular", beds, flat(60), TODAY, engine.horizon_end(pakcoy, "regular", TODAY, False))
+    assert len(calls) <= 2 + 20                 # base + all-of-it + about log2(available / 0.01) steps, not 30
+
+
+def test_borrow_cap_reuses_a_ceiling_it_is_given(pakcoy):
+    for seedlings, later_kg in ((1200, None), (900, None), (900, 7.0)):
+        c, mon, beds, need, end = _uat_bed(seedlings, 10.0, later_kg)
+        safe = engine.ceiling(c, "baby", beds, need, mon, end)
+        assert engine.borrow_cap(c, "baby", beds, need, need, mon, end, 10.0, ceil=safe) == \
+            engine.borrow_cap(c, "baby", beds, need, need, mon, end, 10.0)

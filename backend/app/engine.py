@@ -133,6 +133,9 @@ def ceiling(crop: Crop, line: str, batches: list[Batch], need: dict[date, float]
         return _floor2(avail)
     lo, hi = 0.0, avail
     for _ in range(30):
+        # The answer stays in [lo, hi), so once both ends round down to the same 10 g, it is settled.
+        if math.floor(lo * 100) == math.floor(hi * 100):
+            break
         mid = (lo + hi) / 2
         if _future_short(crop, line, batches, need, tom, end, mid) <= base + EPS_KG:
             lo = mid
@@ -142,15 +145,16 @@ def ceiling(crop: Crop, line: str, batches: list[Batch], need: dict[date, float]
 
 
 def borrow_cap(crop: Crop, line: str, batches: list[Batch], protected: dict[date, float], target: dict[date, float],
-               today: date, end: date, need: float) -> tuple[float, float, float]:
+               today: date, end: date, need: float, ceil: float | None = None) -> tuple[float, float, float]:
     """Tomorrow's harvest cap when the safe ceiling can't cover tomorrow (founder 2026-10-17). Serve it
     whole from plants ready now, borrowing from later days, while the debt (the shortfall after tomorrow
     that borrowing adds) stays within one average day of expected orders. Past that, tomorrow is a market
     day: the field sends only the safe ceiling and the market covers the rest. The debt is recomputed
     from the field and the forecast every day, so a debt that heals itself never sends anyone to market.
-    Returns (cap, debt, limit)."""
+    `ceil` is the safe ceiling when the caller already has it. Returns (cap, debt, limit)."""
     tom = today + timedelta(days=1)
-    ceil = ceiling(crop, line, batches, protected, today, end)
+    if ceil is None:
+        ceil = ceiling(crop, line, batches, protected, today, end)
     week = [target[d] for d in (tom + timedelta(days=i) for i in range(7)) if d in target]
     limit = sum(week) / len(week) if week else 0.0
     full = min(need, sum(available_kg(crop, b, tom) for b in batches if b.line == line))
