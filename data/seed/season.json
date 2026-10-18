@@ -1,882 +1,3471 @@
 {
- "days": 182,
- "seeds": [
-  20261014,
-  1,
-  2,
-  3,
-  7
- ],
- "main_seed": 20261014,
- "summary": {
-  "cobweb": {
-   "waste_pct": 52.8,
-   "b2b_fill_pct": 75.2,
-   "hh_fill_pct": 75.1,
-   "sowing_cv": 0.9
+ "scenarios": [
+  {
+   "id": "normal",
+   "name": "Normal",
+   "blurb": "The base world: steady buyers, two rainy sowing days, one caterpillar attack.",
+   "days": 182,
+   "seeds": [
+    20261014,
+    1,
+    2,
+    3,
+    7
+   ],
+   "main_seed": 20261014,
+   "summary": {
+    "cobweb": {
+     "waste_pct": 52.8,
+     "b2b_fill_pct": 75.2,
+     "hh_fill_pct": 75.1,
+     "sowing_cv": 0.9
+    },
+    "fixed": {
+     "waste_pct": 32.0,
+     "b2b_fill_pct": 99.9,
+     "hh_fill_pct": 98.7,
+     "sowing_cv": 0.0
+    },
+    "tanam": {
+     "waste_pct": 11.9,
+     "b2b_fill_pct": 94.7,
+     "hh_fill_pct": 92.5,
+     "sowing_cv": 0.3
+    }
+   },
+   "runs": [
+    {
+     "strategy": "cobweb",
+     "seed": 20261014,
+     "waste_pct": 46.9,
+     "b2b_fill_pct": 74.7,
+     "hh_fill_pct": 78.0,
+     "sowing_cv": 0.95
+    },
+    {
+     "strategy": "fixed",
+     "seed": 20261014,
+     "waste_pct": 33.5,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 99.4,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 20261014,
+     "waste_pct": 11.2,
+     "b2b_fill_pct": 95.2,
+     "hh_fill_pct": 94.0,
+     "sowing_cv": 0.26
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 1,
+     "waste_pct": 57.7,
+     "b2b_fill_pct": 73.2,
+     "hh_fill_pct": 70.5,
+     "sowing_cv": 0.94
+    },
+    {
+     "strategy": "fixed",
+     "seed": 1,
+     "waste_pct": 33.2,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.9,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 1,
+     "waste_pct": 10.9,
+     "b2b_fill_pct": 97.0,
+     "hh_fill_pct": 95.4,
+     "sowing_cv": 0.3
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 2,
+     "waste_pct": 53.4,
+     "b2b_fill_pct": 74.4,
+     "hh_fill_pct": 70.0,
+     "sowing_cv": 0.94
+    },
+    {
+     "strategy": "fixed",
+     "seed": 2,
+     "waste_pct": 31.0,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.6,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 2,
+     "waste_pct": 14.9,
+     "b2b_fill_pct": 93.3,
+     "hh_fill_pct": 91.5,
+     "sowing_cv": 0.25
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 3,
+     "waste_pct": 52.7,
+     "b2b_fill_pct": 76.2,
+     "hh_fill_pct": 77.0,
+     "sowing_cv": 0.91
+    },
+    {
+     "strategy": "fixed",
+     "seed": 3,
+     "waste_pct": 31.5,
+     "b2b_fill_pct": 99.7,
+     "hh_fill_pct": 97.8,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 3,
+     "waste_pct": 10.0,
+     "b2b_fill_pct": 92.5,
+     "hh_fill_pct": 88.0,
+     "sowing_cv": 0.32
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 7,
+     "waste_pct": 53.2,
+     "b2b_fill_pct": 77.5,
+     "hh_fill_pct": 80.1,
+     "sowing_cv": 0.93
+    },
+    {
+     "strategy": "fixed",
+     "seed": 7,
+     "waste_pct": 30.7,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.9,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 7,
+     "waste_pct": 12.5,
+     "b2b_fill_pct": 95.3,
+     "hh_fill_pct": 93.5,
+     "sowing_cv": 0.29
+    }
+   ],
+   "sowings": {
+    "cobweb": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 400
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 1400
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 2050
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 2650
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1200
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 500
+     }
+    ],
+    "fixed": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 1100
+     }
+    ],
+    "tanam": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1300
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 400
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 1250
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 750
+     }
+    ]
+   }
   },
-  "fixed": {
-   "waste_pct": 32.0,
-   "b2b_fill_pct": 99.9,
-   "hh_fill_pct": 98.7,
-   "sowing_cv": 0.0
+  {
+   "id": "wet",
+   "name": "Wet season",
+   "blurb": "Rain stops six more sowings and pests take 15-30% of a bed five more times (Nov-Feb).",
+   "days": 182,
+   "seeds": [
+    20261014,
+    1,
+    2,
+    3,
+    7
+   ],
+   "main_seed": 20261014,
+   "summary": {
+    "cobweb": {
+     "waste_pct": 47.1,
+     "b2b_fill_pct": 77.5,
+     "hh_fill_pct": 72.9,
+     "sowing_cv": 0.9
+    },
+    "fixed": {
+     "waste_pct": 16.5,
+     "b2b_fill_pct": 99.5,
+     "hh_fill_pct": 94.6,
+     "sowing_cv": 0.0
+    },
+    "tanam": {
+     "waste_pct": 13.7,
+     "b2b_fill_pct": 90.6,
+     "hh_fill_pct": 88.7,
+     "sowing_cv": 0.3
+    }
+   },
+   "runs": [
+    {
+     "strategy": "cobweb",
+     "seed": 20261014,
+     "waste_pct": 42.0,
+     "b2b_fill_pct": 77.4,
+     "hh_fill_pct": 75.7,
+     "sowing_cv": 0.85
+    },
+    {
+     "strategy": "fixed",
+     "seed": 20261014,
+     "waste_pct": 19.8,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 95.7,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 20261014,
+     "waste_pct": 11.4,
+     "b2b_fill_pct": 93.1,
+     "hh_fill_pct": 91.7,
+     "sowing_cv": 0.35
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 1,
+     "waste_pct": 51.4,
+     "b2b_fill_pct": 74.4,
+     "hh_fill_pct": 67.6,
+     "sowing_cv": 0.88
+    },
+    {
+     "strategy": "fixed",
+     "seed": 1,
+     "waste_pct": 17.5,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 96.0,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 1,
+     "waste_pct": 12.3,
+     "b2b_fill_pct": 92.7,
+     "hh_fill_pct": 90.7,
+     "sowing_cv": 0.34
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 2,
+     "waste_pct": 47.1,
+     "b2b_fill_pct": 80.5,
+     "hh_fill_pct": 73.5,
+     "sowing_cv": 0.82
+    },
+    {
+     "strategy": "fixed",
+     "seed": 2,
+     "waste_pct": 13.6,
+     "b2b_fill_pct": 98.9,
+     "hh_fill_pct": 93.4,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 2,
+     "waste_pct": 15.2,
+     "b2b_fill_pct": 89.4,
+     "hh_fill_pct": 86.9,
+     "sowing_cv": 0.31
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 3,
+     "waste_pct": 47.5,
+     "b2b_fill_pct": 80.2,
+     "hh_fill_pct": 74.6,
+     "sowing_cv": 0.86
+    },
+    {
+     "strategy": "fixed",
+     "seed": 3,
+     "waste_pct": 16.1,
+     "b2b_fill_pct": 98.7,
+     "hh_fill_pct": 92.7,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 3,
+     "waste_pct": 14.5,
+     "b2b_fill_pct": 87.2,
+     "hh_fill_pct": 86.3,
+     "sowing_cv": 0.36
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 7,
+     "waste_pct": 47.7,
+     "b2b_fill_pct": 74.8,
+     "hh_fill_pct": 73.3,
+     "sowing_cv": 0.94
+    },
+    {
+     "strategy": "fixed",
+     "seed": 7,
+     "waste_pct": 15.6,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 95.2,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 7,
+     "waste_pct": 14.9,
+     "b2b_fill_pct": 90.7,
+     "hh_fill_pct": 87.9,
+     "sowing_cv": 0.32
+    }
+   ],
+   "sowings": {
+    "cobweb": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 1300
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1850
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 2650
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 2700
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 2300
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1900
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 50
+     }
+    ],
+    "fixed": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 1100
+     }
+    ],
+    "tanam": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1500
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1550
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1450
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 1450
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 1200
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 1400
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 400
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 550
+     }
+    ]
+   }
   },
-  "tanam": {
-   "waste_pct": 14.0,
-   "b2b_fill_pct": 96.3,
-   "hh_fill_pct": 92.9,
-   "sowing_cv": 0.4
+  {
+   "id": "growth",
+   "name": "Demand grows",
+   "blurb": "Restaurant B grows +4% a week for ten weeks (+40%), then stays there.",
+   "days": 182,
+   "seeds": [
+    20261014,
+    1,
+    2,
+    3,
+    7
+   ],
+   "main_seed": 20261014,
+   "summary": {
+    "cobweb": {
+     "waste_pct": 50.0,
+     "b2b_fill_pct": 76.0,
+     "hh_fill_pct": 74.8,
+     "sowing_cv": 0.9
+    },
+    "fixed": {
+     "waste_pct": 24.7,
+     "b2b_fill_pct": 99.9,
+     "hh_fill_pct": 98.6,
+     "sowing_cv": 0.0
+    },
+    "tanam": {
+     "waste_pct": 11.8,
+     "b2b_fill_pct": 92.7,
+     "hh_fill_pct": 91.5,
+     "sowing_cv": 0.3
+    }
+   },
+   "runs": [
+    {
+     "strategy": "cobweb",
+     "seed": 20261014,
+     "waste_pct": 44.7,
+     "b2b_fill_pct": 75.8,
+     "hh_fill_pct": 78.1,
+     "sowing_cv": 0.93
+    },
+    {
+     "strategy": "fixed",
+     "seed": 20261014,
+     "waste_pct": 27.3,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 99.4,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 20261014,
+     "waste_pct": 11.9,
+     "b2b_fill_pct": 93.2,
+     "hh_fill_pct": 93.3,
+     "sowing_cv": 0.26
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 1,
+     "waste_pct": 54.1,
+     "b2b_fill_pct": 74.0,
+     "hh_fill_pct": 69.9,
+     "sowing_cv": 0.9
+    },
+    {
+     "strategy": "fixed",
+     "seed": 1,
+     "waste_pct": 26.5,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.9,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 1,
+     "waste_pct": 11.4,
+     "b2b_fill_pct": 94.2,
+     "hh_fill_pct": 93.1,
+     "sowing_cv": 0.27
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 2,
+     "waste_pct": 50.2,
+     "b2b_fill_pct": 74.8,
+     "hh_fill_pct": 69.5,
+     "sowing_cv": 0.89
+    },
+    {
+     "strategy": "fixed",
+     "seed": 2,
+     "waste_pct": 23.0,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.6,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 2,
+     "waste_pct": 14.9,
+     "b2b_fill_pct": 91.2,
+     "hh_fill_pct": 90.6,
+     "sowing_cv": 0.3
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 3,
+     "waste_pct": 50.3,
+     "b2b_fill_pct": 78.1,
+     "hh_fill_pct": 77.3,
+     "sowing_cv": 0.83
+    },
+    {
+     "strategy": "fixed",
+     "seed": 3,
+     "waste_pct": 23.1,
+     "b2b_fill_pct": 99.7,
+     "hh_fill_pct": 97.8,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 3,
+     "waste_pct": 8.1,
+     "b2b_fill_pct": 91.7,
+     "hh_fill_pct": 87.8,
+     "sowing_cv": 0.31
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 7,
+     "waste_pct": 50.5,
+     "b2b_fill_pct": 77.3,
+     "hh_fill_pct": 79.3,
+     "sowing_cv": 0.9
+    },
+    {
+     "strategy": "fixed",
+     "seed": 7,
+     "waste_pct": 23.5,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.5,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 7,
+     "waste_pct": 12.8,
+     "b2b_fill_pct": 93.2,
+     "hh_fill_pct": 92.5,
+     "sowing_cv": 0.29
+    }
+   ],
+   "sowings": {
+    "cobweb": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1300
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 1900
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 2750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 2450
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 50
+     }
+    ],
+    "fixed": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 1100
+     }
+    ],
+    "tanam": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1300
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1600
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 750
+     }
+    ]
+   }
+  },
+  {
+   "id": "volatile",
+   "name": "Volatile orders",
+   "blurb": "Orders swing twice as much, and about one in twelve is a 2.5x party order.",
+   "days": 182,
+   "seeds": [
+    20261014,
+    1,
+    2,
+    3,
+    7
+   ],
+   "main_seed": 20261014,
+   "summary": {
+    "cobweb": {
+     "waste_pct": 25.9,
+     "b2b_fill_pct": 79.7,
+     "hh_fill_pct": 77.3,
+     "sowing_cv": 0.8
+    },
+    "fixed": {
+     "waste_pct": 21.3,
+     "b2b_fill_pct": 99.6,
+     "hh_fill_pct": 97.8,
+     "sowing_cv": 0.0
+    },
+    "tanam": {
+     "waste_pct": 15.6,
+     "b2b_fill_pct": 88.7,
+     "hh_fill_pct": 90.8,
+     "sowing_cv": 0.4
+    }
+   },
+   "runs": [
+    {
+     "strategy": "cobweb",
+     "seed": 20261014,
+     "waste_pct": 12.1,
+     "b2b_fill_pct": 78.3,
+     "hh_fill_pct": 78.6,
+     "sowing_cv": 0.8
+    },
+    {
+     "strategy": "fixed",
+     "seed": 20261014,
+     "waste_pct": 21.1,
+     "b2b_fill_pct": 99.8,
+     "hh_fill_pct": 98.4,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 20261014,
+     "waste_pct": 14.7,
+     "b2b_fill_pct": 88.7,
+     "hh_fill_pct": 92.1,
+     "sowing_cv": 0.39
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 1,
+     "waste_pct": 36.4,
+     "b2b_fill_pct": 81.8,
+     "hh_fill_pct": 75.4,
+     "sowing_cv": 0.79
+    },
+    {
+     "strategy": "fixed",
+     "seed": 1,
+     "waste_pct": 25.9,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.9,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 1,
+     "waste_pct": 14.8,
+     "b2b_fill_pct": 88.8,
+     "hh_fill_pct": 89.4,
+     "sowing_cv": 0.44
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 2,
+     "waste_pct": 9.2,
+     "b2b_fill_pct": 79.2,
+     "hh_fill_pct": 73.2,
+     "sowing_cv": 0.78
+    },
+    {
+     "strategy": "fixed",
+     "seed": 2,
+     "waste_pct": 17.6,
+     "b2b_fill_pct": 99.5,
+     "hh_fill_pct": 96.3,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 2,
+     "waste_pct": 16.5,
+     "b2b_fill_pct": 88.7,
+     "hh_fill_pct": 90.2,
+     "sowing_cv": 0.44
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 3,
+     "waste_pct": 33.5,
+     "b2b_fill_pct": 76.1,
+     "hh_fill_pct": 76.9,
+     "sowing_cv": 0.88
+    },
+    {
+     "strategy": "fixed",
+     "seed": 3,
+     "waste_pct": 19.0,
+     "b2b_fill_pct": 98.8,
+     "hh_fill_pct": 96.7,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 3,
+     "waste_pct": 18.0,
+     "b2b_fill_pct": 86.1,
+     "hh_fill_pct": 89.4,
+     "sowing_cv": 0.44
+    },
+    {
+     "strategy": "cobweb",
+     "seed": 7,
+     "waste_pct": 38.3,
+     "b2b_fill_pct": 83.2,
+     "hh_fill_pct": 82.3,
+     "sowing_cv": 0.8
+    },
+    {
+     "strategy": "fixed",
+     "seed": 7,
+     "waste_pct": 22.7,
+     "b2b_fill_pct": 100.0,
+     "hh_fill_pct": 98.9,
+     "sowing_cv": 0.0
+    },
+    {
+     "strategy": "tanam",
+     "seed": 7,
+     "waste_pct": 13.9,
+     "b2b_fill_pct": 91.4,
+     "hh_fill_pct": 92.7,
+     "sowing_cv": 0.4
+    }
+   ],
+   "sowings": {
+    "cobweb": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 400
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 400
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 200
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 350
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 600
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1200
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1750
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 2550
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 3000
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 3000
+     }
+    ],
+    "fixed": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-28",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-25",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 1100
+     }
+    ],
+    "tanam": [
+     {
+      "line": "regular",
+      "day": "2026-10-12",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-15",
+      "seedlings": 1200
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-19",
+      "seedlings": 1550
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-26",
+      "seedlings": 400
+     },
+     {
+      "line": "regular",
+      "day": "2026-10-29",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-02",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-05",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-09",
+      "seedlings": 1350
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-12",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-16",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-19",
+      "seedlings": 1800
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-23",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-26",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2026-11-30",
+      "seedlings": 150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-03",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-07",
+      "seedlings": 450
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-10",
+      "seedlings": 500
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-14",
+      "seedlings": 550
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-17",
+      "seedlings": 1150
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-21",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-28",
+      "seedlings": 1400
+     },
+     {
+      "line": "regular",
+      "day": "2026-12-31",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-04",
+      "seedlings": 900
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-07",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-11",
+      "seedlings": 1200
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-14",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-21",
+      "seedlings": 1500
+     },
+     {
+      "line": "regular",
+      "day": "2027-01-25",
+      "seedlings": 1250
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-01",
+      "seedlings": 300
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-04",
+      "seedlings": 750
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-08",
+      "seedlings": 800
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-11",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-15",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-18",
+      "seedlings": 1100
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-22",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-02-25",
+      "seedlings": 850
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-01",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-04",
+      "seedlings": 250
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-08",
+      "seedlings": 700
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-11",
+      "seedlings": 1150
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-15",
+      "seedlings": 1300
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-18",
+      "seedlings": 650
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-22",
+      "seedlings": 950
+     },
+     {
+      "line": "regular",
+      "day": "2027-03-29",
+      "seedlings": 1350
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-01",
+      "seedlings": 1000
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-05",
+      "seedlings": 1050
+     },
+     {
+      "line": "regular",
+      "day": "2027-04-08",
+      "seedlings": 750
+     }
+    ]
+   }
   }
- },
- "runs": [
-  {
-   "strategy": "cobweb",
-   "seed": 20261014,
-   "waste_pct": 46.9,
-   "b2b_fill_pct": 74.7,
-   "hh_fill_pct": 78.0,
-   "sowing_cv": 0.95
-  },
-  {
-   "strategy": "fixed",
-   "seed": 20261014,
-   "waste_pct": 33.5,
-   "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 99.4,
-   "sowing_cv": 0.0
-  },
-  {
-   "strategy": "tanam",
-   "seed": 20261014,
-   "waste_pct": 14.2,
-   "b2b_fill_pct": 97.0,
-   "hh_fill_pct": 95.3,
-   "sowing_cv": 0.34
-  },
-  {
-   "strategy": "cobweb",
-   "seed": 1,
-   "waste_pct": 57.7,
-   "b2b_fill_pct": 73.2,
-   "hh_fill_pct": 70.5,
-   "sowing_cv": 0.94
-  },
-  {
-   "strategy": "fixed",
-   "seed": 1,
-   "waste_pct": 33.2,
-   "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 98.9,
-   "sowing_cv": 0.0
-  },
-  {
-   "strategy": "tanam",
-   "seed": 1,
-   "waste_pct": 13.3,
-   "b2b_fill_pct": 96.8,
-   "hh_fill_pct": 91.5,
-   "sowing_cv": 0.4
-  },
-  {
-   "strategy": "cobweb",
-   "seed": 2,
-   "waste_pct": 53.4,
-   "b2b_fill_pct": 74.4,
-   "hh_fill_pct": 70.0,
-   "sowing_cv": 0.94
-  },
-  {
-   "strategy": "fixed",
-   "seed": 2,
-   "waste_pct": 31.0,
-   "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 98.6,
-   "sowing_cv": 0.0
-  },
-  {
-   "strategy": "tanam",
-   "seed": 2,
-   "waste_pct": 13.1,
-   "b2b_fill_pct": 95.5,
-   "hh_fill_pct": 88.9,
-   "sowing_cv": 0.31
-  },
-  {
-   "strategy": "cobweb",
-   "seed": 3,
-   "waste_pct": 52.7,
-   "b2b_fill_pct": 76.2,
-   "hh_fill_pct": 77.0,
-   "sowing_cv": 0.91
-  },
-  {
-   "strategy": "fixed",
-   "seed": 3,
-   "waste_pct": 31.5,
-   "b2b_fill_pct": 99.7,
-   "hh_fill_pct": 97.8,
-   "sowing_cv": 0.0
-  },
-  {
-   "strategy": "tanam",
-   "seed": 3,
-   "waste_pct": 12.3,
-   "b2b_fill_pct": 96.8,
-   "hh_fill_pct": 94.6,
-   "sowing_cv": 0.39
-  },
-  {
-   "strategy": "cobweb",
-   "seed": 7,
-   "waste_pct": 53.2,
-   "b2b_fill_pct": 77.5,
-   "hh_fill_pct": 80.1,
-   "sowing_cv": 0.93
-  },
-  {
-   "strategy": "fixed",
-   "seed": 7,
-   "waste_pct": 30.7,
-   "b2b_fill_pct": 100.0,
-   "hh_fill_pct": 98.9,
-   "sowing_cv": 0.0
-  },
-  {
-   "strategy": "tanam",
-   "seed": 7,
-   "waste_pct": 16.9,
-   "b2b_fill_pct": 95.5,
-   "hh_fill_pct": 94.0,
-   "sowing_cv": 0.39
-  }
  ],
- "sowings": {
-  "cobweb": [
-   {
-    "line": "regular",
-    "day": "2026-10-12",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-15",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-19",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-26",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-29",
-    "seedlings": 1050
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-02",
-    "seedlings": 1000
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-05",
-    "seedlings": 850
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-09",
-    "seedlings": 700
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-12",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-16",
-    "seedlings": 550
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-19",
-    "seedlings": 400
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-23",
-    "seedlings": 300
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-26",
-    "seedlings": 200
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-30",
-    "seedlings": 150
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-03",
-    "seedlings": 150
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-07",
-    "seedlings": 150
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-10",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-14",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-17",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-21",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-28",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-31",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-04",
-    "seedlings": 100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-07",
-    "seedlings": 150
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-11",
-    "seedlings": 200
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-14",
-    "seedlings": 300
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-18",
-    "seedlings": 450
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-21",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-25",
-    "seedlings": 950
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-28",
-    "seedlings": 1400
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-01",
-    "seedlings": 2050
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-04",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-08",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-11",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-15",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-18",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-22",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-25",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-01",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-04",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-08",
-    "seedlings": 3000
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-11",
-    "seedlings": 2650
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-15",
-    "seedlings": 1200
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-18",
-    "seedlings": 500
-   }
-  ],
-  "fixed": [
-   {
-    "line": "regular",
-    "day": "2026-10-12",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-15",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-19",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-26",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-29",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-02",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-05",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-09",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-12",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-16",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-19",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-23",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-26",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-30",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-03",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-07",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-10",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-14",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-17",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-21",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-28",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-31",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-04",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-07",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-11",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-14",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-18",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-21",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-25",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-28",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-01",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-04",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-08",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-11",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-15",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-18",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-22",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-25",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-01",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-04",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-08",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-11",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-15",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-18",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-22",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-25",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-29",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-04-01",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-04-05",
-    "seedlings": 1100
-   },
-   {
-    "line": "regular",
-    "day": "2027-04-08",
-    "seedlings": 1100
-   }
-  ],
-  "tanam": [
-   {
-    "line": "regular",
-    "day": "2026-10-12",
-    "seedlings": 450
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-15",
-    "seedlings": 1200
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-19",
-    "seedlings": 450
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-26",
-    "seedlings": 1200
-   },
-   {
-    "line": "regular",
-    "day": "2026-10-29",
-    "seedlings": 1050
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-02",
-    "seedlings": 700
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-05",
-    "seedlings": 850
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-09",
-    "seedlings": 950
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-12",
-    "seedlings": 850
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-16",
-    "seedlings": 900
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-19",
-    "seedlings": 1300
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-23",
-    "seedlings": 750
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-26",
-    "seedlings": 250
-   },
-   {
-    "line": "regular",
-    "day": "2026-11-30",
-    "seedlings": 950
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-03",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-07",
-    "seedlings": 500
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-10",
-    "seedlings": 750
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-14",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-17",
-    "seedlings": 950
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-21",
-    "seedlings": 850
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-28",
-    "seedlings": 1750
-   },
-   {
-    "line": "regular",
-    "day": "2026-12-31",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-04",
-    "seedlings": 850
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-07",
-    "seedlings": 1050
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-11",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-14",
-    "seedlings": 700
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-18",
-    "seedlings": 1000
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-21",
-    "seedlings": 450
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-25",
-    "seedlings": 600
-   },
-   {
-    "line": "regular",
-    "day": "2027-01-28",
-    "seedlings": 550
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-01",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-04",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-08",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-11",
-    "seedlings": 950
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-15",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-18",
-    "seedlings": 900
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-22",
-    "seedlings": 700
-   },
-   {
-    "line": "regular",
-    "day": "2027-02-25",
-    "seedlings": 1050
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-01",
-    "seedlings": 550
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-04",
-    "seedlings": 300
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-08",
-    "seedlings": 900
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-11",
-    "seedlings": 850
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-15",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-18",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-22",
-    "seedlings": 350
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-25",
-    "seedlings": 650
-   },
-   {
-    "line": "regular",
-    "day": "2027-03-29",
-    "seedlings": 800
-   },
-   {
-    "line": "regular",
-    "day": "2027-04-01",
-    "seedlings": 900
-   },
-   {
-    "line": "regular",
-    "day": "2027-04-05",
-    "seedlings": 550
-   },
-   {
-    "line": "regular",
-    "day": "2027-04-08",
-    "seedlings": 1200
-   }
-  ]
- },
  "synthetic": true
 }
