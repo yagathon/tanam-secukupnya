@@ -276,7 +276,9 @@ def test_today_card_says_when_something_is_sellable_again():
     assert ln["sellable_from"] > "2026-10-13"
 
 
-def test_example_farm_fills_the_form_and_starts_without_a_shortage():
+def test_example_farm_fills_the_form_and_starts_without_a_shortage(monkeypatch):
+    # demand depends on the weekday, so pin "today" to the day the founder saved this farm (Sat 17 Oct)
+    monkeypatch.setattr(sb, "today_wib", lambda: date(2026, 10, 17))
     ex = client.get(f"{S}/example").json()
     assert client.get(f"{S}/setup").json()["saved"] is False        # loading the example saves nothing
     assert ex["start"] == sb.today_wib().isoformat()
