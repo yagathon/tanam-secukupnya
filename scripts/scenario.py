@@ -1,7 +1,7 @@
 """Six months of farm days for the sandbox: make an editable Excel scenario, then play it into a running sandbox.
 
     uv run --project backend python scripts/scenario.py make                 # → data/scenario/scenario.xlsx
-    uv run --project backend python scripts/scenario.py export               # xlsx → scenario.json (for the UI bot)
+    uv run --project backend python scripts/scenario.py export               # xlsx → scenario.json
     uv run --project backend python scripts/scenario.py play --reset         # clear the sandbox, load the setup, play all
     uv run --project backend python scripts/scenario.py play --days 30       # continue from the sandbox's today
 
