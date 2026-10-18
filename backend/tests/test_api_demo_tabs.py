@@ -26,6 +26,7 @@ def test_setup_shows_the_demo_farm_as_it_started():
     s = client.get("/api/setup").json()
     assert s["day0"] == DAY0 and s["read_only"] is True
     assert s["crop"]["name"] == "Pakcoy"
+    assert s["crop"]["sow_weekdays"] == [0, 3]            # the seed omits it (Crop default); the tab needs it
     assert len(s["buyers"]) == 5 and len(s["households"]) == 30
     assert s["fixed"] == {"seedlings": {"regular": 1100, "baby": 100}, "weekdays": [0, 3]}
     assert s["beds"] and all(b["sown_on"] < DAY0 for b in s["beds"])

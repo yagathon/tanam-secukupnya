@@ -95,7 +95,7 @@ def demo_setup(ws: Store = Depends(workspace)) -> dict:
     beds = sorted(({k: b[k] for k in ("id", "label", "line", "sown_on", "seedlings")} for b in ws.list("batches")),
                   key=lambda b: (b["sown_on"], b["id"]))
     return {"read_only": True, "day0": meta["day0"], "synthetic": meta.get("synthetic", True),
-            "crop": ws.list("crops")[0], "buyers": ws.list("buyers"), "households": ws.list("households"),
+            "crop": {**ws.list("crops")[0], "sow_weekdays": sorted(c.sow_weekdays)}, "buyers": ws.list("buyers"), "households": ws.list("households"),
             "beds": beds, "fixed": {"seedlings": meta["fixed_seedlings"], "weekdays": sorted(c.sow_weekdays)}}
 
 
