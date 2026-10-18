@@ -368,4 +368,4 @@ def check_events(ws: Store, events: list[dict]) -> None:
 
 
 def season() -> dict:
-    return json.loads(SEASON_FILE.read_text()) if SEASON_FILE.exists() else {"runs": [], "summary": {}}
+    return json.loads(SEASON_FILE.read_text()) if SEASON_FILE.exists() else {"scenarios": [], "synthetic": True}

@@ -104,11 +104,21 @@ export interface DemandSeason { month_pct: number[]; year_index: number[]; setup
 
 export type Strategy = "cobweb" | "fixed" | "tanam";
 export interface SeasonMetrics { waste_pct: number; b2b_fill_pct: number; hh_fill_pct: number; sowing_cv: number }
-export interface Season {
-  days: number; seeds: number[]; main_seed: number; synthetic: boolean;
+/** One Simulation-report scenario: 3 strategies × several world seeds on the same synthetic world. */
+export interface SimScenario {
+  id: string; name: string; blurb: string; days: number; seeds: number[]; main_seed: number;
   summary: Record<Strategy, SeasonMetrics>;
   runs: (SeasonMetrics & { strategy: Strategy; seed: number })[];
   sowings: Record<Strategy, { line: LineId; day: string; seedlings: number }[]>;
+}
+export interface SimReport { scenarios: SimScenario[]; synthetic: boolean }
+
+/** /api/setup: the demo farm as it started on DAY0 (read-only). */
+export interface DemoSetup {
+  read_only: true; day0: string; synthetic: boolean;
+  crop: State["crop"]; buyers: State["buyers"]; households: State["households"];
+  beds: { id: string; label: string; line: LineId; sown_on: string; seedlings: number }[];
+  fixed: { seedlings: Record<string, number>; weekdays: number[] };
 }
 
 /** Everything the tabs need, refetched after every change (Season is loaded by its own tab). */
@@ -145,10 +155,11 @@ export interface ImpactRow {
   in_field_plants: number; waste_pct: number; delivered_kg: number;
 }
 export interface ImpactDelivery { logged_kg: number; habit_kg: number; habit_short_kg: number }
-/** /sandbox/impact: the beds from setup, the beds Tanam sized, and the old habit replayed on the same days. */
+/** /impact: the beds from setup, the beds Tanam sized, and the old habit replayed on the same days. */
 export interface Impact {
   today: string;
-  habit: { seedlings: number; weekday: number };
+  days: number;                    // closed days in the log: 0 = nothing to compare yet
+  habit: { seedlings: Record<string, number>; weekdays: number[]; label: string };
   rows: { before: ImpactRow; tanam: ImpactRow; habit: ImpactRow };
   delivery: ImpactDelivery;
   beds: ImpactBed[];

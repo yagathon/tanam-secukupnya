@@ -5,7 +5,7 @@ import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } f
 
 import type { Api } from "@/lib/api";
 import { friendly, int, shortDate } from "@/lib/format";
-import type { Season, SeasonMetrics, Strategy } from "@/lib/types";
+import type { SeasonMetrics, SimReport, Strategy } from "@/lib/types";
 
 const NAMES: Record<Strategy, string> = { cobweb: "Cobweb farmer", fixed: "Fixed farmer", tanam: "Tanam Secukupnya" };
 const RULES: Record<Strategy, string> = {
@@ -22,15 +22,18 @@ const METRICS: { key: keyof SeasonMetrics; label: string; better: "low" | "high"
   { key: "sowing_cv", label: "Swing in sowing (CV)", better: "low", fmt: (n) => n.toFixed(2) },
 ];
 
+/** The Simulation report: the three strategies on one synthetic world, one scenario at a time. */
 export default function SeasonTab({ api }: { api: Api }) {
-  const [s, setS] = useState<Season | null>(null);
+  const [report, setReport] = useState<SimReport | null>(null);
+  const [pick, setPick] = useState("normal");
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    api.season().then(setS).catch((e) => setError(friendly(e)));
+    api.season().then(setReport).catch((e) => setError(friendly(e)));
   }, [api]);
   if (error) return <div className="card error">{error}</div>;
-  if (!s) return <div className="card muted">Loading the season…</div>;
-  if (!s.runs.length) return <div className="card empty">The season comparison has not been computed (run `just season`).</div>;
+  if (!report) return <div className="card muted">Loading the simulation report…</div>;
+  if (!report.scenarios.length) return <div className="card empty">The simulation report has not been computed (run `just season`).</div>;
+  const s = report.scenarios.find((x) => x.id === pick) ?? report.scenarios[0];
 
   const range = (st: Strategy, k: keyof SeasonMetrics) => {
     const v = s.runs.filter((r) => r.strategy === st).map((r) => r[k]);
@@ -49,6 +52,13 @@ export default function SeasonTab({ api }: { api: Api }) {
   return (
     <div className="grid">
       <div className="card">
+        <label className="scenario">
+          <strong>Scenario</strong>
+          <select value={s.id} onChange={(e) => setPick(e.target.value)}>
+            {report.scenarios.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
+          </select>
+        </label>
+        <p className="small">{s.blurb}</p>
         <h2>{Math.round(s.days / 7)} weeks, three ways to farm</h2>
         <p className="small muted">
           The same simulated farm and buyers, run {s.seeds.length} times with different random seeds. Mean shown, range across

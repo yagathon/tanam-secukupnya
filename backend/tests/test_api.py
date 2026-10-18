@@ -142,11 +142,11 @@ def test_gemini_failure_is_502(monkeypatch):
     assert client.post("/api/notes", json={"text": "halo", "sender": "farmer"}).status_code == 502
 
 
-def test_season_compares_three_strategies():
-    s = client.get("/api/season").json()
-    assert set(s["summary"]) == {"cobweb", "fixed", "tanam"}
-    assert s["summary"]["tanam"]["waste_pct"] < s["summary"]["fixed"]["waste_pct"]
-    assert len(s["runs"]) == 3 * len(s["seeds"])
+def test_every_scenario_compares_three_strategies():
+    for s in client.get("/api/season").json()["scenarios"]:
+        assert set(s["summary"]) == {"cobweb", "fixed", "tanam"}
+        assert s["summary"]["tanam"]["waste_pct"] < s["summary"]["fixed"]["waste_pct"], s["id"]
+        assert len(s["runs"]) == 3 * len(s["seeds"])
 
 
 def test_baby_postpone_is_dated_by_the_baby_line_not_regular(monkeypatch):

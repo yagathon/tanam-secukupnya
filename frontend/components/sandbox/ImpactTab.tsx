@@ -8,7 +8,6 @@ import { friendly } from "@/lib/format";
 import { bedBarName, impactHeadline } from "@/lib/impact";
 import type { Impact, ImpactBed, ImpactRow } from "@/lib/types";
 
-const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const n = (x: number) => Math.round(x).toLocaleString("en-US");
 const PARTS = [
   { key: "harvested", name: "harvested for buyers", color: "var(--leaf)" },
@@ -50,8 +49,9 @@ export default function ImpactTab({ data, api }: TabProps) {
 
   if (error) return <div className="card error">{error}</div>;
   if (!d) return <div className="card"><p className="muted">Replaying the old habit…</p></div>;
+  if (!d.days) return <div className="card empty">Nothing to compare yet: press <strong>Next day →</strong> to run the farm forward.</div>;
 
-  const habit = `${n(d.habit.seedlings)} seedlings every ${WEEKDAYS[d.habit.weekday]}`;
+  const habit = d.habit.label;
   const rows: [string, ImpactRow][] = [
     ["Before Tanam (beds from setup)", d.rows.before],
     ["With Tanam", d.rows.tanam],
@@ -67,7 +67,7 @@ export default function ImpactTab({ data, api }: TabProps) {
     <>
       <div className="card">
         <h2>Food loss</h2>
-        <p><strong>{impactHeadline(d.rows, d.delivery, d.habit.seedlings)}</strong></p>
+        <p><strong>{impactHeadline(d.rows, d.delivery, habit)}</strong></p>
         <div className="scroll">
           <table>
             <thead>
@@ -105,7 +105,7 @@ export default function ImpactTab({ data, api }: TabProps) {
           One bar per bed, in plants. A bed closes the morning its average plant is past the heaviest any buyer takes
           (stretch size): what it still holds goes to the middleman cheap, counted as food waste, and the bed is free
           for a new sowing. A bed cut empty before that wastes nothing. * = beds from setup, before Tanam. The old habit
-          is a replay on the same days, orders, harvests (oldest open bed first) and losses you logged.
+          is a replay on the same days, orders, harvests (oldest open bed first) and losses as logged.
           {d.delivery.habit_short_kg > 0 && ` It could not cover ${d.delivery.habit_short_kg.toFixed(1)} kg of what you cut.`}
         </p>
       </div>

@@ -1,4 +1,5 @@
-"""Impact: the sandbox as logged vs. the same days under the old habit (1,000 seedlings every Thursday).
+"""Impact: the log as it went vs. the same days under the old habit (sandbox: 1,000 seedlings every Thursday;
+demo farm: the fixed farmer's per-line count every Monday and Thursday).
 
 The habit run replays the log with three changes: its own sowing replaces every logged one, each day's
 harvested kg (logged or assumed) is taken oldest bed first from its beds, and a logged loss hits its bed
@@ -20,6 +21,14 @@ from app.state import FarmState, apply, current_crop, initial
 
 HABIT_SEEDLINGS = 1000
 HABIT_WEEKDAY = 3                    # Thursday: the founder's sowing day before Tanam
+WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+
+def habit_label(seedlings: dict[str, int], weekdays: tuple[int, ...]) -> str:
+    counts = set(seedlings.values())
+    sown = (f"{counts.pop():,}" if len(counts) == 1
+            else " + ".join(f"{n:,} {line}" for line, n in seedlings.items()))
+    return f"{sown} seedlings every {' & '.join(WEEKDAYS[d] for d in sorted(weekdays))}"
 
 
 def _close(c: Crop, st: FarmState, closed: dict[str, date]) -> None:
@@ -47,9 +56,11 @@ def _row(beds: list[dict], delivered: dict[str, float]) -> dict:
             "delivered_kg": round(sum(delivered.get(b["id"], 0.0) for b in beds), 2)}
 
 
-def build(ref: dict, meta: dict, crop: Crop, docs: list[dict], seedlings: int = HABIT_SEEDLINGS) -> dict:
+def build(ref: dict, meta: dict, crop: Crop, docs: list[dict], seedlings: int | dict[str, int] = HABIT_SEEDLINGS,
+          weekdays: tuple[int, ...] = (HABIT_WEEKDAY,)) -> dict:
+    """`seedlings` per sowing: one count for every line, or a count per line."""
     docs = sorted(docs, key=lambda d: d["seq"])
-    weekday = HABIT_WEEKDAY
+    per_line = seedlings if isinstance(seedlings, dict) else {ln.id: seedlings for ln in crop.lines}
     setup_ids = {b["id"] for b in ref["batches"]}
 
     real = initial(ref, meta)
@@ -72,9 +83,11 @@ def build(ref: dict, meta: dict, crop: Crop, docs: list[dict], seedlings: int = 
     short = 0.0
 
     def sow_habit() -> None:
-        if hab.today.weekday() == weekday:
+        if hab.today.weekday() in weekdays:
             for ln in crop.lines:
-                apply(hab, c, {"t": "sow", "line": ln.id, "day": hab.today.isoformat(), "seedlings": seedlings})
+                if per_line.get(ln.id, 0) > 0:
+                    apply(hab, c, {"t": "sow", "line": ln.id, "day": hab.today.isoformat(),
+                                   "seedlings": per_line[ln.id]})
 
     sow_habit()
     _close(c, hab, hab_shut)
@@ -112,7 +125,8 @@ def build(ref: dict, meta: dict, crop: Crop, docs: list[dict], seedlings: int = 
     group = lambda g: [b for b in beds if b["group"] == g]  # noqa: E731
     return {
         "today": real.today.isoformat(),
-        "habit": {"seedlings": seedlings, "weekday": weekday},
+        "days": sum(1 for d in docs if d["kind"] == "day"),
+        "habit": {"seedlings": per_line, "weekdays": sorted(weekdays), "label": habit_label(per_line, weekdays)},
         "rows": {"before": _row(group("before"), real_got), "tanam": _row(group("tanam"), real_got),
                  "habit": _row(group("habit"), hab_got)},
         "delivery": {"logged_kg": round(sum(real_got.values()), 2), "habit_kg": round(sum(hab_got.values()), 2),

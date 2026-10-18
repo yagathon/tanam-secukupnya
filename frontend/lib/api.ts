@@ -1,6 +1,6 @@
 import { idToken } from "./firebase";
 import type {
-  Beds, Demand, Impact, NoteDoc, SandboxLog, Season, Setup, SetupDoc, Sow, State, Today, Tomorrow, TrailRow,
+  Beds, Demand, DemoSetup, Impact, NoteDoc, SandboxLog, Setup, SimReport, SetupDoc, Sow, State, Today, Tomorrow, TrailRow,
 } from "./types";
 
 /** A non-2xx answer. `detail` is FastAPI's error text (plain English, written for people). */
@@ -42,7 +42,8 @@ export function makeApi(base: "" | "/sandbox") {
     tomorrow: () => call<Tomorrow>(p("/tomorrow")),
     sow: () => call<Sow>(p("/sow")),
     demand: () => call<Demand>(p("/demand")),
-    season: () => call<Season>("/season"),
+    season: () => call<SimReport>("/season"),
+    demoSetup: () => call<DemoSetup>("/setup"),
     readNote: (text: string, sender: string) => call<NoteDoc>(p("/notes"), { text, sender }),
     why: () => call<{ text: string; model: string; cached: boolean }>(p("/today/why"), {}),
     decideNote: (id: string, accept: boolean) => call<NoteDoc>(p(`/notes/${id}/${accept ? "accept" : "reject"}`), {}),
@@ -55,8 +56,8 @@ export function makeApi(base: "" | "/sandbox") {
       call<{ events: unknown[]; lines: string[]; warnings: string[] }>("/sandbox/events", { form, seq }),
     exportLog: () => call<SandboxLog>("/sandbox/export"),
     importLog: (log: SandboxLog) => call<{ days: number; entries: number }>("/sandbox/import", log),
-    trail: () => call<{ rows: TrailRow[] }>("/sandbox/trail"),
-    impact: () => call<Impact>("/sandbox/impact"),
+    trail: () => call<{ rows: TrailRow[] }>(p("/trail")),
+    impact: () => call<Impact>(p("/impact")),
     removeEntry: (id: string) => call<{ removed: number }>(`/sandbox/events/${encodeURIComponent(id)}`, undefined, "DELETE"),
     resetToday: () => call<{ removed: number }>("/sandbox/today/reset", {}),
   };

@@ -86,6 +86,36 @@ def season(uid: str = Depends(current_uid)) -> dict:
     return farm.season()
 
 
+@api.get("/setup")
+def demo_setup(ws: Store = Depends(workspace)) -> dict:
+    """The demo farm as it started on DAY0 (read-only): its crop, buyers, households, beds and the fixed farmer."""
+    if ws.meta().get("sandbox"):
+        raise HTTPException(404)
+    meta, c = ws.meta(), farm.crop(ws)
+    beds = sorted(({k: b[k] for k in ("id", "label", "line", "sown_on", "seedlings")} for b in ws.list("batches")),
+                  key=lambda b: (b["sown_on"], b["id"]))
+    return {"read_only": True, "day0": meta["day0"], "synthetic": meta.get("synthetic", True),
+            "crop": ws.list("crops")[0], "buyers": ws.list("buyers"), "households": ws.list("households"),
+            "beds": beds, "fixed": {"seedlings": meta["fixed_seedlings"], "weekdays": sorted(c.sow_weekdays)}}
+
+
+@api.get("/impact")
+def demo_impact(ws: Store = Depends(workspace)) -> dict:
+    """Waste as the engine ran vs. the same days under the fixed farmer (the Simulation report's baseline)."""
+    if ws.meta().get("sandbox"):
+        raise HTTPException(404)
+    c = farm.crop(ws)
+    return impact.build({"batches": ws.list("batches"), "history": ws.list("history")}, ws.meta(), c,
+                        ws.list("events"), ws.meta()["fixed_seedlings"], tuple(c.sow_weekdays))
+
+
+@api.get("/trail")
+def demo_trail(ws: Store = Depends(workspace)) -> dict:
+    if ws.meta().get("sandbox"):
+        raise HTTPException(404)
+    return trail.build(ws)
+
+
 @api.post("/day/next")
 def day_next(req: NextDayRequest, ws: Store = Depends(workspace)) -> dict:
     try:
@@ -327,7 +357,7 @@ def get_trail(ws: Store = Depends(workspace)) -> dict:
 
 @sbx.get("/impact")
 def get_impact(ws: Store = Depends(workspace)) -> dict:
-    """Waste as logged vs. the same days under the old habit (a fixed sowing once a week)."""
+    """Waste as logged vs. the same days under the old habit (1,000 seedlings every Thursday)."""
     ws = _sandbox_ws(ws)
     if not ws.saved:
         raise HTTPException(409, "save the setup first; there is nothing to compare yet")

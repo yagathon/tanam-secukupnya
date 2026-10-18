@@ -16,7 +16,9 @@ const COLS: [string, (l: TrailLine | undefined) => string][] = [
 ];
 
 /** One row per day, newest first: what the engine decided, and what was logged that day. */
-export default function TrailTab({ rows }: { rows: TrailRow[] }) {
+export default function TrailTab({ rows, emptyHint }: { rows: TrailRow[]; emptyHint?: boolean }) {
+  if (emptyHint && !rows.some((r) => !r.live))
+    return <div className="card empty">No closed days yet: press <strong>Next day →</strong> to run the farm forward.</div>;
   const sorted = [...rows].sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0));
   const lines = [...new Set(rows.flatMap((r) => Object.keys(r.lines)))];
   const cells = (r: TrailRow) => [

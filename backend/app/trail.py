@@ -15,7 +15,7 @@ from app.store import Store
 
 @dataclass
 class _Cache:
-    rev: str
+    rev: str | None
     prints: list[str]                # content fingerprint per replayed log entry
     state: FarmState
     rows: list[dict] = field(default_factory=list)
@@ -46,9 +46,9 @@ def build(ws: Store) -> dict:
     names = {b["id"]: b["alias"] for b in buyers} | {h["id"]: h["alias"] for h in ws.list("households")}
     hit = _cache.get(ws.uid)
     prints = [farm.doc_print(d) for d in docs]
-    if hit is None or hit.rev != meta["rev"] or prints[:len(hit.prints)] != hit.prints:
+    if hit is None or hit.rev != meta.get("rev") or prints[:len(hit.prints)] != hit.prints:
         st = initial({"batches": ws.list("batches"), "history": ws.list("history")}, meta)
-        hit = _Cache(meta["rev"], [], st)
+        hit = _Cache(meta.get("rev"), [], st)
     start = len(hit.prints)
     st = hit.state
     for doc, fp in zip(docs[start:], prints[start:], strict=True):

@@ -9,9 +9,13 @@ import TomorrowTab from "@/components/TomorrowTab";
 import SowTab from "@/components/SowTab";
 import DemandTab from "@/components/DemandTab";
 import SeasonTab from "@/components/SeasonTab";
+import DemoSetupTab from "@/components/DemoSetupTab";
+import ImpactTab from "@/components/sandbox/ImpactTab";
+import TrailTab from "@/components/sandbox/TrailTab";
 import { api, type Api } from "@/lib/api";
 import { friendly, shortDate } from "@/lib/format";
-import type { Data } from "@/lib/types";
+import { SHARED_HINT, TAB_LABEL, TAB_ORDER } from "@/lib/tabs";
+import type { Data, TrailRow } from "@/lib/types";
 
 export interface TabProps {
   data: Data;
@@ -26,15 +30,33 @@ interface Tab {
   view: (p: TabProps) => ReactNode;
 }
 
-// Each later task adds its tab here, in spec order: Today, Beds, Tomorrow, Sow, Demand, Season.
-const TABS: Tab[] = [
-  { id: "today", label: "Today", hint: "The day in one line, and notes from the field", view: (p) => <TodayTab {...p} /> },
-  { id: "beds", label: "Beds", hint: "What is growing, and how much is ready each day", view: (p) => <BedsTab {...p} /> },
-  { id: "tomorrow", label: "Tomorrow", hint: "The most we can safely send, and who gets it", view: (p) => <TomorrowTab {...p} /> },
-  { id: "sow", label: "Sow", hint: "How many seedlings on the next sowing day, and why", view: (p) => <SowTab {...p} /> },
-  { id: "demand", label: "Demand", hint: "Forecast per day with an honest band, and what moved it", view: (p) => <DemandTab {...p} /> },
-  { id: "season", label: "Season", hint: "Six months, three strategies: does it actually waste less?", view: (p) => <SeasonTab api={p.api} /> },
-];
+/** The demo's trail, refetched whenever a day closes or a note is accepted. */
+function DemoTrail({ data, api }: TabProps) {
+  const [rows, setRows] = useState<TrailRow[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const key = `${data.today.today}/${data.today.seq}`;
+  useEffect(() => {
+    let live = true;
+    api.trail().then((t) => live && setRows(t.rows)).catch((e) => live && setError(friendly(e)));
+    return () => { live = false; };
+  }, [api, key]);
+  if (error) return <div className="card error">{error}</div>;
+  if (!rows) return <div className="card muted">Replaying the days…</div>;
+  return <TrailTab rows={rows} emptyHint />;
+}
+
+const VIEW: Record<(typeof TAB_ORDER)[number], { hint: string; view: (p: TabProps) => ReactNode }> = {
+  setup: { hint: "The demo farm as it started: crop, buyers, households and beds (read-only)", view: (p) => <DemoSetupTab api={p.api} /> },
+  today: { hint: "The day in one line, and notes from the field", view: (p) => <TodayTab {...p} /> },
+  beds: { hint: SHARED_HINT.beds, view: (p) => <BedsTab {...p} /> },
+  tomorrow: { hint: SHARED_HINT.tomorrow, view: (p) => <TomorrowTab {...p} /> },
+  sow: { hint: SHARED_HINT.sow, view: (p) => <SowTab {...p} /> },
+  demand: { hint: SHARED_HINT.demand, view: (p) => <DemandTab {...p} /> },
+  impact: { hint: "Plants wasted: Tanam vs the fixed farmer, replayed on the same days", view: (p) => <ImpactTab {...p} /> },
+  report: { hint: "Six months, three strategies, several scenarios: does it actually waste less?", view: (p) => <SeasonTab api={p.api} /> },
+  trail: { hint: SHARED_HINT.trail, view: (p) => <DemoTrail {...p} /> },
+};
+const TABS: Tab[] = TAB_ORDER.map((id) => ({ id, label: TAB_LABEL[id], ...VIEW[id] }));
 
 export default function Home() {
   const [tab, setTab] = useState<string>("today");
@@ -55,7 +77,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const fromHash = window.location.hash.slice(1);
+    const fromHash = window.location.hash.slice(1).replace(/^season$/, "report");
     if (TABS.some((t) => t.id === fromHash)) setTab(fromHash);
     load();
   }, [load]);

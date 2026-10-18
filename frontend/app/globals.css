@@ -77,6 +77,8 @@ input[type="range"] { width: 100%; accent-color: var(--leaf); }
   background: var(--line); font-size: 13px; font-weight: 600;
 }
 .step.on { border-color: var(--leaf); background: var(--leaf-soft); }
+.step.off { opacity: 0.5; }
+.scenario { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .step.on .num { background: var(--leaf); color: #fff; }
 .hint { color: var(--muted); margin: 10px 4px 14px; font-size: 14px; }
 

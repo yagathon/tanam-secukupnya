@@ -74,11 +74,14 @@ def test_demand_shape():
 
 def test_season_shape():
     s = client.get("/api/season").json()
-    assert keys(s) >= {"days", "seeds", "main_seed", "summary", "runs", "sowings", "synthetic"}
-    assert set(s["summary"]) == {"cobweb", "fixed", "tanam"}
-    assert keys(s["summary"]["tanam"]) == {"waste_pct", "b2b_fill_pct", "hh_fill_pct", "sowing_cv"}
-    assert keys(s["runs"][0]) == {"strategy", "seed", "waste_pct", "b2b_fill_pct", "hh_fill_pct", "sowing_cv"}
-    assert keys(s["sowings"]["tanam"][0]) == {"line", "day", "seedlings"}
+    assert keys(s) == {"scenarios", "synthetic"}
+    assert [sc["id"] for sc in s["scenarios"]] == ["normal", "wet", "growth", "volatile"]
+    sc = s["scenarios"][0]
+    assert keys(sc) == {"id", "name", "blurb", "days", "seeds", "main_seed", "summary", "runs", "sowings"}
+    assert set(sc["summary"]) == {"cobweb", "fixed", "tanam"}
+    assert keys(sc["summary"]["tanam"]) == {"waste_pct", "b2b_fill_pct", "hh_fill_pct", "sowing_cv"}
+    assert keys(sc["runs"][0]) == {"strategy", "seed", "waste_pct", "b2b_fill_pct", "hh_fill_pct", "sowing_cv"}
+    assert keys(sc["sowings"]["tanam"][0]) == {"line", "day", "seedlings"}
 
 
 def test_next_day_shape():
